@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Partidos de OSM en Vivo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@500;600;700&display=swap" rel="stylesheet">
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --primary: #f767d8;
+  --primary-glow: rgba(247, 103, 216, 0.4);
+  --secondary: #7c3aed;
+  --bg-dark: #0a0a0f;
+  --bg-card: rgba(255, 255, 255, 0.03);
+  --bg-card-hover: rgba(255, 255, 255, 0.06);
+  --text-primary: #ffffff;
+  --text-secondary: #a1a1aa;
+  --border: rgba(255, 255, 255, 0.08);
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg-dark);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Animated background gradient */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(ellipse at 20% 20%, rgba(247, 103, 216, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(124, 58, 237, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(247, 103, 216, 0.03) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.container {
+  position: relative;
+  z-index: 1;
+  max-width: 1000px;
+  margin: auto;
+  padding: 40px 20px;
+}
+
+/* Header */
+header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding: 20px 0;
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+
+.logo-icon {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 20px var(--primary-glow); }
+  50% { box-shadow: 0 0 40px var(--primary-glow), 0 0 60px var(--primary-glow); }
+}
+
+h1 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #fff 0%, var(--primary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -1px;
+}
+
+.subtitle {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+/* Stats bar */
+.stats-bar {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 50px;
+  font-size: 0.9rem;
+}
+
+.stat-item .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  animation: blink 1.5s ease-in-out infinite;
+}
+
+.stat-item.live .dot {
+  background: var(--success);
+  box-shadow: 0 0 10px var(--success);
+}
+
+.stat-item.upcoming .dot {
+  background: var(--warning);
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* Search */
+.search-container {
+  position: relative;
+  margin-bottom: 30px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+}
+
+.search {
+  width: 100%;
+  padding: 16px 20px 16px 55px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.search::placeholder {
+  color: var(--text-secondary);
+}
+
+.search:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-glow);
+  background: var(--bg-card-hover);
+}
+
+/* Section headers */
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 0 10px;
+}
+
+.section-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--text-secondary);
+}
+
+.section-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--border) 0%, transparent 100%);
+}
+
+/* Cards */
+#events {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.card {
+  position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 20px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--primary), var(--secondary));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.card:hover {
+  background: var(--bg-card-hover);
+  border-color: rgba(247, 103, 216, 0.2);
+  transform: translateX(5px);
+}
+
+.card:hover::before {
+  opacity: 1;
+}
+
+.card.live {
+  border-color: rgba(34, 197, 94, 0.3);
+  background: linear-gradient(90deg, rgba(34, 197, 94, 0.05) 0%, var(--bg-card) 100%);
+}
+
+.card.live::before {
+  background: linear-gradient(180deg, var(--success), #16a34a);
+  opacity: 1;
+}
+
+.card.finished {
+  opacity: 0.6;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.time-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.time {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 1px;
+}
+
+.league-badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 4px 10px;
+  background: rgba(247, 103, 216, 0.15);
+  color: var(--primary);
+  border-radius: 20px;
+}
+
+.match {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.status.live {
+  color: var(--success);
+}
+
+.status.upcoming {
+  color: var(--warning);
+}
+
+.status.finished {
+  color: var(--text-secondary);
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.status.live .status-dot {
+  background: var(--success);
+  animation: pulse-dot 1.5s ease-in-out infinite;
+}
+
+.status.upcoming .status-dot {
+  background: var(--warning);
+}
+
+.status.finished .status-dot {
+  background: var(--text-secondary);
+}
+
+@keyframes pulse-dot {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.7; }
+}
+
+/* Channel selector */
+.channel-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.channel-select {
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 140px;
+}
+
+.channel-select:hover {
+  border-color: var(--primary);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.channel-select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-glow);
+}
+
+.channel-select option {
+  background: var(--bg-dark);
+  color: var(--text-primary);
+  padding: 8px;
+}
+
+.channels-count {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.channels-count::before {
+  content: '📡';
+  font-size: 0.9rem;
+}
+
+/* Button */
+.btn-watch {
+  padding: 12px 24px;
+  border-radius: 12px;
+  border: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-watch.enabled {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
+  box-shadow: 0 4px 20px var(--primary-glow);
+}
+
+.btn-watch.enabled:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px var(--primary-glow);
+}
+
+.btn-watch.enabled:active {
+  transform: translateY(0);
+}
+
+.btn-watch.disabled {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-secondary);
+  cursor: not-allowed;
+}
+
+/* Player */
+.player-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+  padding: 40px 20px;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.player-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.player-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.player-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.btn-close {
+  padding: 10px 24px;
+  background: rgba(239, 68, 68, 0.2);
+  color: var(--danger);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 10px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-close:hover {
+  background: rgba(239, 68, 68, 0.3);
+}
+
+.player-wrapper {
+  flex: 1;
+  background: var(--bg-card);
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+#video-player {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: #000;
+}
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-secondary);
+}
+
+.empty-state-icon {
+  font-size: 4rem;
+  margin-bottom: 20px;
+  opacity: 0.5;
+}
+
+.empty-state-text {
+  font-size: 1.1rem;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-dark);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 1.8rem;
+  }
+  
+  .card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 18px;
+  }
+  
+  .channel-selector {
+    width: 100%;
+    align-items: stretch;
+  }
+  
+  .channel-select {
+    width: 100%;
+  }
+  
+  .btn-watch {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .stats-bar {
+    gap: 15px;
+  }
+  
+  .stat-item {
+    padding: 8px 16px;
+    font-size: 0.8rem;
+  }
+  
+  .player-overlay {
+    padding: 20px 15px;
+  }
+  
+  .player-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+  
+  .btn-close {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Loading animation */
+.loading {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+</style>
+<base target="_blank">
+<base target="_blank">
+</head>
+
+<body>
+
+<div class="container">
+  <header>
+    <div class="logo">
+      <div class="logo-icon">⚽</div>
+      <h1>N7-TV</h1>
+    </div>
+    <p class="subtitle">Este sitio no aloja ni transmite contenido propio. Todo el material proviene de fuentes públicas externas. No tenemos control ni responsabilidad sobre dicho contenido ni sobre los enlaces compartidos.</p>
+  </header>
+
+  <div class="stats-bar">
+    <div class="stat-item live">
+      <span class="dot"></span>
+      <span id="live-count">0 EN VIVO</span>
+    </div>
+    <div class="stat-item upcoming">
+      <span class="dot"></span>
+      <span id="upcoming-count">0 PRÓXIMOS</span>
+    </div>
+  </div>
+
+  <div class="search-container">
+    <span class="search-icon">🔍</span>
+    <input class="search" placeholder="Buscar partidos, equipos, ligas..." oninput="filterEvents(this.value)">
+  </div>
+
+  <div class="section-header">
+    <span class="section-title">Programación</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div id="events"></div>
+</div>
+
+<div class="player-overlay" id="player">
+  <div class="player-container">
+    <div class="player-header">
+      <span class="player-title">📺 Reproductor en Vivo</span>
+      <button class="btn-close" onclick="closePlayer()">
+        <span>✕</span>
+        <span>Cerrar</span>
+      </button>
+    </div>
+    <div class="player-wrapper">
+      <video id="video-player" controls autoplay playsinline>
+        Tu navegador no soporta reproducción de video.
+      </video>
+    </div>
+  </div>
+</div>
+
+<script>
+let eventsData = [
+  { time: "14:00", match: "Super Lig: Fenerbahçe vs Gaziantep FK", link: "https://streamx339.cloud/global1.php?channel=disney1" },
+  { time: "14:45", match: "UEFA Champions League: Sporting CP vs Bodø / Glimt", link: "https://streamx339.cloud/global1.php?channel=disney2" },
+  { time: "14:45", match: "UEFA Champions League: Sporting CP vs Bodø / Glimt", link: "https://streamx339.cloud/global1.php?channel=max1" },
+  { time: "14:45", match: "UEFA Champions League: Sporting CP vs Bodø / Glimt", link: "https://streamx339.cloud/global1.php?channel=espn" },
+  { time: "14:45", match: "UEFA Champions League: Sporting CP vs Bodø / Glimt", link: "https://streamx339.cloud/global1.php?channel=tudnus" },
+  { time: "14:45", match: "UEFA Champions League: Sporting CP vs Bodø / Glimt", link: "https://streamx339.cloud/global1.php?channel=fox2ar" },
+  { time: "14:45", match: "UEFA Champions League: Sporting CP vs Bodø / Glimt", link: "https://streamx339.cloud/global1.php?channel=paramount1" },
+  { time: "17:00", match: "UEFA Champions League: Manchester City vs Real Madrid", link: "https://streamx339.cloud/global1.php?channel=disney3" },
+  { time: "17:00", match: "UEFA Champions League: Manchester City vs Real Madrid", link: "https://streamx339.cloud/global1.php?channel=max2" },
+  { time: "17:00", match: "UEFA Champions League: Manchester City vs Real Madrid", link: "https://streamx339.cloud/global1.php?channel=espn" },
+  { time: "17:00", match: "UEFA Champions League: Manchester City vs Real Madrid", link: "https://streamx339.cloud/global1.php?channel=paramount2" },
+  { time: "17:00", match: "UEFA Champions League: Chelsea vs PSG", link: "https://streamx339.cloud/global1.php?channel=disney4" },
+  { time: "17:00", match: "UEFA Champions League: Chelsea vs PSG", link: "https://streamx339.cloud/global1.php?channel=max3" },
+  { time: "17:00", match: "UEFA Champions League: Chelsea vs PSG", link: "https://streamx339.cloud/global1.php?channel=espn2" },
+  { time: "17:00", match: "UEFA Champions League: Chelsea vs PSG", link: "https://streamx339.cloud/global1.php?channel=tudnus" },
+  { time: "17:00", match: "UEFA Champions League: Chelsea vs PSG", link: "https://streamx339.cloud/global1.php?channel=fox1ar" },
+  { time: "17:00", match: "UEFA Champions League: Chelsea vs PSG", link: "https://streamx339.cloud/global1.php?channel=paramount3" },
+  { time: "17:00", match: "UEFA Champions League: Arsenal vs Bayer Leverkusen", link: "https://streamx339.cloud/global1.php?channel=disney5" },
+  { time: "17:00", match: "UEFA Champions League: Arsenal vs Bayer Leverkusen", link: "https://streamx339.cloud/global1.php?channel=foxone1" },
+  { time: "17:00", match: "UEFA Champions League: Arsenal vs Bayer Leverkusen", link: "https://streamx339.cloud/global1.php?channel=espn5" },
+  { time: "17:00", match: "UEFA Champions League: Arsenal vs Bayer Leverkusen", link: "https://streamx339.cloud/global1.php?channel=paramount4" },
+  { time: "18:10", match: "Liga BetPlay: Llaneros vs Cúcuta Deportivo", link: "https://streamx339.cloud/global1.php?channel=winplus" },
+  { time: "18:10", match: "Liga BetPlay: Llaneros vs Cúcuta Deportivo", link: "https://streamx339.cloud/global1.php?channel=winplus2" },
+  { time: "18:10", match: "Liga BetPlay: Llaneros vs Cúcuta Deportivo", link: "https://streamx339.cloud/global1.php?channel=fanatiz1" },
+  { time: "18:30", match: "Copa de Primera: Sportivo San Lorenzo vs 2 de Mayo", link: "https://streamx339.cloud/global1.php?channel=fanatiz2" },
+  { time: "19:00", match: "Liga Profesional: Lanús vs Newell's Old Boys", link: "https://streamx339.cloud/global1.php?channel=espnpremium" },
+  { time: "19:00", match: "Liga Profesional: Lanús vs Newell's Old Boys", link: "https://streamx339.cloud/global1.php?channel=fanatiz3" },
+  { time: "19:00", match: "Liga Profesional: Lanús vs Newell's Old Boys", link: "https://streamx339.cloud/global1.php?channel=tycint" },
+  { time: "20:20", match: "Liga BetPlay: Atlético Bucaramanga vs Once Caldas", link: "https://streamx339.cloud/global1.php?channel=winplus" },
+  { time: "20:20", match: "Liga BetPlay: Atlético Bucaramanga vs Once Caldas", link: "https://streamx339.cloud/global1.php?channel=winplus2" },
+  { time: "20:20", match: "Liga BetPlay: Atlético Bucaramanga vs Once Caldas", link: "https://streamx339.cloud/global1.php?channel=fanatiz4" },
+  { time: "20:30", match: "Copa de Primera: Olimpia vs Sportivo Luqueño", link: "https://streamx339.cloud/global1.php?channel=fanatiz5" },
+  { time: "21:15", match: "Liga Profesional: Gimnasia Mendoza vs Estudiantes LP", link: "https://streamx339.cloud/global1.php?channel=espnpremium" },
+  { time: "21:15", match: "Liga Profesional: Gimnasia Mendoza vs Estudiantes LP", link: "https://streamx339.cloud/global1.php?channel=fanatiz6" },
+  { time: "21:15", match: "Liga Profesional: Central Córdoba SdE vs Deportivo Riestra", link: "https://streamx339.cloud/global1.php?channel=tntar" },
+  { time: "21:15", match: "Liga Profesional: Central Córdoba SdE vs Deportivo Riestra", link: "https://streamx339.cloud/global1.php?channel=fanatiz7" },
+  { time: "21:15", match: "Liga Profesional: Central Córdoba SdE vs Deportivo Riestra", link: "https://streamx339.cloud/global1.php?channel=tycint" },
+  { time: "22:00", match: "CONCACAF Champions Cup: Alajuelense vs Los Angeles FC", link: "https://streamx339.cloud/global1.php?channel=disney1" },
+  { time: "22:00", match: "CONCACAF Champions Cup: Alajuelense vs Los Angeles FC", link: "https://streamx339.cloud/global1.php?channel=tudnus" },
+  { time: "22:00", match: "CONCACAF Champions Cup: Alajuelense vs Los Angeles FC", link: "https://streamx339.cloud/global1.php?channel=foxone1" },
+  { time: "22:30", match: "Liga BetPlay: Millonarios vs Atlético Nacional", link: "https://streamx339.cloud/global1.php?channel=winplus" },
+  { time: "22:30", match: "Liga BetPlay: Millonarios vs Atlético Nacional", link: "https://streamx339.cloud/global1.php?channel=winplus2" },
+  { time: "22:30", match: "Liga BetPlay: Millonarios vs Atlético Nacional", link: "https://streamx339.cloud/global1.php?channel=fanatiz1" },
+  { time: "23:59", match: "CONCACAF Champions Cup: Cruz Azul vs Monterrey", link: "https://streamx339.cloud/global1.php?channel=disney2" },
+  { time: "23:59", match: "CONCACAF Champions Cup: Cruz Azul vs Monterrey", link: "https://streamx339.cloud/global1.php?channel=tudnus" },
+  { time: "23:59", match: "CONCACAF Champions Cup: Cruz Azul vs Monterrey", link: "https://streamx339.cloud/global1.php?channel=foxone2" }
+];
+
+// Guardar los eventos agrupados para actualización
+let groupedEventsCache = [];
+
+// Extraer nombre de la liga del partido
+function getLeague(match) {
+  const leagues = {
+    'Super Lig': 'Super Lig',
+    'UEFA Champions League': 'UCL',
+    'Liga BetPlay': 'BetPlay',
+    'Copa de Primera': 'Primera',
+    'Liga Profesional': 'LPF',
+    'CONCACAF Champions Cup': 'Concacaf'
+  };
+  
+  for (const [key, value] of Object.entries(leagues)) {
+    if (match.includes(key)) return value;
+  }
+  return 'PARTIDO';
+}
+
+// Extraer nombre del canal desde el link original
+function getChannelFromLink(link) {
+  const match = link.match(/channel=([a-zA-Z0-9]+)/);
+  return match ? match[1] : null;
+}
+
+// Formatear nombre del canal para mostrar
+function formatChannelName(channel) {
+  const channelNames = {
+    'disney1': 'Disney+ 1',
+    'disney2': 'Disney+ 2',
+    'disney3': 'Disney+ 3',
+    'disney4': 'Disney+ 4',
+    'disney5': 'Disney+ 5',
+    'max1': 'Max 1',
+    'max2': 'Max 2',
+    'max3': 'Max 3',
+    'espn': 'ESPN',
+    'espn2': 'ESPN 2',
+    'espn5': 'ESPN 5',
+    'espnpremium': 'ESPN Premium',
+    'tudnus': 'TUDN',
+    'fox1ar': 'Fox Sports 1 AR',
+    'fox2ar': 'Fox Sports 2 AR',
+    'foxone1': 'Fox Sports 1',
+    'foxone2': 'Fox Sports 2',
+    'paramount1': 'Paramount+ 1',
+    'paramount2': 'Paramount+ 2',
+    'paramount3': 'Paramount+ 3',
+    'paramount4': 'Paramount+ 4',
+    'winplus': 'Win Sports+',
+    'winplus2': 'Win Sports+ 2',
+    'fanatiz1': 'Fanatiz 1',
+    'fanatiz2': 'Fanatiz 2',
+    'fanatiz3': 'Fanatiz 3',
+    'fanatiz4': 'Fanatiz 4',
+    'fanatiz5': 'Fanatiz 5',
+    'fanatiz6': 'Fanatiz 6',
+    'fanatiz7': 'Fanatiz 7',
+    'tntar': 'TNT Sports',
+    'tycint': 'TyC Sports'
+  };
+  return channelNames[channel] || channel.toUpperCase();
+}
+
+// Agrupar eventos por partido
+function groupEventsByMatch(events) {
+  const grouped = {};
+  
+  events.forEach(ev => {
+    const key = `${ev.time}_${ev.match}`;
+    if (!grouped[key]) {
+      grouped[key] = {
+        time: ev.time,
+        match: ev.match,
+        channels: []
+      };
+    }
+    const channel = getChannelFromLink(ev.link);
+    if (channel) {
+      grouped[key].channels.push({
+        name: channel,
+        link: ev.link,
+        displayName: formatChannelName(channel)
+      });
+    }
+  });
+  
+  // Ordenar canales alfabéticamente
+  Object.values(grouped).forEach(group => {
+    group.channels.sort((a, b) => a.displayName.localeCompare(b.displayName));
+  });
+  
+  return Object.values(grouped);
+}
+
+// convertir hora a fecha real
+function getEventDate(time) {
+  const [h, m] = time.split(":").map(Number);
+  const d = new Date();
+  d.setHours(h, m, 0, 0);
+  return d;
+}
+
+// estado dinámico
+function getStatus(eventTime) {
+  const now = new Date();
+  const start = getEventDate(eventTime);
+  const end = new Date(start.getTime() + 2 * 60 * 60 * 1000);
+
+  if (now < start) return "PROXIMO";
+  if (now >= start && now <= end) return "EN VIVO";
+  return "FINALIZADO";
+}
+
+// update stats
+function updateStats(list) {
+  let live = 0, upcoming = 0;
+  list.forEach(ev => {
+    const status = getStatus(ev.time);
+    if (status === "EN VIVO") live++;
+    else if (status === "PROXIMO") upcoming++;
+  });
+  document.getElementById("live-count").textContent = `${live} EN VIVO`;
+  document.getElementById("upcoming-count").textContent = `${upcoming} PRÓXIMOS`;
+}
+
+// Generar ID único para cada partido
+function getMatchId(time, match) {
+  return `${time}-${match.replace(/[^a-zA-Z0-9]/g, '-')}`;
+}
+
+// render - solo se llama una vez al inicio o al filtrar
+function renderEvents(list = eventsData) {
+  const container = document.getElementById("events");
+  container.innerHTML = "";
+  
+  // Agrupar eventos por partido y guardar en caché
+  groupedEventsCache = groupEventsByMatch(list);
+  
+  updateStats(list);
+
+  if (groupedEventsCache.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">🔍</div>
+        <p class="empty-state-text">No se encontraron partidos</p>
+      </div>
+    `;
+    return;
+  }
+
+  groupedEventsCache.sort((a, b) => a.time.localeCompare(b.time));
+
+  groupedEventsCache.forEach(ev => {
+    const status = getStatus(ev.time);
+    const isActive = status === "EN VIVO";
+    const isFinished = status === "FINALIZADO";
+    const league = getLeague(ev.match);
+    const hasMultipleChannels = ev.channels.length > 1;
+    const matchId = getMatchId(ev.time, ev.match);
+
+    const div = document.createElement("div");
+    div.className = `card ${isActive ? 'live' : ''} ${isFinished ? 'finished' : ''}`;
+    div.dataset.matchId = matchId;
+    div.dataset.time = ev.time;
+
+    // Generar opciones del selector de canales
+    let channelSelectHTML = '';
+    if (!isFinished && ev.channels.length > 0) {
+      if (hasMultipleChannels) {
+        channelSelectHTML = `
+          <select class="channel-select" data-match-id="${matchId}">
+            ${ev.channels.map((ch, idx) => `<option value="${ch.link}">${ch.displayName}</option>`).join('')}
+          </select>
+          <span class="channels-count">${ev.channels.length} canales disponibles</span>
+        `;
+      } else {
+        channelSelectHTML = `
+          <select class="channel-select" data-match-id="${matchId}" style="display:none;">
+            <option value="${ev.channels[0].link}">${ev.channels[0].displayName}</option>
+          </select>
+        `;
+      }
+    }
+
+    div.innerHTML = `
+      <div class="info">
+        <div class="time-row">
+          <div class="time">${ev.time}</div>
+          <span class="league-badge">${league}</span>
+        </div>
+        <div class="match">${ev.match}</div>
+        <div class="status ${isActive ? 'live' : isFinished ? 'finished' : 'upcoming'}" data-status="${status}">
+          <span class="status-dot"></span>
+          <span class="status-text">${status}</span>
+        </div>
+      </div>
+
+      ${!isFinished ? `
+      <div class="channel-selector">
+        ${channelSelectHTML}
+        <button 
+          class="btn-watch ${isActive ? 'enabled' : 'disabled'}"
+          data-btn-match-id="${matchId}" 
+          ${isActive ? `onclick="watchMatch('${matchId}')"` : ""}
+        >
+          <span class="btn-icon">${isActive ? '▶' : '⏳'}</span>
+          <span class="btn-text">${isActive ? 'Ver' : 'Próximo'}</span>
+        </button>
+      </div>
+      ` : ''}
+    `;
+
+    container.appendChild(div);
+  });
+}
+
+// Actualizar solo los estados sin recrear el DOM
+function updateStatuses() {
+  const cards = document.querySelectorAll('.card');
+  let liveCount = 0;
+  let upcomingCount = 0;
+  
+  cards.forEach(card => {
+    const time = card.dataset.time;
+    if (!time) return;
+    
+    const status = getStatus(time);
+    const statusEl = card.querySelector('.status');
+    const btn = card.querySelector('.btn-watch');
+    
+    // Contar para stats
+    if (status === "EN VIVO") liveCount++;
+    else if (status === "PROXIMO") upcomingCount++;
+    
+    // Solo actualizar si cambió el estado
+    if (statusEl && statusEl.dataset.status !== status) {
+      statusEl.dataset.status = status;
+      
+      // Actualizar clase de status
+      statusEl.className = `status ${status === 'EN VIVO' ? 'live' : status === 'FINALIZADO' ? 'finished' : 'upcoming'}`;
+      
+      // Actualizar texto de status
+      const statusText = statusEl.querySelector('.status-text');
+      if (statusText) statusText.textContent = status;
+      
+      // Actualizar clase de la card
+      card.classList.remove('live', 'finished');
+      if (status === 'EN VIVO') card.classList.add('live');
+      if (status === 'FINALIZADO') card.classList.add('finished');
+      
+      // Actualizar botón
+      if (btn) {
+        const isActive = status === 'EN VIVO';
+        btn.className = `btn-watch ${isActive ? 'enabled' : 'disabled'}`;
+        btn.onclick = isActive ? () => watchMatch(card.dataset.matchId) : null;
+        
+        const btnIcon = btn.querySelector('.btn-icon');
+        const btnText = btn.querySelector('.btn-text');
+        if (btnIcon) btnIcon.textContent = isActive ? '▶' : '⏳';
+        if (btnText) btnText.textContent = isActive ? 'Ver' : 'Próximo';
+      }
+    }
+  });
+  
+  // Actualizar contadores
+  document.getElementById("live-count").textContent = `${liveCount} EN VIVO`;
+  document.getElementById("upcoming-count").textContent = `${upcomingCount} PRÓXIMOS`;
+}
+
+// Ver partido con el canal seleccionado
+function watchMatch(matchId) {
+  const select = document.querySelector(`select[data-match-id="${matchId}"]`);
+  const card = document.querySelector(`.card[data-match-id="${matchId}"]`);
+  
+  if (select && card) {
+    const selectedLink = select.value;
+    const matchTitle = card.querySelector('.match').textContent;
+    openPlayer(selectedLink, matchTitle);
+  }
+}
+
+// Mapeo de canales a URLs m3u8
+const channelM3UMap = {
+  'disney1': 'https://cc324.streamingtv339.com/disney1/index.m3u8?token=359bbb587263779ceb86f4e5987254f69cfeb56d-22-1773825002-1773771002&ip=181.29.203.203',
+  'disney2': 'https://244pl.streamingtv339.com/disney2/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=30ba84bebdb20214353f3c997f25b4cefa6d916b-f4-1773824734-1773770734',
+  'disney3': 'https://cc324.streamingtv339.com/disney3/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=cb7fc07b9444f17816368772a479f0de0740e73c-86-1773824782-1773770782',
+  'disney4': 'https://cc324.streamingtv339.com/disney4/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=1753c4741627cae97da8d2f7dccb2afe8a7c92b4-20-1773824810-1773770810',
+  'disney5': 'https://cc324.streamingtv339.com/disney5/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=b2e086e4a95d21b72037fe95bc4ce42c9047cf34-96-1773824853-1773770853',
+  'max1': 'https://cc324.streamingtv339.com/max1/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=111f8160c95c4fa28d4ba4353bec8de50d3b0f57-09-1773824744-1773770744',
+  'max2': 'https://cc324.streamingtv339.com/max2/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=03fd9fb8e913bbe2419e9c7d69d45c084959add0-3d-1773824789-1773770789',
+  'max3': 'https://cc324.streamingtv339.com/max3/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=609ca04527e08ff745070ad466fd98dc7da421a0-44-1773824818-1773770818',
+  'espn': 'https://244pl.streamingtv339.com/espn/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=242bed29759b25bbe722d8883cde73844b4aec4e-0d-1773824751-1773770751',
+  'espn2': 'https://244pl.streamingtv339.com/espn2/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=5b9096d11540da3e0c8a7f0c4d309a260f6bb6d5-7f-1773824825-1773770825',
+  'espn5': 'https://244pl.streamingtv339.com/espn5/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=710ac8757d947f3de4bfb971b00402024f2c7d2b-c1-1773824867-1773770867',
+  'espnpremium': 'https://cc324.streamingtv339.com/espnpremium/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=0eb962ab8b40a3355de44ce1fe144bbfd0fe51c3-f6-1773824911-1773770911',
+  'tudnus': 'https://cc324.streamingtv339.com/tudnus/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=2d5e9194b746b9afa3abe318da0bdf694785c7ab-f1-1773824759-1773770759',
+  'fox1ar': 'https://244pl.streamingtv339.com/fox1ar/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=337828bcc3969e3324c635316dfbf141ca8ef0b9-cc-1773824839-1773770839',
+  'fox2ar': 'https://cc324.streamingtv339.com/fox2ar/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=8118c6562e98dcac322ea43cfb5a4b71b71e615e-68-1773824767-1773770767',
+  'foxone1': 'https://244pl.streamingtv339.com/foxone1/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=408d3971384688602609d3ac34ee15d5affec78f-29-1773824860-1773770860',
+  'foxone2': 'https://244pl.streamingtv339.com/foxone2/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=1ceeb9dc1c018d68182867899475f72dde3f833c-cd-1773825059-1773771059',
+  'paramount1': 'https://244pl.streamingtv339.com/paramount1/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=03fbd267a0943f69cb0c650051a9e5d46edc39c2-08-1773824774-1773770774',
+  'paramount2': 'https://244pl.streamingtv339.com/paramount2/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=6ee3ea789503137e60dcf4aa3badcf47a0bcec00-9b-1773824803-1773770803',
+  'paramount3': 'https://244pl.streamingtv339.com/paramount3/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=86d6fd0632e20d4293fdbc3679de68c5b6f34896-ec-1773824846-1773770846',
+  'paramount4': 'https://cc324.streamingtv339.com/paramount4/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=0d697d31dd68fefa1875bd208ca498b2abc19142-d8-1773824874-1773770874',
+  'winplus': 'https://244pl.streamingtv339.com/winplus/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=4c546f1ec96e97a98a3e2f1382528000ad7a6aab-08-1773824881-1773770881',
+  'winplus2': 'https://cc324.streamingtv339.com/winplus2/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=1c5cb9daf8e2cb46b4ad301a04290b837d5a442c-22-1773824889-1773770889',
+  'fanatiz1': 'https://244pl.streamingtv339.com/fanatiz1/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=e3aa201e38b26f3ec7902f3cd1fe1b5930e326f3-6d-1773824896-1773770896',
+  'fanatiz2': 'https://cc324.streamingtv339.com/fanatiz2/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=8d035077ac4004a4bdc85c69d7b439c45ca36866-70-1773824904-1773770904',
+  'fanatiz3': 'https://cc324.streamingtv339.com/fanatiz3/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=37b5b0dc86b11010b24dc242f933f718a5addfdc-d9-1773824919-1773770919',
+  'fanatiz4': 'https://cc324.streamingtv339.com/fanatiz4/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=dd30feaab48555acd9ffaa562561390edf076a52-82-1773824950-1773770950',
+  'fanatiz5': 'https://244pl.streamingtv339.com/fanatiz5/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=aa53203d818662a9ed6a7f2c851cdc3b800acf75-57-1773824957-1773770957',
+  'fanatiz6': 'https://cc324.streamingtv339.com/fanatiz6/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=5ea27d5fe9411869252e47bb7fa50205db65039c-d8-1773824972-1773770972',
+  'fanatiz7': 'https://cc324.streamingtv339.com/fanatiz7/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=953207a50dd0e42078604c76c791d1934a503adb-e5-1773824987-1773770987',
+  'tntar': 'https://244pl.streamingtv339.com/tntar/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=482af88478c2b29eae405d2956c048a5661f871f-70-1773824979-1773770979',
+  'tycint': 'https://cc324.streamingtv339.com/tycint/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=08f4ff75468b53a5db2b1d22fed6dfe375cacaaa-92-1773824995-1773770995'
+};
+
+// player
+function openPlayer(link, matchTitle) {
+  const channel = getChannelFromLink(link);
+  const m3u8Url = channel && channelM3UMap[channel] ? channelM3UMap[channel] : link;
+  
+  document.getElementById("player").style.display = "block";
+  document.getElementById("video-player").src = m3u8Url;
+  document.querySelector(".player-title").textContent = `📺 ${matchTitle}`;
+  document.body.style.overflow = "hidden";
+}
+
+function closePlayer() {
+  document.getElementById("player").style.display = "none";
+  document.getElementById("video-player").src = "";
+  document.body.style.overflow = "";
+}
+
+// filtro
+function filterEvents(text) {
+  const filtered = eventsData.filter(e =>
+    e.match.toLowerCase().includes(text.toLowerCase())
+  );
+  renderEvents(filtered);
+}
+
+// Close player on escape key
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closePlayer();
+});
+
+// INIT - render inicial
+renderEvents();
+
+// actualizar estados cada segundo sin recrear el DOM
+setInterval(() => {
+  updateStatuses();
+}, 1000);
+</script>
+
+</body>
+</html>
