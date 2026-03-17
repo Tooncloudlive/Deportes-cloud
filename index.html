@@ -3,10 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>en Vivo</title>
+<title>Partidos de OSM en Vivo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@500;600;700&display=swap" rel="stylesheet">
+<!-- HLS.js para reproducir streams m3u8 en todos los dispositivos -->
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
 <style>
 * {
@@ -450,10 +452,10 @@ h1 {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.9);
+  background: rgba(0, 0, 0, 0.95);
   backdrop-filter: blur(10px);
   z-index: 1000;
-  padding: 40px 20px;
+  padding: 20px;
   animation: fadeIn 0.3s ease;
 }
 
@@ -474,19 +476,19 @@ h1 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
-  padding-bottom: 20px;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
   border-bottom: 1px solid var(--border);
 }
 
 .player-title {
   font-family: 'Orbitron', sans-serif;
-  font-size: 1.2rem;
+  font-size: 1rem;
   font-weight: 600;
 }
 
 .btn-close {
-  padding: 10px 24px;
+  padding: 10px 20px;
   background: rgba(239, 68, 68, 0.2);
   color: var(--danger);
   border: 1px solid rgba(239, 68, 68, 0.3);
@@ -498,6 +500,7 @@ h1 {
   display: flex;
   align-items: center;
   gap: 8px;
+  font-size: 0.9rem;
 }
 
 .btn-close:hover {
@@ -507,9 +510,10 @@ h1 {
 .player-wrapper {
   flex: 1;
   background: var(--bg-card);
-  border-radius: 20px;
+  border-radius: 16px;
   overflow: hidden;
   border: 1px solid var(--border);
+  position: relative;
 }
 
 #video-player {
@@ -517,6 +521,61 @@ h1 {
   height: 100%;
   border: none;
   background: #000;
+  display: block;
+}
+
+/* Loading spinner para el video */
+.video-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  z-index: 10;
+}
+
+.video-loading .spinner {
+  width: 50px;
+  height: 50px;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.video-loading p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Mensaje de error */
+.video-error {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  padding: 30px;
+  display: none;
+  z-index: 10;
+}
+
+.video-error-icon {
+  font-size: 3rem;
+  margin-bottom: 15px;
+}
+
+.video-error-text {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  max-width: 300px;
 }
 
 /* Empty state */
@@ -591,18 +650,22 @@ h1 {
   }
   
   .player-overlay {
-    padding: 20px 15px;
+    padding: 10px;
   }
   
   .player-header {
     flex-direction: column;
-    gap: 15px;
+    gap: 10px;
     align-items: flex-start;
   }
   
   .btn-close {
     width: 100%;
     justify-content: center;
+  }
+  
+  .player-title {
+    font-size: 0.85rem;
   }
 }
 
@@ -616,10 +679,6 @@ h1 {
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
 </style>
 <base target="_blank">
 <base target="_blank">
@@ -631,7 +690,7 @@ h1 {
   <header>
     <div class="logo">
       <div class="logo-icon">⚽</div>
-      <h1>Tooncloud TV - Deportes</h1>
+      <h1>Tooncloud Deportes</h1>
     </div>
     <p class="subtitle">Este sitio no aloja ni transmite contenido propio. Todo el material proviene de fuentes públicas externas. No tenemos control ni responsabilidad sobre dicho contenido ni sobre los enlaces compartidos.</p>
   </header>
@@ -670,7 +729,15 @@ h1 {
       </button>
     </div>
     <div class="player-wrapper">
-      <video id="video-player" controls autoplay playsinline>
+      <div class="video-loading" id="video-loading">
+        <div class="spinner"></div>
+        <p>Cargando transmisión...</p>
+      </div>
+      <div class="video-error" id="video-error">
+        <div class="video-error-icon">⚠️</div>
+        <p class="video-error-text">No se pudo cargar el video. Intenta con otro canal.</p>
+      </div>
+      <video id="video-player" controls playsinline webkit-playsinline>
         Tu navegador no soporta reproducción de video.
       </video>
     </div>
@@ -729,6 +796,7 @@ let eventsData = [
 
 // Guardar los eventos agrupados para actualización
 let groupedEventsCache = [];
+let hls = null; // Instancia de HLS.js
 
 // Extraer nombre de la liga del partido
 function getLeague(match) {
@@ -1046,21 +1114,118 @@ const channelM3UMap = {
   'tycint': 'https://cc324.streamingtv339.com/tycint/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=08f4ff75468b53a5db2b1d22fed6dfe375cacaaa-92-1773824995-1773770995'
 };
 
-// player
+// player con soporte HLS.js
 function openPlayer(link, matchTitle) {
   const channel = getChannelFromLink(link);
   const m3u8Url = channel && channelM3UMap[channel] ? channelM3UMap[channel] : link;
+  const video = document.getElementById("video-player");
+  const loadingEl = document.getElementById("video-loading");
+  const errorEl = document.getElementById("video-error");
   
+  // Mostrar loading
+  loadingEl.style.display = 'flex';
+  errorEl.style.display = 'none';
+  
+  // Mostrar player
   document.getElementById("player").style.display = "block";
-  document.getElementById("video-player").src = m3u8Url;
   document.querySelector(".player-title").textContent = `📺 ${matchTitle}`;
   document.body.style.overflow = "hidden";
+  
+  // Destruir instancia anterior de HLS si existe
+  if (hls) {
+    hls.destroy();
+    hls = null;
+  }
+  
+  // Detectar si es iOS Safari (soporta HLS nativamente)
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+  
+  if (isIOS && isSafari) {
+    // iOS Safari - usar reproducción nativa HLS
+    video.src = m3u8Url;
+    video.load();
+    video.play().then(() => {
+      loadingEl.style.display = 'none';
+    }).catch(err => {
+      console.error('Error reproduciendo en iOS:', err);
+      loadingEl.style.display = 'none';
+      errorEl.style.display = 'block';
+    });
+  } else if (Hls.isSupported()) {
+    // Usar HLS.js para otros navegadores
+    hls = new Hls({
+      enableWorker: true,
+      lowLatencyMode: true,
+      backBufferLength: 90,
+      maxBufferLength: 30,
+      maxMaxBufferLength: 60,
+      liveSyncDurationCount: 3,
+      liveMaxLatencyDurationCount: 10,
+    });
+    
+    hls.loadSource(m3u8Url);
+    hls.attachMedia(video);
+    
+    hls.on(Hls.Events.MANIFEST_PARSED, function() {
+      loadingEl.style.display = 'none';
+      video.play().catch(err => {
+        console.error('Error al reproducir:', err);
+      });
+    });
+    
+    hls.on(Hls.Events.ERROR, function(event, data) {
+      console.error('HLS Error:', data);
+      if (data.fatal) {
+        loadingEl.style.display = 'none';
+        errorEl.style.display = 'block';
+        
+        switch(data.type) {
+          case Hls.ErrorTypes.NETWORK_ERROR:
+            console.log('Error de red, intentando reconectar...');
+            hls.startLoad();
+            break;
+          case Hls.ErrorTypes.MEDIA_ERROR:
+            console.log('Error de media, intentando recuperar...');
+            hls.recoverMediaError();
+            break;
+          default:
+            console.log('Error fatal, no se puede recuperar');
+            hls.destroy();
+            break;
+        }
+      }
+    });
+  } else {
+    // Navegador no soporta HLS
+    loadingEl.style.display = 'none';
+    errorEl.style.display = 'block';
+    errorEl.querySelector('.video-error-text').textContent = 
+      'Tu navegador no soporta reproducción de video en vivo. Intenta con Chrome, Safari o Firefox.';
+  }
 }
 
 function closePlayer() {
+  const video = document.getElementById("video-player");
+  
+  // Destruir HLS
+  if (hls) {
+    hls.destroy();
+    hls = null;
+  }
+  
+  // Detener video
+  video.pause();
+  video.src = "";
+  video.load();
+  
+  // Ocultar player
   document.getElementById("player").style.display = "none";
-  document.getElementById("video-player").src = "";
   document.body.style.overflow = "";
+  
+  // Reset loading/error
+  document.getElementById("video-loading").style.display = 'none';
+  document.getElementById("video-error").style.display = 'none';
 }
 
 // filtro
