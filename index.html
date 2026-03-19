@@ -669,6 +669,46 @@ h1 {
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+/* Banner Publicitario */
+.banner-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin: 20px 0 30px 0;
+  padding: 0 10px;
+}
+
+.banner-container a {
+  display: block;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.banner-container a:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(247, 103, 216, 0.3);
+}
+
+.banner-img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 12px;
+}
+
+/* Responsive banner */
+@media (max-width: 768px) {
+  .banner-container {
+    margin: 15px 0 25px 0;
+    padding: 0 5px;
+  }
+
+  .banner-img {
+    width: 100%;
+  }
+}
+
 </style>
 <base target="_blank">
 </head>
@@ -699,6 +739,13 @@ h1 {
   <div class="search-container">
     <span class="search-icon">🔍</span>
     <input class="search" placeholder="Buscar partidos, equipos, ligas..." oninput="filterEvents(this.value)">
+  </div>
+
+  <!-- Banner Publicitario 1xBet -->
+  <div class="banner-container">
+    <a href="https://refbanners.com/I?tag=d_5378140m_99260c_&site=5378140&ad=99260" target="_blank" rel="noopener noreferrer">
+      <img src="Media99260__WEEKEND-BOOSTER_970x90.gif" alt="1xBet Weekend Booster - ¡Bonos todos los viernes!" class="banner-img">
+    </a>
   </div>
 
   <div class="section-header">
