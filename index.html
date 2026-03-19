@@ -302,11 +302,44 @@ h1 {
   border-radius: 20px;
 }
 
+/* Match with team logos */
 .match {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   font-size: 1rem;
   font-weight: 500;
   color: var(--text-primary);
   line-height: 1.4;
+  flex-wrap: wrap;
+}
+
+.team-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.team-logo {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.team-logo-placeholder {
+  width: 28px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.vs-text {
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 0.85rem;
+  margin: 0 4px;
 }
 
 .status {
@@ -611,6 +644,15 @@ h1 {
     width: 100%;
     justify-content: center;
   }
+  
+  .match {
+    font-size: 0.9rem;
+  }
+  
+  .team-logo, .team-logo-placeholder {
+    width: 24px;
+    height: 24px;
+  }
 }
 
 /* Loading animation */
@@ -628,8 +670,6 @@ h1 {
   to { transform: rotate(360deg); }
 }
 </style>
-<base target="_blank">
-<base target="_blank">
 <base target="_blank">
 </head>
 
@@ -685,84 +725,542 @@ h1 {
 </div>
 
 <script>
+// =====================================================
+// BASE DE DATOS DE ESCUDOS - TODAS LAS LIGAS
+// =====================================================
+const teamLogosDB = {
+  // Liga BetPlay Dimayor (Colombia)
+  "Atlético Nacional": "https://api.promiedos.com.ar/images/team/igea/4",
+  "Pasto": "https://api.promiedos.com.ar/images/team/jaei/4",
+  "Deportivo Pasto": "https://api.promiedos.com.ar/images/team/jaei/4",
+  "Once Caldas": "https://api.promiedos.com.ar/images/team/hcij/4",
+  "Inter Bogotá": "https://api.promiedos.com.ar/images/team/ifec/4",
+  "Bucaramanga": "https://api.promiedos.com.ar/images/team/bacce/4",
+  "Atl. Bucaramanga": "https://api.promiedos.com.ar/images/team/bacce/4",
+  "Junior": "https://api.promiedos.com.ar/images/team/hcae/4",
+  "América de Cali": "https://api.promiedos.com.ar/images/team/igef/4",
+  "Deportivo Cali": "https://api.promiedos.com.ar/images/team/igdj/4",
+  "Cali": "https://api.promiedos.com.ar/images/team/igdj/4",
+  "Millonarios": "https://api.promiedos.com.ar/images/team/igdh/4",
+  "Tolima": "https://api.promiedos.com.ar/images/team/hgdf/4",
+  "Llaneros FC": "https://api.promiedos.com.ar/images/team/badhi/4",
+  "Águilas": "https://api.promiedos.com.ar/images/team/caieb/4",
+  "Fortaleza FC": "https://api.promiedos.com.ar/images/team/jiee/4",
+  "Santa Fe": "https://api.promiedos.com.ar/images/team/hgee/4",
+  "Independiente Medellín": "https://api.promiedos.com.ar/images/team/iged/4",
+  "Jaguares": "https://api.promiedos.com.ar/images/team/badhh/4",
+  "Cúcuta": "https://api.promiedos.com.ar/images/team/igde/4",
+  "Boyacá Chicó": "https://api.promiedos.com.ar/images/team/igeb/4",
+  "Pereira": "https://api.promiedos.com.ar/images/team/igdi/4",
+  "Deportivo Pereira": "https://api.promiedos.com.ar/images/team/igdi/4",
+  "Alianza FC": "https://api.promiedos.com.ar/images/team/bacaj/4",
+  
+  // Liga de Primera (Chile)
+  "Colo Colo": "https://api.promiedos.com.ar/images/team/bcdj/4",
+  "Limache": "https://api.promiedos.com.ar/images/team/fbjie/4",
+  "Ñublense": "https://api.promiedos.com.ar/images/team/bcee/4",
+  "U. Católica": "https://api.promiedos.com.ar/images/team/bcef/4",
+  "U. de Concepción": "https://api.promiedos.com.ar/images/team/bceh/4",
+  "Audax Italiano": "https://api.promiedos.com.ar/images/team/bccj/4",
+  "U. La Calera": "https://api.promiedos.com.ar/images/team/ieaj/4",
+  "U. de Chile": "https://api.promiedos.com.ar/images/team/ifeb/4",
+  "O'Higgins": "https://api.promiedos.com.ar/images/team/bcde/4",
+  "La Serena": "https://api.promiedos.com.ar/images/team/bcdh/4",
+  "Coquimbo": "https://api.promiedos.com.ar/images/team/igcf/4",
+  "Huachipato": "https://api.promiedos.com.ar/images/team/bcdc/4",
+  "Palestino": "https://api.promiedos.com.ar/images/team/bcdi/4",
+  "Everton": "https://api.promiedos.com.ar/images/team/bcda/4",
+  "Cobresal": "https://api.promiedos.com.ar/images/team/bcdb/4",
+  "Dep. Concepción": "https://api.promiedos.com.ar/images/team/igcj/4",
+  
+  // Liga MX (México)
+  "Chivas": "https://api.promiedos.com.ar/images/team/bcfj/4",
+  "Guadalajara": "https://api.promiedos.com.ar/images/team/bcfj/4",
+  "Cruz Azul": "https://api.promiedos.com.ar/images/team/bcgb/4",
+  "Toluca": "https://api.promiedos.com.ar/images/team/cahi/4",
+  "Pachuca": "https://api.promiedos.com.ar/images/team/bcfa/4",
+  "Pumas": "https://api.promiedos.com.ar/images/team/bcej/4",
+  "U.A.N.L.": "https://api.promiedos.com.ar/images/team/bcge/4",
+  "Tigres": "https://api.promiedos.com.ar/images/team/bcge/4",
+  "Club América": "https://api.promiedos.com.ar/images/team/bcff/4",
+  "América": "https://api.promiedos.com.ar/images/team/bcff/4",
+  "Atlas": "https://api.promiedos.com.ar/images/team/bcfi/4",
+  "Monterrey": "https://api.promiedos.com.ar/images/team/bcfh/4",
+  "Club Tijuana": "https://api.promiedos.com.ar/images/team/ifai/4",
+  "Puebla": "https://api.promiedos.com.ar/images/team/bcfc/4",
+  "Atlético San Luis": "https://api.promiedos.com.ar/images/team/bcga/4",
+  "Juarez": "https://api.promiedos.com.ar/images/team/cfbej/4",
+  "Necaxa": "https://api.promiedos.com.ar/images/team/bcgd/4",
+  "Mazatlan FC": "https://api.promiedos.com.ar/images/team/ggdfj/4",
+  "León": "https://api.promiedos.com.ar/images/team/jddj/4",
+  "Querétaro FC": "https://api.promiedos.com.ar/images/team/fjje/4",
+  "Santos Laguna": "https://api.promiedos.com.ar/images/team/bcfe/4",
+  
+  // Liga Profesional Argentina
+  "Vélez": "https://api.promiedos.com.ar/images/team/ihc/4",
+  "Estudiantes": "https://api.promiedos.com.ar/images/team/igh/4",
+  "Unión": "https://api.promiedos.com.ar/images/team/hcag/4",
+  "Defensa": "https://api.promiedos.com.ar/images/team/hcbh/4",
+  "Lanús": "https://api.promiedos.com.ar/images/team/igj/4",
+  "Talleres": "https://api.promiedos.com.ar/images/team/jche/4",
+  "Boca Jrs.": "https://api.promiedos.com.ar/images/team/igg/4",
+  "Boca Juniors": "https://api.promiedos.com.ar/images/team/igg/4",
+  "Independiente": "https://api.promiedos.com.ar/images/team/ihe/4",
+  "Platense": "https://api.promiedos.com.ar/images/team/hcah/4",
+  "San Lorenzo": "https://api.promiedos.com.ar/images/team/igf/4",
+  "Central Córdoba": "https://api.promiedos.com.ar/images/team/beafh/4",
+  "Instituto": "https://api.promiedos.com.ar/images/team/hchc/4",
+  "Gimnasia (M)": "https://api.promiedos.com.ar/images/team/bbjbf/4",
+  "Riestra": "https://api.promiedos.com.ar/images/team/bbjea/4",
+  "Newell's": "https://api.promiedos.com.ar/images/team/ihh/4",
+  "Ind. Rivadavia": "https://api.promiedos.com.ar/images/team/hcch/4",
+  "Belgrano": "https://api.promiedos.com.ar/images/team/fhid/4",
+  "Central": "https://api.promiedos.com.ar/images/team/ihf/4",
+  "Rosario Central": "https://api.promiedos.com.ar/images/team/ihf/4",
+  "Tigre": "https://api.promiedos.com.ar/images/team/iid/4",
+  "River": "https://api.promiedos.com.ar/images/team/igi/4",
+  "River Plate": "https://api.promiedos.com.ar/images/team/igi/4",
+  "Racing": "https://api.promiedos.com.ar/images/team/ihg/4",
+  "Racing Club": "https://api.promiedos.com.ar/images/team/ihg/4",
+  "Barracas": "https://api.promiedos.com.ar/images/team/jafb/4",
+  "Gimnasia": "https://api.promiedos.com.ar/images/team/iia/4",
+  "Gimnasia y Esgrima": "https://api.promiedos.com.ar/images/team/iia/4",
+  "Huracán": "https://api.promiedos.com.ar/images/team/iie/4",
+  "Argentinos": "https://api.promiedos.com.ar/images/team/ihb/4",
+  "Argentinos Juniors": "https://api.promiedos.com.ar/images/team/ihb/4",
+  "Banfield": "https://api.promiedos.com.ar/images/team/ihi/4",
+  "Sarmiento": "https://api.promiedos.com.ar/images/team/hbbh/4",
+  "Atl. Tucumán": "https://api.promiedos.com.ar/images/team/gbfc/4",
+  "Atlético Tucumán": "https://api.promiedos.com.ar/images/team/gbfc/4",
+  "Aldosivi": "https://api.promiedos.com.ar/images/team/hccd/4",
+  "Estudiantes RC": "https://api.promiedos.com.ar/images/team/bheaf/4",
+  
+  // Ligue 1 (Francia)
+  "PSG": "https://api.promiedos.com.ar/images/team/eia/4",
+  "Paris Saint-Germain": "https://api.promiedos.com.ar/images/team/eia/4",
+  "Lens": "https://api.promiedos.com.ar/images/team/eib/4",
+  "Marsella": "https://api.promiedos.com.ar/images/team/egj/4",
+  "Olympique de Marsella": "https://api.promiedos.com.ar/images/team/egj/4",
+  "Lyon": "https://api.promiedos.com.ar/images/team/egf/4",
+  "Olympique Lyonnais": "https://api.promiedos.com.ar/images/team/egf/4",
+  "Lille": "https://api.promiedos.com.ar/images/team/ehi/4",
+  "Monaco": "https://api.promiedos.com.ar/images/team/ehb/4",
+  "AS Monaco": "https://api.promiedos.com.ar/images/team/ehb/4",
+  "Rennes": "https://api.promiedos.com.ar/images/team/ehh/4",
+  "Stade Rennais": "https://api.promiedos.com.ar/images/team/ehh/4",
+  "Estrasburgo": "https://api.promiedos.com.ar/images/team/ehj/4",
+  "Strasbourg": "https://api.promiedos.com.ar/images/team/ehj/4",
+  "Lorient": "https://api.promiedos.com.ar/images/team/ehc/4",
+  "Brest": "https://api.promiedos.com.ar/images/team/fde/4",
+  "Toulouse": "https://api.promiedos.com.ar/images/team/eic/4",
+  "Angers": "https://api.promiedos.com.ar/images/team/ejd/4",
+  "Paris FC": "https://api.promiedos.com.ar/images/team/gahf/4",
+  "Le Havre": "https://api.promiedos.com.ar/images/team/eif/4",
+  "Niza": "https://api.promiedos.com.ar/images/team/eha/4",
+  "Nice": "https://api.promiedos.com.ar/images/team/eha/4",
+  "Auxerre": "https://api.promiedos.com.ar/images/team/ehg/4",
+  "Nantes": "https://api.promiedos.com.ar/images/team/eig/4",
+  "Metz": "https://api.promiedos.com.ar/images/team/eie/4",
+  
+  // MLS (Estados Unidos)
+  "New York City FC": "https://api.promiedos.com.ar/images/team/cagcc/4",
+  "NYCFC": "https://api.promiedos.com.ar/images/team/cagcc/4",
+  "Nashville SC": "https://api.promiedos.com.ar/images/team/fbbcg/4",
+  "Inter Miami": "https://api.promiedos.com.ar/images/team/fehcj/4",
+  "Inter Miami CF": "https://api.promiedos.com.ar/images/team/fehcj/4",
+  "N.Y Red Bulls": "https://api.promiedos.com.ar/images/team/bddi/4",
+  "New York Red Bulls": "https://api.promiedos.com.ar/images/team/bddi/4",
+  "DC United": "https://api.promiedos.com.ar/images/team/bddj/4",
+  "Charlotte FC": "https://api.promiedos.com.ar/images/team/gjbii/4",
+  "Chicago Fire": "https://api.promiedos.com.ar/images/team/bddd/4",
+  "Toronto": "https://api.promiedos.com.ar/images/team/bddg/4",
+  "Toronto FC": "https://api.promiedos.com.ar/images/team/bddg/4",
+  "Revolution": "https://api.promiedos.com.ar/images/team/bddh/4",
+  "New England Revolution": "https://api.promiedos.com.ar/images/team/bddh/4",
+  "Atlanta United": "https://api.promiedos.com.ar/images/team/daejj/4",
+  "FC Cincinnati": "https://api.promiedos.com.ar/images/team/cfcih/4",
+  "CF Montréal": "https://api.promiedos.com.ar/images/team/jbch/4",
+  "Orlando City": "https://api.promiedos.com.ar/images/team/bccae/4",
+  "Columbus Crew": "https://api.promiedos.com.ar/images/team/bdde/4",
+  "Philadelphia Union": "https://api.promiedos.com.ar/images/team/hdge/4",
+  "Whitecaps": "https://api.promiedos.com.ar/images/team/idij/4",
+  "Vancouver Whitecaps": "https://api.promiedos.com.ar/images/team/idij/4",
+  "Vancouver Whitecaps FC": "https://api.promiedos.com.ar/images/team/idij/4",
+  "Los Angeles FC": "https://api.promiedos.com.ar/images/team/fbbhi/4",
+  "LAFC": "https://api.promiedos.com.ar/images/team/fbbhi/4",
+  "San Diego FC": "https://api.promiedos.com.ar/images/team/iahhi/4",
+  "San Jose": "https://api.promiedos.com.ar/images/team/bdef/4",
+  "San Jose Earthquakes": "https://api.promiedos.com.ar/images/team/bdef/4",
+  "Seattle Sounders": "https://api.promiedos.com.ar/images/team/bdeh/4",
+  "Seattle Sounders FC": "https://api.promiedos.com.ar/images/team/bdeh/4",
+  "Real Salt Lake": "https://api.promiedos.com.ar/images/team/bdee/4",
+  "Colorado Rapids": "https://api.promiedos.com.ar/images/team/bdea/4",
+  "Houston Dynamo": "https://api.promiedos.com.ar/images/team/bdeg/4",
+  "FC Dallas": "https://api.promiedos.com.ar/images/team/bdeb/4",
+  "LA Galaxy": "https://api.promiedos.com.ar/images/team/bdec/4",
+  "Austin FC": "https://api.promiedos.com.ar/images/team/ghjah/4",
+  "Sporting KC": "https://api.promiedos.com.ar/images/team/bddf/4",
+  "Minnesota United": "https://api.promiedos.com.ar/images/team/bccai/4",
+  "Portland": "https://api.promiedos.com.ar/images/team/fjbg/4",
+  "Portland Timbers": "https://api.promiedos.com.ar/images/team/fjbg/4",
+  "St. Louis City SC": "https://api.promiedos.com.ar/images/team/ceehe/4",
+  
+  // Premier League (Inglaterra)
+  "Arsenal": "https://api.promiedos.com.ar/images/team/bae/4",
+  "Man City": "https://api.promiedos.com.ar/images/team/bba/4",
+  "Manchester City": "https://api.promiedos.com.ar/images/team/bba/4",
+  "Man Utd": "https://api.promiedos.com.ar/images/team/baf/4",
+  "Manchester United": "https://api.promiedos.com.ar/images/team/baf/4",
+  "Aston Villa": "https://api.promiedos.com.ar/images/team/baj/4",
+  "Liverpool": "https://api.promiedos.com.ar/images/team/bai/4",
+  "Chelsea": "https://api.promiedos.com.ar/images/team/bag/4",
+  "Brentford": "https://api.promiedos.com.ar/images/team/gd/4",
+  "Everton": "https://api.promiedos.com.ar/images/team/bah/4",
+  "Newcastle Utd": "https://api.promiedos.com.ar/images/team/bbg/4",
+  "Newcastle United": "https://api.promiedos.com.ar/images/team/bbg/4",
+  "Bournemouth": "https://api.promiedos.com.ar/images/team/fa/4",
+  "Fulham": "https://api.promiedos.com.ar/images/team/bca/4",
+  "Brighton": "https://api.promiedos.com.ar/images/team/di/4",
+  "Sunderland": "https://api.promiedos.com.ar/images/team/bbh/4",
+  "Palace": "https://api.promiedos.com.ar/images/team/ba/4",
+  "Crystal Palace": "https://api.promiedos.com.ar/images/team/ba/4",
+  "Leeds": "https://api.promiedos.com.ar/images/team/dg/4",
+  "Leeds United": "https://api.promiedos.com.ar/images/team/dg/4",
+  "Tottenham": "https://api.promiedos.com.ar/images/team/bbe/4",
+  "Tottenham Hotspur": "https://api.promiedos.com.ar/images/team/bbe/4",
+  "Forest": "https://api.promiedos.com.ar/images/team/cj/4",
+  "Nottingham Forest": "https://api.promiedos.com.ar/images/team/cj/4",
+  "West Ham": "https://api.promiedos.com.ar/images/team/bbd/4",
+  "West Ham United": "https://api.promiedos.com.ar/images/team/bbd/4",
+  "Burnley": "https://api.promiedos.com.ar/images/team/bc/4",
+  "Wolves": "https://api.promiedos.com.ar/images/team/bf/4",
+  "Wolverhampton": "https://api.promiedos.com.ar/images/team/bf/4",
+  
+  // Primeira Liga (Portugal)
+  "Porto": "https://api.promiedos.com.ar/images/team/iih/4",
+  "FC Porto": "https://api.promiedos.com.ar/images/team/iih/4",
+  "Sporting": "https://api.promiedos.com.ar/images/team/ija/4",
+  "Sporting CP": "https://api.promiedos.com.ar/images/team/ija/4",
+  "Sporting Braga": "https://api.promiedos.com.ar/images/team/ijf/4",
+  "Braga": "https://api.promiedos.com.ar/images/team/ijf/4",
+  "Benfica": "https://api.promiedos.com.ar/images/team/iii/4",
+  "Gil Vicente FC": "https://api.promiedos.com.ar/images/team/jaf/4",
+  "Famalicão": "https://api.promiedos.com.ar/images/team/bbbhc/4",
+  "Estoril": "https://api.promiedos.com.ar/images/team/jaj/4",
+  "Moreirense": "https://api.promiedos.com.ar/images/team/hfhd/4",
+  "Guimarães": "https://api.promiedos.com.ar/images/team/iij/4",
+  "Alverca": "https://api.promiedos.com.ar/images/team/fdibb/4",
+  "Rio Ave": "https://api.promiedos.com.ar/images/team/jae/4",
+  "Arouca": "https://api.promiedos.com.ar/images/team/jch/4",
+  "Amadora": "https://api.promiedos.com.ar/images/team/ghbed/4",
+  "Santa Clara": "https://api.promiedos.com.ar/images/team/jdf/4",
+  "Casa Pia AC": "https://api.promiedos.com.ar/images/team/gdhc/4",
+  "CD Nacional": "https://api.promiedos.com.ar/images/team/ije/4",
+  "Tondela": "https://api.promiedos.com.ar/images/team/geha/4",
+  "AVS": "https://api.promiedos.com.ar/images/team/chbhg/4",
+  "Ferencváros": "https://upload.wikimedia.org/wikipedia/en/4/49/Ferencv%C3%A1rosi_TC_crest.png",
+  
+  // Serie A (Italia)
+  "Inter": "https://api.promiedos.com.ar/images/team/cce/4",
+  "Inter Milan": "https://api.promiedos.com.ar/images/team/cce/4",
+  "AC Milan": "https://api.promiedos.com.ar/images/team/cch/4",
+  "Milan": "https://api.promiedos.com.ar/images/team/cch/4",
+  "Napoli": "https://api.promiedos.com.ar/images/team/cde/4",
+  "Como": "https://api.promiedos.com.ar/images/team/gbbh/4",
+  "Juventus": "https://api.promiedos.com.ar/images/team/ccg/4",
+  "AS Roma": "https://api.promiedos.com.ar/images/team/ccf/4",
+  "Roma": "https://api.promiedos.com.ar/images/team/ccf/4",
+  "Atalanta": "https://api.promiedos.com.ar/images/team/cdc/4",
+  "Bologna": "https://api.promiedos.com.ar/images/team/cef/4",
+  "Lazio": "https://api.promiedos.com.ar/images/team/cdg/4",
+  "Sassuolo": "https://api.promiedos.com.ar/images/team/cgg/4",
+  "Udinese": "https://api.promiedos.com.ar/images/team/ccj/4",
+  "Parma": "https://api.promiedos.com.ar/images/team/ceb/4",
+  "Genoa": "https://api.promiedos.com.ar/images/team/cdb/4",
+  "Torino": "https://api.promiedos.com.ar/images/team/cdf/4",
+  "Cagliari": "https://api.promiedos.com.ar/images/team/ced/4",
+  "Fiorentina": "https://api.promiedos.com.ar/images/team/cci/4",
+  "Lecce": "https://api.promiedos.com.ar/images/team/ceg/4",
+  "Cremonese": "https://api.promiedos.com.ar/images/team/cja/4",
+  "Pisa": "https://api.promiedos.com.ar/images/team/cei/4",
+  "Hellas Verona": "https://api.promiedos.com.ar/images/team/dbg/4",
+  "Verona": "https://api.promiedos.com.ar/images/team/dbg/4",
+  
+  // Brasileirão (Brasil)
+  "Palmeiras": "https://api.promiedos.com.ar/images/team/bccc/4",
+  "São Paulo": "https://api.promiedos.com.ar/images/team/bccf/4",
+  "Bahia": "https://api.promiedos.com.ar/images/team/bhgh/4",
+  "Fluminense": "https://api.promiedos.com.ar/images/team/bcbg/4",
+  "Coritiba": "https://api.promiedos.com.ar/images/team/bcbc/4",
+  "Flamengo": "https://api.promiedos.com.ar/images/team/bcbf/4",
+  "Paranaense": "https://api.promiedos.com.ar/images/team/bcba/4",
+  "Athletico-PR": "https://api.promiedos.com.ar/images/team/bcba/4",
+  "Athletico Paranaense": "https://api.promiedos.com.ar/images/team/bcba/4",
+  "Grêmio": "https://api.promiedos.com.ar/images/team/bcbi/4",
+  "Corinthians": "https://api.promiedos.com.ar/images/team/bcgh/4",
+  "Vasco Da Gama": "https://api.promiedos.com.ar/images/team/bcch/4",
+  "Vasco da Gama": "https://api.promiedos.com.ar/images/team/bcch/4",
+  "Atlético Mineiro": "https://api.promiedos.com.ar/images/team/bcaj/4",
+  "Bragantino": "https://api.promiedos.com.ar/images/team/bchd/4",
+  "RB Bragantino": "https://api.promiedos.com.ar/images/team/bchd/4",
+  "Vitória": "https://api.promiedos.com.ar/images/team/bcci/4",
+  "Chapecoense": "https://api.promiedos.com.ar/images/team/hdih/4",
+  "Mirassol": "https://api.promiedos.com.ar/images/team/bcgj/4",
+  "Santos": "https://api.promiedos.com.ar/images/team/bcce/4",
+  "Internacional": "https://api.promiedos.com.ar/images/team/bcbj/4",
+  "Botafogo": "https://api.promiedos.com.ar/images/team/bcbb/4",
+  "Remo": "https://api.promiedos.com.ar/images/team/hdid/4",
+  "Cruzeiro": "https://api.promiedos.com.ar/images/team/bcbd/4",
+  
+  // Bundesliga (Alemania)
+  "Bayern": "https://api.promiedos.com.ar/images/team/ddb/4",
+  "Bayern München": "https://api.promiedos.com.ar/images/team/ddb/4",
+  "Bayern Munich": "https://api.promiedos.com.ar/images/team/ddb/4",
+  "Dortmund": "https://api.promiedos.com.ar/images/team/deb/4",
+  "Borussia Dortmund": "https://api.promiedos.com.ar/images/team/deb/4",
+  "Hoffenheim": "https://api.promiedos.com.ar/images/team/dfb/4",
+  "Stuttgart": "https://api.promiedos.com.ar/images/team/ddi/4",
+  "RB Leipzig": "https://api.promiedos.com.ar/images/team/hbhb/4",
+  "Leverkusen": "https://api.promiedos.com.ar/images/team/ddd/4",
+  "Bayer Leverkusen": "https://api.promiedos.com.ar/images/team/ddd/4",
+  "Eintracht": "https://api.promiedos.com.ar/images/team/ddh/4",
+  "Eintracht Frankfurt": "https://api.promiedos.com.ar/images/team/ddh/4",
+  "Friburgo": "https://api.promiedos.com.ar/images/team/dfe/4",
+  "Freiburg": "https://api.promiedos.com.ar/images/team/dfe/4",
+  "Union Berlin": "https://api.promiedos.com.ar/images/team/djc/4",
+  "Augsburg": "https://api.promiedos.com.ar/images/team/dfi/4",
+  "Hamburgo SV": "https://api.promiedos.com.ar/images/team/dde/4",
+  "Hamburg": "https://api.promiedos.com.ar/images/team/dde/4",
+  "Gladbach": "https://api.promiedos.com.ar/images/team/dej/4",
+  "Borussia Mönchengladbach": "https://api.promiedos.com.ar/images/team/dej/4",
+  "Mainz": "https://api.promiedos.com.ar/images/team/dfc/4",
+  "Köln": "https://api.promiedos.com.ar/images/team/dfa/4",
+  "Cologne": "https://api.promiedos.com.ar/images/team/dfa/4",
+  "Werder Bremen": "https://api.promiedos.com.ar/images/team/ddc/4",
+  "St. Pauli": "https://api.promiedos.com.ar/images/team/dfj/4",
+  "Wolfsburg": "https://api.promiedos.com.ar/images/team/ddj/4",
+  "Heidenheim": "https://api.promiedos.com.ar/images/team/ede/4",
+  
+  // Copa de Primera (Paraguay)
+  "Olimpia": "https://api.promiedos.com.ar/images/team/ifei/4",
+  "Cerro Porteño": "https://api.promiedos.com.ar/images/team/bcje/4",
+  "Club Nacional": "https://api.promiedos.com.ar/images/team/bcia/4",
+  "Nacional Asunción": "https://api.promiedos.com.ar/images/team/bcia/4",
+  "Libertad": "https://api.promiedos.com.ar/images/team/bcig/4",
+  "Rubio Ñú": "https://api.promiedos.com.ar/images/team/ihhe/4",
+  "Club Guaraní": "https://api.promiedos.com.ar/images/team/hhdj/4",
+  "Guaraní": "https://api.promiedos.com.ar/images/team/hhdj/4",
+  "Sportivo Ameliano": "https://api.promiedos.com.ar/images/team/fgfii/4",
+  "Recoleta FC": "https://api.promiedos.com.ar/images/team/fdcaj/4",
+  "Deportivo Recoleta": "https://api.promiedos.com.ar/images/team/fdcaj/4",
+  "Sportivo Trinidense": "https://api.promiedos.com.ar/images/team/begea/4",
+  "Luqueño": "https://api.promiedos.com.ar/images/team/ihhi/4",
+  "2 de Mayo": "https://api.promiedos.com.ar/images/team/begec/4",
+  "CS San Lorenzo": "https://api.promiedos.com.ar/images/team/begde/4",
+  
+  // LaLiga (España)
+  "Barcelona": "https://api.promiedos.com.ar/images/team/bdc/4",
+  "Real Madrid": "https://api.promiedos.com.ar/images/team/bdb/4",
+  "Atlético": "https://api.promiedos.com.ar/images/team/bde/4",
+  "Atlético Madrid": "https://api.promiedos.com.ar/images/team/bde/4",
+  "Villarreal": "https://api.promiedos.com.ar/images/team/bdd/4",
+  "Betis": "https://api.promiedos.com.ar/images/team/beg/4",
+  "Real Betis": "https://api.promiedos.com.ar/images/team/beg/4",
+  "Celta": "https://api.promiedos.com.ar/images/team/bfi/4",
+  "Celta de Vigo": "https://api.promiedos.com.ar/images/team/bfi/4",
+  "Real Sociedad": "https://api.promiedos.com.ar/images/team/bfe/4",
+  "Espanyol": "https://api.promiedos.com.ar/images/team/bdg/4",
+  "Getafe": "https://api.promiedos.com.ar/images/team/bea/4",
+  "Athletic": "https://api.promiedos.com.ar/images/team/bee/4",
+  "Athletic Bilbao": "https://api.promiedos.com.ar/images/team/bee/4",
+  "Osasuna": "https://api.promiedos.com.ar/images/team/bed/4",
+  "Girona": "https://api.promiedos.com.ar/images/team/bhf/4",
+  "Rayo": "https://api.promiedos.com.ar/images/team/bhe/4",
+  "Rayo Vallecano": "https://api.promiedos.com.ar/images/team/bhe/4",
+  "Valencia": "https://api.promiedos.com.ar/images/team/bdj/4",
+  "Sevilla": "https://api.promiedos.com.ar/images/team/bdf/4",
+  "Mallorca": "https://api.promiedos.com.ar/images/team/bec/4",
+  "Alavés": "https://api.promiedos.com.ar/images/team/bgi/4",
+  "Elche CF": "https://api.promiedos.com.ar/images/team/bfg/4",
+  "Levante UD": "https://api.promiedos.com.ar/images/team/bfa/4",
+  "Real Oviedo": "https://api.promiedos.com.ar/images/team/bjd/4",
+  "Al-Ahli": "https://upload.wikimedia.org/wikipedia/en/6/66/Al-Ahli_Saudi_FC_logo.svg",
+  "Al Hilal": "https://upload.wikimedia.org/wikipedia/en/e/e3/Al_Hilal_SFC_logo.svg",
+  "Galatasaray": "https://upload.wikimedia.org/wikipedia/en/3/37/Galatasaray_Star_Logo.svg",
+  
+  // Liga AUF Uruguaya (Uruguay)
+  "Racing": "https://api.promiedos.com.ar/images/team/haih/4",
+  "Racing Montevideo": "https://api.promiedos.com.ar/images/team/haih/4",
+  "Deportivo Maldonado": "https://api.promiedos.com.ar/images/team/beagc/4",
+  "Peñarol": "https://api.promiedos.com.ar/images/team/hhgg/4",
+  "Torque": "https://api.promiedos.com.ar/images/team/bcghf/4",
+  "Danubio": "https://api.promiedos.com.ar/images/team/igbb/4",
+  "Central Español": "https://api.promiedos.com.ar/images/team/babjd/4",
+  "Nacional": "https://api.promiedos.com.ar/images/team/hehi/4",
+  "Nacional Uruguay": "https://api.promiedos.com.ar/images/team/hehi/4",
+  "Defensor Sp.": "https://api.promiedos.com.ar/images/team/hgdj/4",
+  "Defensor Sporting": "https://api.promiedos.com.ar/images/team/hgdj/4",
+  "Wanderers": "https://api.promiedos.com.ar/images/team/igbe/4",
+  "Montevideo Wanderers": "https://api.promiedos.com.ar/images/team/igbe/4",
+  "Cerro Largo": "https://api.promiedos.com.ar/images/team/igbi/4",
+  "Albion": "https://api.promiedos.com.ar/images/team/fbfcc/4",
+  "Progreso": "https://api.promiedos.com.ar/images/team/babjb/4",
+  "Juventud": "https://api.promiedos.com.ar/images/team/babjc/4",
+  "Boston River": "https://api.promiedos.com.ar/images/team/bcghd/4",
+  "Cerro": "https://api.promiedos.com.ar/images/team/hehh/4"
+};
+
+// =====================================================
+// DATOS DE EVENTOS
+// =====================================================
 let eventsData = [
-  { time: "12:30", match: "UEFA Europa League: Sporting Braga vs Ferencváros", link: "https://streamx339.cloud/global1.php?channel=disney1" },
-  { time: "12:30", match: "UEFA Europa League: Sporting Braga vs Ferencváros", link: "https://streamx339.cloud/global1.php?channel=espn3" },
-  { time: "12:30", match: "UEFA Europa League: Sporting Braga vs Ferencváros", link: "https://streamx339.cloud/global1.php?channel=espnmx" },
-  { time: "12:30", match: "UEFA Europa League: Sporting Braga vs Ferencváros", link: "https://streamx339.cloud/global1.php?channel=tnt1uk" },
-  { time: "14:45", match: "UEFA Champions League: Barcelona vs Newcastle United", link: "https://streamx339.cloud/global1.php?channel=disney2" },
-  { time: "14:45", match: "UEFA Champions League: Barcelona vs Newcastle United", link: "https://streamx339.cloud/global1.php?channel=foxone1" },
-  { time: "14:45", match: "UEFA Champions League: Barcelona vs Newcastle United", link: "https://streamx339.cloud/global1.php?channel=espn" },
-  { time: "14:45", match: "UEFA Champions League: Barcelona vs Newcastle United", link: "https://streamx339.cloud/global1.php?channel=tudnus" },
-  { time: "14:45", match: "UEFA Champions League: Barcelona vs Newcastle United", link: "https://streamx339.cloud/global1.php?channel=fox1ar" },
-  { time: "14:45", match: "UEFA Champions League: Barcelona vs Newcastle United", link: "https://streamx339.cloud/global1.php?channel=paramount1" },
-  { time: "16:00", match: "Copa del Rey de Arabia: Al-Ahli vs Al Hilal", link: "https://streamx339.cloud/global1.php?channel=foxdeportes" },
-  { time: "17:00", match: "UEFA Champions League: Bayern München vs Atalanta", link: "https://streamx339.cloud/global1.php?channel=disney3" },
-  { time: "17:00", match: "UEFA Champions League: Bayern München vs Atalanta", link: "https://streamx339.cloud/global1.php?channel=max1" },
-  { time: "17:00", match: "UEFA Champions League: Bayern München vs Atalanta", link: "https://streamx339.cloud/global1.php?channel=espn" },
-  { time: "17:00", match: "UEFA Champions League: Bayern München vs Atalanta", link: "https://streamx339.cloud/global1.php?channel=fox2ar" },
-  { time: "17:00", match: "UEFA Champions League: Bayern München vs Atalanta", link: "https://streamx339.cloud/global1.php?channel=paramount2" },
-  { time: "17:00", match: "UEFA Champions League: Liverpool vs Galatasaray", link: "https://streamx339.cloud/global1.php?channel=disney4" },
-  { time: "17:00", match: "UEFA Champions League: Liverpool vs Galatasaray", link: "https://streamx339.cloud/global1.php?channel=foxone2" },
-  { time: "17:00", match: "UEFA Champions League: Liverpool vs Galatasaray", link: "https://streamx339.cloud/global1.php?channel=espn2" },
-  { time: "17:00", match: "UEFA Champions League: Liverpool vs Galatasaray", link: "https://streamx339.cloud/global1.php?channel=tudnus" },
-  { time: "17:00", match: "UEFA Champions League: Liverpool vs Galatasaray", link: "https://streamx339.cloud/global1.php?channel=paramount3" },
-  { time: "17:00", match: "UEFA Champions League: Tottenham Hotspur vs Atlético Madrid", link: "https://streamx339.cloud/global1.php?channel=disney5" },
-  { time: "17:00", match: "UEFA Champions League: Tottenham Hotspur vs Atlético Madrid", link: "https://streamx339.cloud/global1.php?channel=foxone3" },
-  { time: "17:00", match: "UEFA Champions League: Tottenham Hotspur vs Atlético Madrid", link: "https://streamx339.cloud/global1.php?channel=espn5" },
-  { time: "17:00", match: "UEFA Champions League: Tottenham Hotspur vs Atlético Madrid", link: "https://streamx339.cloud/global1.php?channel=paramount4" },
-  { time: "18:10", match: "Liga BetPlay: Deportivo Pasto vs Boyacá Chicó", link: "https://streamx339.cloud/global1.php?channel=winplus" },
-  { time: "18:10", match: "Liga BetPlay: Deportivo Pasto vs Boyacá Chicó", link: "https://streamx339.cloud/global1.php?channel=winplus2" },
-  { time: "18:30", match: "Copa de Primera: Rubio Ñú vs Cerro Porteño", link: "https://streamx339.cloud/global1.php?channel=fanatiz1" },
-  { time: "19:00", match: "Brasileirão: Palmeiras vs Botafogo", link: "https://streamx339.cloud/global1.php?channel=fanatiz2" },
-  { time: "19:00", match: "Brasileirão: Palmeiras vs Botafogo", link: "https://streamx339.cloud/global1.php?channel=winsports" },
-  { time: "19:00", match: "Brasileirão: Palmeiras vs Botafogo", link: "https://streamx339.cloud/global1.php?channel=premiere1" },
-  { time: "19:00", match: "Brasileirão: Bahia vs RB Bragantino", link: "https://streamx339.cloud/global1.php?channel=fanatiz3" },
-  { time: "19:00", match: "Brasileirão: Bahia vs RB Bragantino", link: "https://streamx339.cloud/global1.php?channel=premiere4" },
-  { time: "19:30", match: "Brasileirão: Athletico-PR vs Cruzeiro", link: "https://streamx339.cloud/global1.php?channel=fanatiz4" },
-  { time: "19:30", match: "Brasileirão: Athletico-PR vs Cruzeiro", link: "https://streamx339.cloud/global1.php?channel=premiere7" },
-  { time: "20:00", match: "Brasileirão: Mirassol vs Coritiba", link: "https://streamx339.cloud/global1.php?channel=fanatiz5" },
-  { time: "20:00", match: "Brasileirão: Mirassol vs Coritiba", link: "https://streamx339.cloud/global1.php?channel=premiere6" },
-  { time: "20:00", match: "Brasileirão: Atlético Mineiro vs São Paulo", link: "https://streamx339.cloud/global1.php?channel=fanatiz6" },
-  { time: "20:00", match: "Brasileirão: Atlético Mineiro vs São Paulo", link: "https://streamx339.cloud/global1.php?channel=premiere3" },
-  { time: "20:00", match: "CONCACAF Champions Cup: Inter Miami vs Nashville SC", link: "https://streamx339.cloud/global1.php?channel=disney1" },
-  { time: "20:00", match: "CONCACAF Champions Cup: Inter Miami vs Nashville SC", link: "https://streamx339.cloud/global1.php?channel=tudnus" },
-  { time: "20:00", match: "CONCACAF Champions Cup: Inter Miami vs Nashville SC", link: "https://streamx339.cloud/global1.php?channel=foxone1" },
-  { time: "20:20", match: "Liga BetPlay: Inter Bogotá vs Deportivo Pereira", link: "https://streamx339.cloud/global1.php?channel=winplus" },
-  { time: "20:20", match: "Liga BetPlay: Inter Bogotá vs Deportivo Pereira", link: "https://streamx339.cloud/global1.php?channel=winplus2" },
-  { time: "20:30", match: "Copa de Primera: Guaraní vs Deportivo Recoleta", link: "https://streamx339.cloud/global1.php?channel=fanatiz7" },
-  { time: "20:30", match: "Copa de Primera: Libertad vs Nacional Asunción", link: "https://streamx339.cloud/global1.php?channel=fanatiz8" },
-  { time: "21:30", match: "Brasileirão: Santos vs Internacional", link: "https://streamx339.cloud/global1.php?channel=fanatiz9" },
-  { time: "21:30", match: "Brasileirão: Santos vs Internacional", link: "https://streamx339.cloud/global1.php?channel=premiere5" },
-  { time: "21:30", match: "Brasileirão: Vasco da Gama vs Fluminense", link: "https://streamx339.cloud/global1.php?channel=fanatiz10" },
-  { time: "21:30", match: "Brasileirão: Vasco da Gama vs Fluminense", link: "https://streamx339.cloud/global1.php?channel=winsports" },
-  { time: "21:30", match: "Brasileirão: Vasco da Gama vs Fluminense", link: "https://streamx339.cloud/global1.php?channel=premiere1" },
-  { time: "21:30", match: "Liga BetPlay: Atl. Bucaramanga vs Once Caldas", link: "https://streamx339.cloud/global1.php?channel=fanatiz1" },
-  { time: "22:00", match: "CONCACAF Champions Cup: América vs Philadelphia Union", link: "https://streamx339.cloud/global1.php?channel=disney2" },
-  { time: "22:00", match: "CONCACAF Champions Cup: América vs Philadelphia Union", link: "https://streamx339.cloud/global1.php?channel=tudnus" },
-  { time: "22:00", match: "CONCACAF Champions Cup: América vs Philadelphia Union", link: "https://streamx339.cloud/global1.php?channel=foxone2" },
-  { time: "22:30", match: "Liga BetPlay: Deportivo Cali vs Santa Fe", link: "https://streamx339.cloud/global1.php?channel=winplus" },
-  { time: "22:30", match: "Liga BetPlay: Deportivo Cali vs Santa Fe", link: "https://streamx339.cloud/global1.php?channel=winplus2" },
-  { time: "23:07", match: "Liga MX: Guadalajara vs León", link: "https://streamx339.cloud/global1.php?channel=universo" },
-  { time: "23:59", match: "CONCACAF Champions Cup: Toluca vs San Diego", link: "https://streamx339.cloud/global1.php?channel=disney3" },
-  { time: "23:59", match: "CONCACAF Champions Cup: Toluca vs San Diego", link: "https://streamx339.cloud/global1.php?channel=tudnus" },
-  { time: "23:59", match: "CONCACAF Champions Cup: Toluca vs San Diego", link: "https://streamx339.cloud/global1.php?channel=foxone3" },
-  { time: "23:59", match: "CONCACAF Champions Cup: Seattle Sounders FC vs Vancouver Whitecaps", link: "https://streamx339.cloud/global1.php?channel=disney4" },
-  { time: "23:59", match: "CONCACAF Champions Cup: Seattle Sounders FC vs Vancouver Whitecaps", link: "https://streamx339.cloud/global1.php?channel=foxone4" }
+  { time: "14:00", match: "Super Lig: Beşiktaş vs Kasımpaşa", link: "https://streamx339.cloud/global1.php?channel=espn6" },
+  { time: "14:45", match: "UEFA Europa League: Midtjylland vs Nottingham Forest", link: "https://streamx339.cloud/global1.php?channel=disney1" },
+  { time: "14:45", match: "UEFA Europa League: Midtjylland vs Nottingham Forest", link: "https://streamx339.cloud/global1.php?channel=espn" },
+  { time: "14:45", match: "UEFA Europa League: Midtjylland vs Nottingham Forest", link: "https://streamx339.cloud/global1.php?channel=tudnus" },
+  { time: "14:45", match: "UEFA Europa League: Olympique Lyonnais vs Celta de Vigo", link: "https://streamx339.cloud/global1.php?channel=disney2" },
+  { time: "14:45", match: "UEFA Europa League: Olympique Lyonnais vs Celta de Vigo", link: "https://streamx339.cloud/global1.php?channel=espn2" },
+  { time: "14:45", match: "UEFA Europa League: Freiburg vs Genk", link: "https://streamx339.cloud/global1.php?channel=disney3" },
+  { time: "14:45", match: "UEFA Europa League: Freiburg vs Genk", link: "https://streamx339.cloud/global1.php?channel=espn3" },
+  { time: "14:45", match: "UEFA Conference League: AEK Athens vs Celje", link: "https://streamx339.cloud/global1.php?channel=disney4" },
+  { time: "14:45", match: "UEFA Conference League: AEK Athens vs Celje", link: "https://streamx339.cloud/global1.php?channel=espn2mx" },
+  { time: "14:45", match: "UEFA Conference League: AEK Larnaca vs Crystal Palace", link: "https://streamx339.cloud/global1.php?channel=disney5" },
+  { time: "14:45", match: "UEFA Conference League: Mainz 05 vs Sigma Olomouc", link: "https://streamx339.cloud/global1.php?channel=disney6" },
+  { time: "14:45", match: "UEFA Conference League: Raków Częstochowa vs Fiorentina", link: "https://streamx339.cloud/global1.php?channel=disney7" },
+  { time: "17:00", match: "UEFA Europa League: Real Betis vs Panathinaikos", link: "https://streamx339.cloud/global1.php?channel=disney8" },
+  { time: "17:00", match: "UEFA Europa League: Real Betis vs Panathinaikos", link: "https://streamx339.cloud/global1.php?channel=espn" },
+  { time: "17:00", match: "UEFA Europa League: Real Betis vs Panathinaikos", link: "https://streamx339.cloud/global1.php?channel=espn2mx" },
+  { time: "17:00", match: "UEFA Europa League: Aston Villa vs Lille", link: "https://streamx339.cloud/global1.php?channel=disney9" },
+  { time: "17:00", match: "UEFA Europa League: Aston Villa vs Lille", link: "https://streamx339.cloud/global1.php?channel=espn2" },
+  { time: "17:00", match: "UEFA Europa League: Roma vs Bologna", link: "https://streamx339.cloud/global1.php?channel=disney10" },
+  { time: "17:00", match: "UEFA Europa League: Roma vs Bologna", link: "https://streamx339.cloud/global1.php?channel=espn3" },
+  { time: "17:00", match: "UEFA Europa League: Roma vs Bologna", link: "https://streamx339.cloud/global1.php?channel=tudnus" },
+  { time: "17:00", match: "UEFA Europa League: Porto vs Stuttgart", link: "https://streamx339.cloud/global1.php?channel=disney11" },
+  { time: "17:00", match: "UEFA Europa League: Porto vs Stuttgart", link: "https://streamx339.cloud/global1.php?channel=espn4" },
+  { time: "17:00", match: "UEFA Conference League: Sparta Praha vs AZ", link: "https://streamx339.cloud/global1.php?channel=disney12" },
+  { time: "17:00", match: "UEFA Conference League: Shakhtar Donetsk vs Lech Poznań", link: "https://streamx339.cloud/global1.php?channel=disney13" },
+  { time: "17:00", match: "UEFA Conference League: Rayo Vallecano vs Samsunspor", link: "https://streamx339.cloud/global1.php?channel=disney14" },
+  { time: "17:00", match: "UEFA Conference League: Strasbourg vs Rijeka", link: "https://streamx339.cloud/global1.php?channel=disney15" },
+  { time: "18:10", match: "Liga BetPlay: Alianza vs Jaguares de Córdoba", link: "https://streamx339.cloud/global1.php?channel=winplus" },
+  { time: "18:10", match: "Liga BetPlay: Alianza vs Jaguares de Córdoba", link: "https://streamx339.cloud/global1.php?channel=winplus2" },
+  { time: "19:00", match: "Brasileirão: Grêmio vs Vitória", link: "https://streamx339.cloud/global1.php?channel=fanatiz1" },
+  { time: "19:00", match: "Brasileirão: Grêmio vs Vitória", link: "https://streamx339.cloud/global1.php?channel=premiere2" },
+  { time: "20:00", match: "Brasileirão: Flamengo vs Remo", link: "https://streamx339.cloud/global1.php?channel=premiere1" },
+  { time: "20:00", match: "CONCACAF Champions Cup: Mount Pleasant Academy vs LA Galaxy", link: "https://streamx339.cloud/global1.php?channel=disney1" },
+  { time: "20:00", match: "CONCACAF Champions Cup: Mount Pleasant Academy vs LA Galaxy", link: "https://streamx339.cloud/global1.php?channel=tudnus" },
+  { time: "20:00", match: "CONCACAF Champions Cup: Mount Pleasant Academy vs LA Galaxy", link: "https://streamx339.cloud/global1.php?channel=foxone1" },
+  { time: "20:00", match: "Copa de Primera: Sportivo Trinidense vs Sportivo Ameliano", link: "https://streamx339.cloud/global1.php?channel=fanatiz2" },
+  { time: "20:20", match: "Liga BetPlay: Deportes Tolima vs Fortaleza CEIF", link: "https://streamx339.cloud/global1.php?channel=winplus" },
+  { time: "20:20", match: "Liga BetPlay: Deportes Tolima vs Fortaleza CEIF", link: "https://streamx339.cloud/global1.php?channel=winplus2" },
+  { time: "21:30", match: "Brasileirão: Chapecoense vs Corinthians", link: "https://streamx339.cloud/global1.php?channel=fanatiz3" },
+  { time: "22:00", match: "CONCACAF Champions Cup: Tigres UANL vs Cincinnati", link: "https://streamx339.cloud/global1.php?channel=disney2" },
+  { time: "22:00", match: "CONCACAF Champions Cup: Tigres UANL vs Cincinnati", link: "https://streamx339.cloud/global1.php?channel=tudnus" },
+  { time: "22:00", match: "CONCACAF Champions Cup: Tigres UANL vs Cincinnati", link: "https://streamx339.cloud/global1.php?channel=foxone2" },
+  { time: "22:30", match: "Liga BetPlay: Medellín vs Junior", link: "https://streamx339.cloud/global1.php?channel=winplus" },
+  { time: "22:30", match: "Liga BetPlay: Medellín vs Junior", link: "https://streamx339.cloud/global1.php?channel=winplus2" },
 ];
 
 // Guardar los eventos agrupados para actualización
 let groupedEventsCache = [];
+
+// =====================================================
+// FUNCIONES PARA ESCUDOS
+// =====================================================
+
+// Extraer equipos del texto del partido
+function extractTeamsFromMatch(matchText) {
+  // Eliminar el nombre de la competición (todo antes de los dos puntos)
+  const withoutCompetition = matchText.replace(/^[^:]+:\s*/, '');
+  
+  // Buscar separador vs (varias variantes)
+  const vsPatterns = [/\svs\s/i, /\svs\.\s/i, /\sVS\s/i, /\s–\s/, /\s-\s/];
+  
+  for (const pattern of vsPatterns) {
+    const parts = withoutCompetition.split(pattern);
+    if (parts.length === 2) {
+      return {
+        team1: parts[0].trim(),
+        team2: parts[1].trim()
+      };
+    }
+  }
+  
+  return { team1: withoutCompetition, team2: null };
+}
+
+// Buscar escudo de un equipo
+function getTeamLogo(teamName) {
+  if (!teamName) return null;
+  
+  // Búsqueda directa
+  if (teamLogosDB[teamName]) {
+    return teamLogosDB[teamName];
+  }
+  
+  // Búsqueda case-insensitive
+  const lowerTeamName = teamName.toLowerCase();
+  for (const [key, value] of Object.entries(teamLogosDB)) {
+    if (key.toLowerCase() === lowerTeamName) {
+      return value;
+    }
+  }
+  
+  // Búsqueda parcial (si el nombre del equipo está contenido en la clave)
+  for (const [key, value] of Object.entries(teamLogosDB)) {
+    if (key.toLowerCase().includes(lowerTeamName) || 
+        lowerTeamName.includes(key.toLowerCase())) {
+      return value;
+    }
+  }
+  
+  return null;
+}
+
+// Generar HTML para mostrar los equipos con escudos
+function generateMatchHTML(matchText) {
+  const { team1, team2 } = extractTeamsFromMatch(matchText);
+  
+  const logo1 = getTeamLogo(team1);
+  const logo2 = getTeamLogo(team2);
+  
+  const logo1HTML = logo1 
+    ? `<img src="${logo1}" alt="${team1}" class="team-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><div class="team-logo-placeholder" style="display:none;"></div>`
+    : `<div class="team-logo-placeholder"></div>`;
+    
+  const logo2HTML = logo2 
+    ? `<img src="${logo2}" alt="${team2}" class="team-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><div class="team-logo-placeholder" style="display:none;"></div>`
+    : `<div class="team-logo-placeholder"></div>`;
+  
+  return `
+    <div class="team-section">
+      ${logo1HTML}
+      <span>${team1}</span>
+    </div>
+    <span class="vs-text">VS</span>
+    <div class="team-section">
+      ${logo2HTML}
+      <span>${team2}</span>
+    </div>
+  `;
+}
+
+// =====================================================
+// FUNCIONES ORIGINALES MEJORADAS
+// =====================================================
 
 // Extraer nombre de la liga del partido
 function getLeague(match) {
   const leagues = {
     'Super Lig': 'Super Lig',
     'UEFA Champions League': 'UCL',
+    'UEFA Europa League': 'UEL',
     'Liga BetPlay': 'BetPlay',
     'Copa de Primera': 'Primera',
     'Liga Profesional': 'LPF',
-    'CONCACAF Champions Cup': 'Concacaf'
+    'CONCACAF Champions Cup': 'Concacaf',
+    'Brasileirão': 'Brasil',
+    'Copa del Rey de Arabia': 'Arabia',
+    'Liga MX': 'Liga MX'
   };
   
   for (const [key, value] of Object.entries(leagues)) {
@@ -790,13 +1288,18 @@ function formatChannelName(channel) {
     'max3': 'Max 3',
     'espn': 'ESPN',
     'espn2': 'ESPN 2',
+    'espn3': 'ESPN 3',
     'espn5': 'ESPN 5',
+    'espnmx': 'ESPN MX',
     'espnpremium': 'ESPN Premium',
     'tudnus': 'TUDN',
     'fox1ar': 'Fox Sports 1 AR',
     'fox2ar': 'Fox Sports 2 AR',
     'foxone1': 'Fox Sports 1',
     'foxone2': 'Fox Sports 2',
+    'foxone3': 'Fox Sports 3',
+    'foxone4': 'Fox Sports 4',
+    'foxdeportes': 'Fox Deportes',
     'paramount1': 'Paramount+ 1',
     'paramount2': 'Paramount+ 2',
     'paramount3': 'Paramount+ 3',
@@ -810,8 +1313,20 @@ function formatChannelName(channel) {
     'fanatiz5': 'Fanatiz 5',
     'fanatiz6': 'Fanatiz 6',
     'fanatiz7': 'Fanatiz 7',
+    'fanatiz8': 'Fanatiz 8',
+    'fanatiz9': 'Fanatiz 9',
+    'fanatiz10': 'Fanatiz 10',
     'tntar': 'TNT Sports',
-    'tycint': 'TyC Sports'
+    'tnt1uk': 'TNT Sports UK',
+    'tycint': 'TyC Sports',
+    'winsports': 'Win Sports',
+    'premiere1': 'Premiere 1',
+    'premiere3': 'Premiere 3',
+    'premiere4': 'Premiere 4',
+    'premiere5': 'Premiere 5',
+    'premiere6': 'Premiere 6',
+    'premiere7': 'Premiere 7',
+    'universo': 'Universo'
   };
   return channelNames[channel] || channel.toUpperCase();
 }
@@ -943,7 +1458,7 @@ function renderEvents(list = eventsData) {
           <div class="time">${ev.time}</div>
           <span class="league-badge">${league}</span>
         </div>
-        <div class="match">${ev.match}</div>
+        <div class="match">${generateMatchHTML(ev.match)}</div>
         <div class="status ${isActive ? 'live' : isFinished ? 'finished' : 'upcoming'}" data-status="${status}">
           <span class="status-dot"></span>
           <span class="status-text">${status}</span>
@@ -1005,7 +1520,7 @@ function updateStatuses() {
       
       // Actualizar botón
       if (btn) {
-        const isActive = status === 'EN VIVO';
+        const isActive = status === "EN VIVO";
         btn.className = `btn-watch ${isActive ? 'enabled' : 'disabled'}`;
         btn.onclick = isActive ? () => watchMatch(card.dataset.matchId) : null;
         
@@ -1033,42 +1548,6 @@ function watchMatch(matchId) {
     openPlayer(selectedLink, matchTitle);
   }
 }
-
-// Mapeo de canales a URLs m3u8
-const channelM3UMap = {
-  'disney1': 'https://cc324.streamingtv339.com/disney1/index.m3u8?token=359bbb587263779ceb86f4e5987254f69cfeb56d-22-1773825002-1773771002&ip=181.29.203.203',
-  'disney2': 'https://244pl.streamingtv339.com/disney2/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=30ba84bebdb20214353f3c997f25b4cefa6d916b-f4-1773824734-1773770734',
-  'disney3': 'https://cc324.streamingtv339.com/disney3/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=cb7fc07b9444f17816368772a479f0de0740e73c-86-1773824782-1773770782',
-  'disney4': 'https://cc324.streamingtv339.com/disney4/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=1753c4741627cae97da8d2f7dccb2afe8a7c92b4-20-1773824810-1773770810',
-  'disney5': 'https://cc324.streamingtv339.com/disney5/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=b2e086e4a95d21b72037fe95bc4ce42c9047cf34-96-1773824853-1773770853',
-  'max1': 'https://cc324.streamingtv339.com/max1/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=111f8160c95c4fa28d4ba4353bec8de50d3b0f57-09-1773824744-1773770744',
-  'max2': 'https://cc324.streamingtv339.com/max2/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=03fd9fb8e913bbe2419e9c7d69d45c084959add0-3d-1773824789-1773770789',
-  'max3': 'https://cc324.streamingtv339.com/max3/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=609ca04527e08ff745070ad466fd98dc7da421a0-44-1773824818-1773770818',
-  'espn': 'https://244pl.streamingtv339.com/espn/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=242bed29759b25bbe722d8883cde73844b4aec4e-0d-1773824751-1773770751',
-  'espn2': 'https://244pl.streamingtv339.com/espn2/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=5b9096d11540da3e0c8a7f0c4d309a260f6bb6d5-7f-1773824825-1773770825',
-  'espn5': 'https://244pl.streamingtv339.com/espn5/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=710ac8757d947f3de4bfb971b00402024f2c7d2b-c1-1773824867-1773770867',
-  'espnpremium': 'https://cc324.streamingtv339.com/espnpremium/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=0eb962ab8b40a3355de44ce1fe144bbfd0fe51c3-f6-1773824911-1773770911',
-  'tudnus': 'https://cc324.streamingtv339.com/tudnus/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=2d5e9194b746b9afa3abe318da0bdf694785c7ab-f1-1773824759-1773770759',
-  'fox1ar': 'https://244pl.streamingtv339.com/fox1ar/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=337828bcc3969e3324c635316dfbf141ca8ef0b9-cc-1773824839-1773770839',
-  'fox2ar': 'https://cc324.streamingtv339.com/fox2ar/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=8118c6562e98dcac322ea43cfb5a4b71b71e615e-68-1773824767-1773770767',
-  'foxone1': 'https://244pl.streamingtv339.com/foxone1/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=408d3971384688602609d3ac34ee15d5affec78f-29-1773824860-1773770860',
-  'foxone2': 'https://244pl.streamingtv339.com/foxone2/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=1ceeb9dc1c018d68182867899475f72dde3f833c-cd-1773825059-1773771059',
-  'paramount1': 'https://244pl.streamingtv339.com/paramount1/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=03fbd267a0943f69cb0c650051a9e5d46edc39c2-08-1773824774-1773770774',
-  'paramount2': 'https://244pl.streamingtv339.com/paramount2/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=6ee3ea789503137e60dcf4aa3badcf47a0bcec00-9b-1773824803-1773770803',
-  'paramount3': 'https://244pl.streamingtv339.com/paramount3/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=86d6fd0632e20d4293fdbc3679de68c5b6f34896-ec-1773824846-1773770846',
-  'paramount4': 'https://cc324.streamingtv339.com/paramount4/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=0d697d31dd68fefa1875bd208ca498b2abc19142-d8-1773824874-1773770874',
-  'winplus': 'https://244pl.streamingtv339.com/winplus/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=4c546f1ec96e97a98a3e2f1382528000ad7a6aab-08-1773824881-1773770881',
-  'winplus2': 'https://cc324.streamingtv339.com/winplus2/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=1c5cb9daf8e2cb46b4ad301a04290b837d5a442c-22-1773824889-1773770889',
-  'fanatiz1': 'https://244pl.streamingtv339.com/fanatiz1/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=e3aa201e38b26f3ec7902f3cd1fe1b5930e326f3-6d-1773824896-1773770896',
-  'fanatiz2': 'https://cc324.streamingtv339.com/fanatiz2/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=8d035077ac4004a4bdc85c69d7b439c45ca36866-70-1773824904-1773770904',
-  'fanatiz3': 'https://cc324.streamingtv339.com/fanatiz3/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=37b5b0dc86b11010b24dc242f933f718a5addfdc-d9-1773824919-1773770919',
-  'fanatiz4': 'https://cc324.streamingtv339.com/fanatiz4/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=dd30feaab48555acd9ffaa562561390edf076a52-82-1773824950-1773770950',
-  'fanatiz5': 'https://244pl.streamingtv339.com/fanatiz5/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=aa53203d818662a9ed6a7f2c851cdc3b800acf75-57-1773824957-1773770957',
-  'fanatiz6': 'https://cc324.streamingtv339.com/fanatiz6/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=5ea27d5fe9411869252e47bb7fa50205db65039c-d8-1773824972-1773770972',
-  'fanatiz7': 'https://cc324.streamingtv339.com/fanatiz7/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=953207a50dd0e42078604c76c791d1934a503adb-e5-1773824987-1773770987',
-  'tntar': 'https://244pl.streamingtv339.com/tntar/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=482af88478c2b29eae405d2956c048a5661f871f-70-1773824979-1773770979',
-  'tycint': 'https://cc324.streamingtv339.com/tycint/tracks-v1a1/mono.m3u8?ip=181.29.203.203&token=08f4ff75468b53a5db2b1d22fed6dfe375cacaaa-92-1773824995-1773770995'
-};
 
 // player
 function openPlayer(link, matchTitle) {
