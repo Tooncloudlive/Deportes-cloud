@@ -1,0 +1,23 @@
+{
+  "name": "toocloud-automation",
+  "version": "1.0.0",
+  "description": "Automatización de scraping de eventos deportivos para ToonCloud",
+  "main": "scraper.js",
+  "scripts": {
+    "scrape": "node scraper.js",
+    "test": "node test-scraper.js"
+  },
+  "keywords": [
+    "scraping",
+    "deportes",
+    "automation"
+  ],
+  "author": "ToonCloud",
+  "license": "MIT",
+  "dependencies": {
+    "playwright": "^1.40.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
