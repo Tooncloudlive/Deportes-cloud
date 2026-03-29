@@ -401,10 +401,11 @@ h1 {
   border-radius: 9999px;
 }
 
+/* Match with team logos */
 .match {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   font-size: 0.9375rem;
   font-weight: 500;
   color: #ffffff;
@@ -412,10 +413,32 @@ h1 {
   flex-wrap: wrap;
 }
 
+.team-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.team-logo {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.team-logo-placeholder {
+  width: 24px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
 .vs-text {
   color: rgba(255, 255, 255, 0.4);
   font-weight: 600;
   font-size: 0.75rem;
+  margin: 0 4px;
 }
 
 /* Status Badge */
@@ -724,6 +747,11 @@ h1 {
     font-size: 0.875rem;
   }
   
+  .team-logo, .team-logo-placeholder {
+    width: 20px;
+    height: 20px;
+  }
+  
   .btn-watch {
     width: 100%;
   }
@@ -830,6 +858,938 @@ h1 {
 
 <script>
 // =====================================================
+// BASE DE DATOS DE ESCUDOS - SELECTIVO OPTIMIZADO
+// =====================================================
+const teamLogosDB = {
+  // === LIGA PROFESIONAL ARGENTINA ===
+  "velez": "https://api.promiedos.com.ar/images/team/ihc/4",
+  "velez sarsfield": "https://api.promiedos.com.ar/images/team/ihc/4",
+  "estudiantes": "https://api.promiedos.com.ar/images/team/igh/4",
+  "estudiantes de la plata": "https://api.promiedos.com.ar/images/team/igh/4",
+  "union": "https://api.promiedos.com.ar/images/team/hcag/4",
+  "union de santa fe": "https://api.promiedos.com.ar/images/team/hcag/4",
+  "defensa": "https://api.promiedos.com.ar/images/team/hcbh/4",
+  "defensa y justicia": "https://api.promiedos.com.ar/images/team/hcbh/4",
+  "lanus": "https://api.promiedos.com.ar/images/team/igj/4",
+  "talleres": "https://api.promiedos.com.ar/images/team/jche/4",
+  "talleres de cordoba": "https://api.promiedos.com.ar/images/team/jche/4",
+  "boca": "https://api.promiedos.com.ar/images/team/igg/4",
+  "boca juniors": "https://api.promiedos.com.ar/images/team/igg/4",
+  "boca jrs": "https://api.promiedos.com.ar/images/team/igg/4",
+  "independiente": "https://api.promiedos.com.ar/images/team/ihe/4",
+  "platense": "https://api.promiedos.com.ar/images/team/hcah/4",
+  "san lorenzo": "https://api.promiedos.com.ar/images/team/igf/4",
+  "central cordoba": "https://api.promiedos.com.ar/images/team/beafh/4",
+  "central cordoba sde": "https://api.promiedos.com.ar/images/team/beafh/4",
+  "instituto": "https://api.promiedos.com.ar/images/team/hchc/4",
+  "instituto de cordoba": "https://api.promiedos.com.ar/images/team/hchc/4",
+  "gimnasia": "https://api.promiedos.com.ar/images/team/iia/4",
+  "gimnasia la plata": "https://api.promiedos.com.ar/images/team/iia/4",
+  "gimnasia y esgrima": "https://api.promiedos.com.ar/images/team/iia/4",
+  "riestra": "https://api.promiedos.com.ar/images/team/bbjea/4",
+  "deportivo riestra": "https://api.promiedos.com.ar/images/team/bbjea/4",
+  "newells": "https://api.promiedos.com.ar/images/team/ihh/4",
+  "newell's": "https://api.promiedos.com.ar/images/team/ihh/4",
+  "newell's old boys": "https://api.promiedos.com.ar/images/team/ihh/4",
+  "ind. rivadavia": "https://api.promiedos.com.ar/images/team/hcch/4",
+  "independiente rivadavia": "https://api.promiedos.com.ar/images/team/hcch/4",
+  "belgrano": "https://api.promiedos.com.ar/images/team/fhid/4",
+  "belgrano de cordoba": "https://api.promiedos.com.ar/images/team/fhid/4",
+  "central": "https://api.promiedos.com.ar/images/team/ihf/4",
+  "rosario central": "https://api.promiedos.com.ar/images/team/ihf/4",
+  "tigre": "https://api.promiedos.com.ar/images/team/iid/4",
+  "club atletico tigre": "https://api.promiedos.com.ar/images/team/iid/4",
+  "river": "https://api.promiedos.com.ar/images/team/igi/4",
+  "river plate": "https://api.promiedos.com.ar/images/team/igi/4",
+  "racing": "https://api.promiedos.com.ar/images/team/ihg/4",
+  "racing club": "https://api.promiedos.com.ar/images/team/ihg/4",
+  "barracas": "https://api.promiedos.com.ar/images/team/jafb/4",
+  "barracas central": "https://api.promiedos.com.ar/images/team/jafb/4",
+  "huracan": "https://api.promiedos.com.ar/images/team/iie/4",
+  "argentinos": "https://api.promiedos.com.ar/images/team/ihb/4",
+  "argentinos juniors": "https://api.promiedos.com.ar/images/team/ihb/4",
+  "banfield": "https://api.promiedos.com.ar/images/team/ihi/4",
+  "sarmiento": "https://api.promiedos.com.ar/images/team/hbbh/4",
+  "sarmiento de junin": "https://api.promiedos.com.ar/images/team/hbbh/4",
+  "atl. tucuman": "https://api.promiedos.com.ar/images/team/gbfc/4",
+  "atletico tucuman": "https://api.promiedos.com.ar/images/team/gbfc/4",
+  "aldosivi": "https://api.promiedos.com.ar/images/team/hccd/4",
+  "estudiantes rc": "https://api.promiedos.com.ar/images/team/bheaf/4",
+  "estudiantes de rio cuarto": "https://api.promiedos.com.ar/images/team/bheaf/4",
+  "godoy cruz": "https://api.promiedos.com.ar/images/team/ihd/4",
+  "colon": "https://api.promiedos.com.ar/images/team/iha/4",
+  "atletico rafaela": "https://api.promiedos.com.ar/images/team/fjgi/4",
+  "chacarita": "https://api.promiedos.com.ar/images/team/gbjg/4",
+  "chacarita juniors": "https://api.promiedos.com.ar/images/team/gbjg/4",
+  "quilmes": "https://api.promiedos.com.ar/images/team/hccf/4",
+  "almagro": "https://api.promiedos.com.ar/images/team/hbag/4",
+  "san martin": "https://api.promiedos.com.ar/images/team/hcai/4",
+  "san martin de tucuman": "https://api.promiedos.com.ar/images/team/hcai/4",
+  "temperley": "https://api.promiedos.com.ar/images/team/hbac/4",
+  "all boys": "https://api.promiedos.com.ar/images/team/hhij/4",
+  "patronato": "https://api.promiedos.com.ar/images/team/iche/4",
+  "arsenal": "https://api.promiedos.com.ar/images/team/fjbd/4",
+  "arsenal de sarandi": "https://api.promiedos.com.ar/images/team/fjbd/4",
+
+  // === LIGA BETPLAY COLOMBIA ===
+  "atletico nacional": "https://api.promiedos.com.ar/images/team/igea/4",
+  "nacional": "https://api.promiedos.com.ar/images/team/igea/4",
+  "pasto": "https://api.promiedos.com.ar/images/team/jaei/4",
+  "deportivo pasto": "https://api.promiedos.com.ar/images/team/jaei/4",
+  "once caldas": "https://api.promiedos.com.ar/images/team/hcij/4",
+  "bucaramanga": "https://api.promiedos.com.ar/images/team/bacce/4",
+  "atletico bucaramanga": "https://api.promiedos.com.ar/images/team/bacce/4",
+  "junior": "https://api.promiedos.com.ar/images/team/hcae/4",
+  "junior de barranquilla": "https://api.promiedos.com.ar/images/team/hcae/4",
+  "america de cali": "https://api.promiedos.com.ar/images/team/igef/4",
+  "america": "https://api.promiedos.com.ar/images/team/igef/4",
+  "millonarios": "https://api.promiedos.com.ar/images/team/igdh/4",
+  "tolima": "https://api.promiedos.com.ar/images/team/hgdf/4",
+  "deportes tolima": "https://api.promiedos.com.ar/images/team/hgdf/4",
+  "cali": "https://api.promiedos.com.ar/images/team/igdj/4",
+  "deportivo cali": "https://api.promiedos.com.ar/images/team/igdj/4",
+  "llaneros": "https://api.promiedos.com.ar/images/team/badhi/4",
+  "llaneros fc": "https://api.promiedos.com.ar/images/team/badhi/4",
+  "aguilas": "https://api.promiedos.com.ar/images/team/caieb/4",
+  "aguilas doradas": "https://api.promiedos.com.ar/images/team/caieb/4",
+  "rionegro aguilas": "https://api.promiedos.com.ar/images/team/caieb/4",
+  "fortaleza": "https://api.promiedos.com.ar/images/team/jiee/4",
+  "fortaleza fc": "https://api.promiedos.com.ar/images/team/jiee/4",
+  "santa fe": "https://api.promiedos.com.ar/images/team/hgee/4",
+  "independiente santa fe": "https://api.promiedos.com.ar/images/team/hgee/4",
+  "independiente medellin": "https://api.promiedos.com.ar/images/team/iged/4",
+  "medellin": "https://api.promiedos.com.ar/images/team/iged/4",
+  "jaguares": "https://api.promiedos.com.ar/images/team/badhh/4",
+  "jaguares de cordoba": "https://api.promiedos.com.ar/images/team/badhh/4",
+  "cucuta": "https://api.promiedos.com.ar/images/team/igde/4",
+  "cucuta deportivo": "https://api.promiedos.com.ar/images/team/igde/4",
+  "boyaca chico": "https://api.promiedos.com.ar/images/team/igeb/4",
+  "boyaca chico": "https://api.promiedos.com.ar/images/team/igeb/4",
+  "pereira": "https://api.promiedos.com.ar/images/team/igdi/4",
+  "deportivo pereira": "https://api.promiedos.com.ar/images/team/igdi/4",
+  "alianza": "https://api.promiedos.com.ar/images/team/bacaj/4",
+  "alianza fc": "https://api.promiedos.com.ar/images/team/bacaj/4",
+  "alianza petrolera": "https://api.promiedos.com.ar/images/team/bacaj/4",
+  "envigado": "https://api.promiedos.com.ar/images/team/badei/4",
+  "patriotas": "https://api.promiedos.com.ar/images/team/hdih/4",
+  "atletico huila": "https://api.promiedos.com.ar/images/team/hdggf/4",
+  "union magdalena": "https://api.promiedos.com.ar/images/team/igcj/4",
+
+  // === LIGA MX MEXICO ===
+  "chivas": "https://api.promiedos.com.ar/images/team/bcfj/4",
+  "guadalajara": "https://api.promiedos.com.ar/images/team/bcfj/4",
+  "cruz azul": "https://api.promiedos.com.ar/images/team/bcgb/4",
+  "toluca": "https://api.promiedos.com.ar/images/team/cahi/4",
+  "deportivo toluca": "https://api.promiedos.com.ar/images/team/cahi/4",
+  "pachuca": "https://api.promiedos.com.ar/images/team/bcfa/4",
+  "pumas": "https://api.promiedos.com.ar/images/team/bcej/4",
+  "pumas unam": "https://api.promiedos.com.ar/images/team/bcej/4",
+  "unam": "https://api.promiedos.com.ar/images/team/bcej/4",
+  "tigres": "https://api.promiedos.com.ar/images/team/bcge/4",
+  "tigres uanl": "https://api.promiedos.com.ar/images/team/bcge/4",
+  "uanl": "https://api.promiedos.com.ar/images/team/bcge/4",
+  "club america": "https://api.promiedos.com.ar/images/team/bcff/4",
+  "atlas": "https://api.promiedos.com.ar/images/team/bcfi/4",
+  "monterrey": "https://api.promiedos.com.ar/images/team/bcfh/4",
+  "club tijuana": "https://api.promiedos.com.ar/images/team/ifai/4",
+  "xolos": "https://api.promiedos.com.ar/images/team/ifai/4",
+  "puebla": "https://api.promiedos.com.ar/images/team/bcfc/4",
+  "atletico san luis": "https://api.promiedos.com.ar/images/team/bcga/4",
+  "san luis": "https://api.promiedos.com.ar/images/team/bcga/4",
+  "juarez": "https://api.promiedos.com.ar/images/team/cfbej/4",
+  "fc juarez": "https://api.promiedos.com.ar/images/team/cfbej/4",
+  "necaxa": "https://api.promiedos.com.ar/images/team/bcgd/4",
+  "mazatlan": "https://api.promiedos.com.ar/images/team/ggdfj/4",
+  "mazatlan fc": "https://api.promiedos.com.ar/images/team/ggdfj/4",
+  "leon": "https://api.promiedos.com.ar/images/team/jddj/4",
+  "club leon": "https://api.promiedos.com.ar/images/team/jddj/4",
+  "queretaro": "https://api.promiedos.com.ar/images/team/fjje/4",
+  "queretaro fc": "https://api.promiedos.com.ar/images/team/fjje/4",
+  "santos": "https://api.promiedos.com.ar/images/team/bcfe/4",
+  "santos laguna": "https://api.promiedos.com.ar/images/team/bcfe/4",
+
+  // === LALIGA ESPAÑA ===
+  "barcelona": "https://api.promiedos.com.ar/images/team/bdc/4",
+  "real madrid": "https://api.promiedos.com.ar/images/team/bdb/4",
+  "atletico": "https://api.promiedos.com.ar/images/team/bde/4",
+  "atletico madrid": "https://api.promiedos.com.ar/images/team/bde/4",
+  "villarreal": "https://api.promiedos.com.ar/images/team/bdd/4",
+  "betis": "https://api.promiedos.com.ar/images/team/beg/4",
+  "real betis": "https://api.promiedos.com.ar/images/team/beg/4",
+  "celta": "https://api.promiedos.com.ar/images/team/bfi/4",
+  "celta de vigo": "https://api.promiedos.com.ar/images/team/bfi/4",
+  "real sociedad": "https://api.promiedos.com.ar/images/team/bfe/4",
+  "espanyol": "https://api.promiedos.com.ar/images/team/bdg/4",
+  "rcd espanyol": "https://api.promiedos.com.ar/images/team/bdg/4",
+  "getafe": "https://api.promiedos.com.ar/images/team/bea/4",
+  "getafe cf": "https://api.promiedos.com.ar/images/team/bea/4",
+  "athletic": "https://api.promiedos.com.ar/images/team/bee/4",
+  "athletic bilbao": "https://api.promiedos.com.ar/images/team/bee/4",
+  "osasuna": "https://api.promiedos.com.ar/images/team/bed/4",
+  "ca osasuna": "https://api.promiedos.com.ar/images/team/bed/4",
+  "girona": "https://api.promiedos.com.ar/images/team/bhf/4",
+  "girona fc": "https://api.promiedos.com.ar/images/team/bhf/4",
+  "rayo": "https://api.promiedos.com.ar/images/team/bhe/4",
+  "rayo vallecano": "https://api.promiedos.com.ar/images/team/bhe/4",
+  "valencia": "https://api.promiedos.com.ar/images/team/bdj/4",
+  "valencia cf": "https://api.promiedos.com.ar/images/team/bdj/4",
+  "sevilla": "https://api.promiedos.com.ar/images/team/bdf/4",
+  "sevilla fc": "https://api.promiedos.com.ar/images/team/bdf/4",
+  "mallorca": "https://api.promiedos.com.ar/images/team/bec/4",
+  "rcd mallorca": "https://api.promiedos.com.ar/images/team/bec/4",
+  "alaves": "https://api.promiedos.com.ar/images/team/bgi/4",
+  "deportivo alaves": "https://api.promiedos.com.ar/images/team/bgi/4",
+  "las palmas": "https://api.promiedos.com.ar/images/team/bfg/4",
+  "ud las palmas": "https://api.promiedos.com.ar/images/team/bfg/4",
+  "leganes": "https://api.promiedos.com.ar/images/team/bfa/4",
+  "cd leganes": "https://api.promiedos.com.ar/images/team/bfa/4",
+  "valladolid": "https://api.promiedos.com.ar/images/team/bjd/4",
+  "real valladolid": "https://api.promiedos.com.ar/images/team/bjd/4",
+
+  // === PREMIER LEAGUE INGLATERRA ===
+  "arsenal": "https://api.promiedos.com.ar/images/team/bae/4",
+  "man city": "https://api.promiedos.com.ar/images/team/bba/4",
+  "manchester city": "https://api.promiedos.com.ar/images/team/bba/4",
+  "man utd": "https://api.promiedos.com.ar/images/team/baf/4",
+  "manchester united": "https://api.promiedos.com.ar/images/team/baf/4",
+  "aston villa": "https://api.promiedos.com.ar/images/team/baj/4",
+  "liverpool": "https://api.promiedos.com.ar/images/team/bai/4",
+  "chelsea": "https://api.promiedos.com.ar/images/team/bag/4",
+  "brentford": "https://api.promiedos.com.ar/images/team/gd/4",
+  "everton": "https://api.promiedos.com.ar/images/team/bah/4",
+  "newcastle": "https://api.promiedos.com.ar/images/team/bbg/4",
+  "newcastle utd": "https://api.promiedos.com.ar/images/team/bbg/4",
+  "newcastle united": "https://api.promiedos.com.ar/images/team/bbg/4",
+  "bournemouth": "https://api.promiedos.com.ar/images/team/fa/4",
+  "fulham": "https://api.promiedos.com.ar/images/team/bca/4",
+  "brighton": "https://api.promiedos.com.ar/images/team/di/4",
+  "crystal palace": "https://api.promiedos.com.ar/images/team/ba/4",
+  "palace": "https://api.promiedos.com.ar/images/team/ba/4",
+  "tottenham": "https://api.promiedos.com.ar/images/team/bbe/4",
+  "tottenham hotspur": "https://api.promiedos.com.ar/images/team/bbe/4",
+  "spurs": "https://api.promiedos.com.ar/images/team/bbe/4",
+  "nottingham forest": "https://api.promiedos.com.ar/images/team/cj/4",
+  "forest": "https://api.promiedos.com.ar/images/team/cj/4",
+  "west ham": "https://api.promiedos.com.ar/images/team/bbd/4",
+  "west ham united": "https://api.promiedos.com.ar/images/team/bbd/4",
+  "wolves": "https://api.promiedos.com.ar/images/team/bf/4",
+  "wolverhampton": "https://api.promiedos.com.ar/images/team/bf/4",
+  "wolverhampton wanderers": "https://api.promiedos.com.ar/images/team/bf/4",
+  "leicester": "https://api.promiedos.com.ar/images/team/bc/4",
+  "leicester city": "https://api.promiedos.com.ar/images/team/bc/4",
+  "ipswich": "https://api.promiedos.com.ar/images/team/dg/4",
+  "ipswich town": "https://api.promiedos.com.ar/images/team/dg/4",
+  "southampton": "https://api.promiedos.com.ar/images/team/bbh/4",
+  "southampton fc": "https://api.promiedos.com.ar/images/team/bbh/4",
+
+  // === SERIE A ITALIA ===
+  "inter": "https://api.promiedos.com.ar/images/team/cce/4",
+  "inter milan": "https://api.promiedos.com.ar/images/team/cce/4",
+  "milan": "https://api.promiedos.com.ar/images/team/cch/4",
+  "ac milan": "https://api.promiedos.com.ar/images/team/cch/4",
+  "napoli": "https://api.promiedos.com.ar/images/team/cde/4",
+  "ssc napoli": "https://api.promiedos.com.ar/images/team/cde/4",
+  "juventus": "https://api.promiedos.com.ar/images/team/ccg/4",
+  "roma": "https://api.promiedos.com.ar/images/team/ccf/4",
+  "as roma": "https://api.promiedos.com.ar/images/team/ccf/4",
+  "atalanta": "https://api.promiedos.com.ar/images/team/cdc/4",
+  "bologna": "https://api.promiedos.com.ar/images/team/cef/4",
+  "bologna fc": "https://api.promiedos.com.ar/images/team/cef/4",
+  "lazio": "https://api.promiedos.com.ar/images/team/cdg/4",
+  "ss lazio": "https://api.promiedos.com.ar/images/team/cdg/4",
+  "sassuolo": "https://api.promiedos.com.ar/images/team/cgg/4",
+  "udinese": "https://api.promiedos.com.ar/images/team/ccj/4",
+  "parma": "https://api.promiedos.com.ar/images/team/ceb/4",
+  "parma calcio": "https://api.promiedos.com.ar/images/team/ceb/4",
+  "genoa": "https://api.promiedos.com.ar/images/team/cdb/4",
+  "genoa cfc": "https://api.promiedos.com.ar/images/team/cdb/4",
+  "torino": "https://api.promiedos.com.ar/images/team/cdf/4",
+  "torino fc": "https://api.promiedos.com.ar/images/team/cdf/4",
+  "cagliari": "https://api.promiedos.com.ar/images/team/ced/4",
+  "fiorentina": "https://api.promiedos.com.ar/images/team/cci/4",
+  "acf fiorentina": "https://api.promiedos.com.ar/images/team/cci/4",
+  "lecce": "https://api.promiedos.com.ar/images/team/ceg/4",
+  "verona": "https://api.promiedos.com.ar/images/team/dbg/4",
+  "hellas verona": "https://api.promiedos.com.ar/images/team/dbg/4",
+  "monza": "https://api.promiedos.com.ar/images/team/gbbh/4",
+  "ac monza": "https://api.promiedos.com.ar/images/team/gbbh/4",
+  "empoli": "https://api.promiedos.com.ar/images/team/cja/4",
+  "empoli fc": "https://api.promiedos.com.ar/images/team/cja/4",
+
+  // === BUNDESLIGA ALEMANIA ===
+  "bayern": "https://api.promiedos.com.ar/images/team/ddb/4",
+  "bayern munchen": "https://api.promiedos.com.ar/images/team/ddb/4",
+  "bayern munich": "https://api.promiedos.com.ar/images/team/ddb/4",
+  "dortmund": "https://api.promiedos.com.ar/images/team/deb/4",
+  "borussia dortmund": "https://api.promiedos.com.ar/images/team/deb/4",
+  "bvb": "https://api.promiedos.com.ar/images/team/deb/4",
+  "hoffenheim": "https://api.promiedos.com.ar/images/team/dfb/4",
+  "stuttgart": "https://api.promiedos.com.ar/images/team/ddi/4",
+  "vfb stuttgart": "https://api.promiedos.com.ar/images/team/ddi/4",
+  "leipzig": "https://api.promiedos.com.ar/images/team/hbhb/4",
+  "rb leipzig": "https://api.promiedos.com.ar/images/team/hbhb/4",
+  "leverkusen": "https://api.promiedos.com.ar/images/team/ddd/4",
+  "bayer leverkusen": "https://api.promiedos.com.ar/images/team/ddd/4",
+  "eintracht": "https://api.promiedos.com.ar/images/team/ddh/4",
+  "eintracht frankfurt": "https://api.promiedos.com.ar/images/team/ddh/4",
+  "frankfurt": "https://api.promiedos.com.ar/images/team/ddh/4",
+  "freiburg": "https://api.promiedos.com.ar/images/team/dfe/4",
+  "sc freiburg": "https://api.promiedos.com.ar/images/team/dfe/4",
+  "union berlin": "https://api.promiedos.com.ar/images/team/djc/4",
+  "augsburg": "https://api.promiedos.com.ar/images/team/dfi/4",
+  "hamburg": "https://api.promiedos.com.ar/images/team/dde/4",
+  "hamburg sv": "https://api.promiedos.com.ar/images/team/dde/4",
+  "gladbach": "https://api.promiedos.com.ar/images/team/dej/4",
+  "borussia monchengladbach": "https://api.promiedos.com.ar/images/team/dej/4",
+  "mainz": "https://api.promiedos.com.ar/images/team/dfc/4",
+  "mainz 05": "https://api.promiedos.com.ar/images/team/dfc/4",
+  "koln": "https://api.promiedos.com.ar/images/team/dfa/4",
+  "fc koln": "https://api.promiedos.com.ar/images/team/dfa/4",
+  "cologne": "https://api.promiedos.com.ar/images/team/dfa/4",
+  "werder": "https://api.promiedos.com.ar/images/team/ddc/4",
+  "werder bremen": "https://api.promiedos.com.ar/images/team/ddc/4",
+  "wolfsburg": "https://api.promiedos.com.ar/images/team/ddj/4",
+  "vfl wolfsburg": "https://api.promiedos.com.ar/images/team/ddj/4",
+  "heidenheim": "https://api.promiedos.com.ar/images/team/ede/4",
+  "bochum": "https://api.promiedos.com.ar/images/team/dfj/4",
+  "vfl bochum": "https://api.promiedos.com.ar/images/team/dfj/4",
+
+  // === BRASILEIRAO BRASIL ===
+  "palmeiras": "https://api.promiedos.com.ar/images/team/bccc/4",
+  "sao paulo": "https://api.promiedos.com.ar/images/team/bccf/4",
+  "sao paulo fc": "https://api.promiedos.com.ar/images/team/bccf/4",
+  "bahia": "https://api.promiedos.com.ar/images/team/bhgh/4",
+  "ec bahia": "https://api.promiedos.com.ar/images/team/bhgh/4",
+  "fluminense": "https://api.promiedos.com.ar/images/team/bcbg/4",
+  "coritiba": "https://api.promiedos.com.ar/images/team/bcbc/4",
+  "flamengo": "https://api.promiedos.com.ar/images/team/bcbf/4",
+  "cr flamengo": "https://api.promiedos.com.ar/images/team/bcbf/4",
+  "athletico-pr": "https://api.promiedos.com.ar/images/team/bcba/4",
+  "athletico paranaense": "https://api.promiedos.com.ar/images/team/bcba/4",
+  "paranaense": "https://api.promiedos.com.ar/images/team/bcba/4",
+  "gremio": "https://api.promiedos.com.ar/images/team/bcbi/4",
+  "corinthians": "https://api.promiedos.com.ar/images/team/bcgh/4",
+  "sc corinthians": "https://api.promiedos.com.ar/images/team/bcgh/4",
+  "vasco": "https://api.promiedos.com.ar/images/team/bcch/4",
+  "vasco da gama": "https://api.promiedos.com.ar/images/team/bcch/4",
+  "atletico mineiro": "https://api.promiedos.com.ar/images/team/bcaj/4",
+  "atletico-mg": "https://api.promiedos.com.ar/images/team/bcaj/4",
+  "bragantino": "https://api.promiedos.com.ar/images/team/bchd/4",
+  "rb bragantino": "https://api.promiedos.com.ar/images/team/bchd/4",
+  "red bull bragantino": "https://api.promiedos.com.ar/images/team/bchd/4",
+  "vitoria": "https://api.promiedos.com.ar/images/team/bcci/4",
+  "ec vitoria": "https://api.promiedos.com.ar/images/team/bcci/4",
+  "santos": "https://api.promiedos.com.ar/images/team/bcce/4",
+  "santos fc": "https://api.promiedos.com.ar/images/team/bcce/4",
+  "internacional": "https://api.promiedos.com.ar/images/team/bcbj/4",
+  "sc internacional": "https://api.promiedos.com.ar/images/team/bcbj/4",
+  "botafogo": "https://api.promiedos.com.ar/images/team/bcbb/4",
+  "botafogo fr": "https://api.promiedos.com.ar/images/team/bcbb/4",
+  "cruzeiro": "https://api.promiedos.com.ar/images/team/bcbd/4",
+  "cruzeiro ec": "https://api.promiedos.com.ar/images/team/bcbd/4",
+  "cuiaba": "https://api.promiedos.com.ar/images/team/bcgj/4",
+  "cuiaba ec": "https://api.promiedos.com.ar/images/team/bcgj/4",
+  "fortaleza": "https://api.promiedos.com.ar/images/team/hdih/4",
+  "fortaleza ec": "https://api.promiedos.com.ar/images/team/hdih/4",
+  "juventude": "https://api.promiedos.com.ar/images/team/bcgj/4",
+  "ec juventude": "https://api.promiedos.com.ar/images/team/bcgj/4",
+  "chapecoense": "https://api.promiedos.com.ar/images/team/hdih/4",
+  "mirassol": "https://api.promiedos.com.ar/images/team/bcgj/4",
+
+  // === LIGUE 1 FRANCIA ===
+  "psg": "https://api.promiedos.com.ar/images/team/eia/4",
+  "paris saint-germain": "https://api.promiedos.com.ar/images/team/eia/4",
+  "paris saint germain": "https://api.promiedos.com.ar/images/team/eia/4",
+  "lens": "https://api.promiedos.com.ar/images/team/eib/4",
+  "rc lens": "https://api.promiedos.com.ar/images/team/eib/4",
+  "marsella": "https://api.promiedos.com.ar/images/team/egj/4",
+  "olympique de marsella": "https://api.promiedos.com.ar/images/team/egj/4",
+  "om": "https://api.promiedos.com.ar/images/team/egj/4",
+  "lyon": "https://api.promiedos.com.ar/images/team/egf/4",
+  "olympique lyonnais": "https://api.promiedos.com.ar/images/team/egf/4",
+  "lille": "https://api.promiedos.com.ar/images/team/ehi/4",
+  "losc": "https://api.promiedos.com.ar/images/team/ehi/4",
+  "monaco": "https://api.promiedos.com.ar/images/team/ehb/4",
+  "as monaco": "https://api.promiedos.com.ar/images/team/ehb/4",
+  "rennes": "https://api.promiedos.com.ar/images/team/ehh/4",
+  "stade rennais": "https://api.promiedos.com.ar/images/team/ehh/4",
+  "strasbourg": "https://api.promiedos.com.ar/images/team/ehj/4",
+  "rc strasbourg": "https://api.promiedos.com.ar/images/team/ehj/4",
+  "lorient": "https://api.promiedos.com.ar/images/team/ehc/4",
+  "brest": "https://api.promiedos.com.ar/images/team/fde/4",
+  "stade brestois": "https://api.promiedos.com.ar/images/team/fde/4",
+  "toulouse": "https://api.promiedos.com.ar/images/team/eic/4",
+  "angers": "https://api.promiedos.com.ar/images/team/ejd/4",
+  "sco angers": "https://api.promiedos.com.ar/images/team/ejd/4",
+  "paris fc": "https://api.promiedos.com.ar/images/team/gahf/4",
+  "le havre": "https://api.promiedos.com.ar/images/team/eif/4",
+  "nice": "https://api.promiedos.com.ar/images/team/eha/4",
+  "ogc nice": "https://api.promiedos.com.ar/images/team/eha/4",
+  "niza": "https://api.promiedos.com.ar/images/team/eha/4",
+  "auxerre": "https://api.promiedos.com.ar/images/team/ehg/4",
+  "nantes": "https://api.promiedos.com.ar/images/team/eig/4",
+  "fc nantes": "https://api.promiedos.com.ar/images/team/eig/4",
+  "metz": "https://api.promiedos.com.ar/images/team/eie/4",
+  "fc metz": "https://api.promiedos.com.ar/images/team/eie/4",
+  "montpellier": "https://api.promiedos.com.ar/images/team/eie/4",
+  "reims": "https://api.promiedos.com.ar/images/team/eie/4",
+
+  // === PRIMEIRA LIGA PORTUGAL ===
+  "porto": "https://api.promiedos.com.ar/images/team/iih/4",
+  "fc porto": "https://api.promiedos.com.ar/images/team/iih/4",
+  "sporting": "https://api.promiedos.com.ar/images/team/ija/4",
+  "sporting cp": "https://api.promiedos.com.ar/images/team/ija/4",
+  "sporting lisbon": "https://api.promiedos.com.ar/images/team/ija/4",
+  "benfica": "https://api.promiedos.com.ar/images/team/iii/4",
+  "sl benfica": "https://api.promiedos.com.ar/images/team/iii/4",
+  "braga": "https://api.promiedos.com.ar/images/team/ijf/4",
+  "sc braga": "https://api.promiedos.com.ar/images/team/ijf/4",
+  "gil vicente": "https://api.promiedos.com.ar/images/team/jaf/4",
+  "famalicao": "https://api.promiedos.com.ar/images/team/bbbhc/4",
+  "estoril": "https://api.promiedos.com.ar/images/team/jaj/4",
+  "moreirense": "https://api.promiedos.com.ar/images/team/hfhd/4",
+  "guimaraes": "https://api.promiedos.com.ar/images/team/iij/4",
+  "vitoria guimaraes": "https://api.promiedos.com.ar/images/team/iij/4",
+  "rio ave": "https://api.promiedos.com.ar/images/team/jae/4",
+  "arouca": "https://api.promiedos.com.ar/images/team/jch/4",
+  "casa pia": "https://api.promiedos.com.ar/images/team/gdhc/4",
+  "nacional": "https://api.promiedos.com.ar/images/team/ije/4",
+  "cd nacional": "https://api.promiedos.com.ar/images/team/ije/4",
+  "tondela": "https://api.promiedos.com.ar/images/team/geha/4",
+
+  // === MLS ESTADOS UNIDOS ===
+  "nycfc": "https://api.promiedos.com.ar/images/team/cagcc/4",
+  "new york city fc": "https://api.promiedos.com.ar/images/team/cagcc/4",
+  "nashville": "https://api.promiedos.com.ar/images/team/fbbcg/4",
+  "nashville sc": "https://api.promiedos.com.ar/images/team/fbbcg/4",
+  "inter miami": "https://api.promiedos.com.ar/images/team/fehcj/4",
+  "inter miami cf": "https://api.promiedos.com.ar/images/team/fehcj/4",
+  "ny red bulls": "https://api.promiedos.com.ar/images/team/bddi/4",
+  "new york red bulls": "https://api.promiedos.com.ar/images/team/bddi/4",
+  "dc united": "https://api.promiedos.com.ar/images/team/bddj/4",
+  "charlotte": "https://api.promiedos.com.ar/images/team/gjbii/4",
+  "charlotte fc": "https://api.promiedos.com.ar/images/team/gjbii/4",
+  "chicago": "https://api.promiedos.com.ar/images/team/bddd/4",
+  "chicago fire": "https://api.promiedos.com.ar/images/team/bddd/4",
+  "toronto": "https://api.promiedos.com.ar/images/team/bddg/4",
+  "toronto fc": "https://api.promiedos.com.ar/images/team/bddg/4",
+  "new england": "https://api.promiedos.com.ar/images/team/bddh/4",
+  "new england revolution": "https://api.promiedos.com.ar/images/team/bddh/4",
+  "revolution": "https://api.promiedos.com.ar/images/team/bddh/4",
+  "atlanta": "https://api.promiedos.com.ar/images/team/daejj/4",
+  "atlanta united": "https://api.promiedos.com.ar/images/team/daejj/4",
+  "cincinnati": "https://api.promiedos.com.ar/images/team/cfcih/4",
+  "fc cincinnati": "https://api.promiedos.com.ar/images/team/cfcih/4",
+  "montreal": "https://api.promiedos.com.ar/images/team/jbch/4",
+  "cf montreal": "https://api.promiedos.com.ar/images/team/jbch/4",
+  "orlando": "https://api.promiedos.com.ar/images/team/bccae/4",
+  "orlando city": "https://api.promiedos.com.ar/images/team/bccae/4",
+  "columbus": "https://api.promiedos.com.ar/images/team/bdde/4",
+  "columbus crew": "https://api.promiedos.com.ar/images/team/bdde/4",
+  "philadelphia": "https://api.promiedos.com.ar/images/team/hdge/4",
+  "philadelphia union": "https://api.promiedos.com.ar/images/team/hdge/4",
+  "vancouver": "https://api.promiedos.com.ar/images/team/idij/4",
+  "whitecaps": "https://api.promiedos.com.ar/images/team/idij/4",
+  "vancouver whitecaps": "https://api.promiedos.com.ar/images/team/idij/4",
+  "lafc": "https://api.promiedos.com.ar/images/team/fbbhi/4",
+  "los angeles fc": "https://api.promiedos.com.ar/images/team/fbbhi/4",
+  "san diego": "https://api.promiedos.com.ar/images/team/iahhi/4",
+  "san diego fc": "https://api.promiedos.com.ar/images/team/iahhi/4",
+  "san jose": "https://api.promiedos.com.ar/images/team/bdef/4",
+  "san jose earthquakes": "https://api.promiedos.com.ar/images/team/bdef/4",
+  "seattle": "https://api.promiedos.com.ar/images/team/bdeh/4",
+  "seattle sounders": "https://api.promiedos.com.ar/images/team/bdeh/4",
+  "real salt lake": "https://api.promiedos.com.ar/images/team/bdee/4",
+  "colorado": "https://api.promiedos.com.ar/images/team/bdea/4",
+  "colorado rapids": "https://api.promiedos.com.ar/images/team/bdea/4",
+  "houston": "https://api.promiedos.com.ar/images/team/bdeg/4",
+  "houston dynamo": "https://api.promiedos.com.ar/images/team/bdeg/4",
+  "dallas": "https://api.promiedos.com.ar/images/team/bdeb/4",
+  "fc dallas": "https://api.promiedos.com.ar/images/team/bdeb/4",
+  "la galaxy": "https://api.promiedos.com.ar/images/team/bdec/4",
+  "los angeles galaxy": "https://api.promiedos.com.ar/images/team/bdec/4",
+  "austin": "https://api.promiedos.com.ar/images/team/ghjah/4",
+  "austin fc": "https://api.promiedos.com.ar/images/team/ghjah/4",
+  "sporting kc": "https://api.promiedos.com.ar/images/team/bddf/4",
+  "sporting kansas city": "https://api.promiedos.com.ar/images/team/bddf/4",
+  "minnesota": "https://api.promiedos.com.ar/images/team/bccai/4",
+  "minnesota united": "https://api.promiedos.com.ar/images/team/bccai/4",
+  "portland": "https://api.promiedos.com.ar/images/team/fjbg/4",
+  "portland timbers": "https://api.promiedos.com.ar/images/team/fjbg/4",
+  "st. louis": "https://api.promiedos.com.ar/images/team/ceehe/4",
+  "st. louis city": "https://api.promiedos.com.ar/images/team/ceehe/4",
+
+  // === LIGA CHILE ===
+  "colo colo": "https://api.promiedos.com.ar/images/team/bcdj/4",
+  "limache": "https://api.promiedos.com.ar/images/team/fbjie/4",
+  "nublense": "https://api.promiedos.com.ar/images/team/bcee/4",
+  "u. catolica": "https://api.promiedos.com.ar/images/team/bcef/4",
+  "universidad catolica": "https://api.promiedos.com.ar/images/team/bcef/4",
+  "catolica": "https://api.promiedos.com.ar/images/team/bcef/4",
+  "u. de concepcion": "https://api.promiedos.com.ar/images/team/bceh/4",
+  "universidad de concepcion": "https://api.promiedos.com.ar/images/team/bceh/4",
+  "audax italiano": "https://api.promiedos.com.ar/images/team/bccj/4",
+  "u. la calera": "https://api.promiedos.com.ar/images/team/ieaj/4",
+  "union la calera": "https://api.promiedos.com.ar/images/team/ieaj/4",
+  "u. de chile": "https://api.promiedos.com.ar/images/team/ifeb/4",
+  "universidad de chile": "https://api.promiedos.com.ar/images/team/ifeb/4",
+  "o'higgins": "https://api.promiedos.com.ar/images/team/bcde/4",
+  "ohiggins": "https://api.promiedos.com.ar/images/team/bcde/4",
+  "la serena": "https://api.promiedos.com.ar/images/team/bcdh/4",
+  "deportes la serena": "https://api.promiedos.com.ar/images/team/bcdh/4",
+  "coquimbo": "https://api.promiedos.com.ar/images/team/igcf/4",
+  "coquimbo unido": "https://api.promiedos.com.ar/images/team/igcf/4",
+  "huachipato": "https://api.promiedos.com.ar/images/team/bcdc/4",
+  "palestino": "https://api.promiedos.com.ar/images/team/bcdi/4",
+  "everton": "https://api.promiedos.com.ar/images/team/bcda/4",
+  "everton de vina": "https://api.promiedos.com.ar/images/team/bcda/4",
+  "cobresal": "https://api.promiedos.com.ar/images/team/bcdb/4",
+
+  // === COPA DE PRIMERA PARAGUAY ===
+  "olimpia": "https://api.promiedos.com.ar/images/team/ifei/4",
+  "club olimpia": "https://api.promiedos.com.ar/images/team/ifei/4",
+  "cerro porteno": "https://api.promiedos.com.ar/images/team/bcje/4",
+  "cerro porteño": "https://api.promiedos.com.ar/images/team/bcje/4",
+  "ccp": "https://api.promiedos.com.ar/images/team/bcje/4",
+  "nacional asuncion": "https://api.promiedos.com.ar/images/team/bcia/4",
+  "club nacional": "https://api.promiedos.com.ar/images/team/bcia/4",
+  "libertad": "https://api.promiedos.com.ar/images/team/bcig/4",
+  "club libertad": "https://api.promiedos.com.ar/images/team/bcig/4",
+  "guarani": "https://api.promiedos.com.ar/images/team/hhdj/4",
+  "club guarani": "https://api.promiedos.com.ar/images/team/hhdj/4",
+  "sportivo ameliano": "https://api.promiedos.com.ar/images/team/fgfii/4",
+  "ameliano": "https://api.promiedos.com.ar/images/team/fgfii/4",
+  "sportivo trinidense": "https://api.promiedos.com.ar/images/team/begea/4",
+  "trinidense": "https://api.promiedos.com.ar/images/team/begea/4",
+  "luqueño": "https://api.promiedos.com.ar/images/team/ihhi/4",
+  "sportivo luqueño": "https://api.promiedos.com.ar/images/team/ihhi/4",
+  "2 de mayo": "https://api.promiedos.com.ar/images/team/begec/4",
+  "rubio ñu": "https://api.promiedos.com.ar/images/team/ihhe/4",
+  "recoleta": "https://api.promiedos.com.ar/images/team/fdcaj/4",
+  "cs san lorenzo": "https://api.promiedos.com.ar/images/team/begde/4",
+
+  // === LIGA AUF URUGUAY ===
+  "peñarol": "https://api.promiedos.com.ar/images/team/hhgg/4",
+  "penarol": "https://api.promiedos.com.ar/images/team/hhgg/4",
+  "nacional": "https://api.promiedos.com.ar/images/team/hehi/4",
+  "nacional uruguay": "https://api.promiedos.com.ar/images/team/hehi/4",
+  "defensor": "https://api.promiedos.com.ar/images/team/hgdj/4",
+  "defensor sporting": "https://api.promiedos.com.ar/images/team/hgdj/4",
+  "danubio": "https://api.promiedos.com.ar/images/team/igbb/4",
+  "danubio fc": "https://api.promiedos.com.ar/images/team/igbb/4",
+  "wanderers": "https://api.promiedos.com.ar/images/team/igbe/4",
+  "montevideo wanderers": "https://api.promiedos.com.ar/images/team/igbe/4",
+  "cerro largo": "https://api.promiedos.com.ar/images/team/igbi/4",
+  "cerro": "https://api.promiedos.com.ar/images/team/hehh/4",
+  "boston river": "https://api.promiedos.com.ar/images/team/bcghd/4",
+  "progreso": "https://api.promiedos.com.ar/images/team/babjb/4",
+  "ca progreso": "https://api.promiedos.com.ar/images/team/babjb/4",
+  "juventud": "https://api.promiedos.com.ar/images/team/babjc/4",
+  "juventud las piedras": "https://api.promiedos.com.ar/images/team/babjc/4",
+  "racing": "https://api.promiedos.com.ar/images/team/haih/4",
+  "racing montevideo": "https://api.promiedos.com.ar/images/team/haih/4",
+  "liverpool": "https://api.promiedos.com.ar/images/team/idfi/4",
+  "liverpool montevideo": "https://api.promiedos.com.ar/images/team/idfi/4",
+  "deportivo maldonado": "https://api.promiedos.com.ar/images/team/beagc/4",
+  "maldonado": "https://api.promiedos.com.ar/images/team/beagc/4",
+  "torque": "https://api.promiedos.com.ar/images/team/bcghf/4",
+  "montevideo city torque": "https://api.promiedos.com.ar/images/team/bcghf/4",
+  "albion": "https://api.promiedos.com.ar/images/team/fbfcc/4",
+  "albion fc": "https://api.promiedos.com.ar/images/team/fbfcc/4",
+  "central español": "https://api.promiedos.com.ar/images/team/babjd/4",
+
+
+  // === SELECCIONES ===
+  // AMÉRICA DEL SUR
+  "argentina": "https://flagcdn.com/h240/ar.png",
+  "brasil": "https://flagcdn.com/h240/br.png",
+  "brazil": "https://flagcdn.com/h240/br.png",
+  "uruguay": "https://flagcdn.com/h240/uy.png",
+  "chile": "https://flagcdn.com/h240/cl.png",
+  "colombia": "https://flagcdn.com/h240/co.png",
+  "peru": "https://flagcdn.com/h240/pe.png",
+  "paraguay": "https://flagcdn.com/h240/py.png",
+  "bolivia": "https://flagcdn.com/h240/bo.png",
+  "ecuador": "https://flagcdn.com/h240/ec.png",
+  "venezuela": "https://flagcdn.com/h240/ve.png",
+  "guyana": "https://flagcdn.com/h240/gy.png",
+  "surinam": "https://flagcdn.com/h240/sr.png",
+  "suriname": "https://flagcdn.com/h240/sr.png",
+
+  // AMÉRICA CENTRAL Y CARIBE
+  "mexico": "https://flagcdn.com/h240/mx.png",
+  "méxico": "https://flagcdn.com/h240/mx.png",
+  "guatemala": "https://flagcdn.com/h240/gt.png",
+  "honduras": "https://flagcdn.com/h240/hn.png",
+  "el salvador": "https://flagcdn.com/h240/sv.png",
+  "nicaragua": "https://flagcdn.com/h240/ni.png",
+  "costa rica": "https://flagcdn.com/h240/cr.png",
+  "panama": "https://flagcdn.com/h240/pa.png",
+  "panamá": "https://flagcdn.com/h240/pa.png",
+  "cuba": "https://flagcdn.com/h240/cu.png",
+  "republica dominicana": "https://flagcdn.com/h240/do.png",
+  "república dominicana": "https://flagcdn.com/h240/do.png",
+  "dominican republic": "https://flagcdn.com/h240/do.png",
+  "haiti": "https://flagcdn.com/h240/ht.png",
+  "haití": "https://flagcdn.com/h240/ht.png",
+  "jamaica": "https://flagcdn.com/h240/jm.png",
+  "trinidad y tobago": "https://flagcdn.com/h240/tt.png",
+  "trinidad and tobago": "https://flagcdn.com/h240/tt.png",
+  "puerto rico": "https://flagcdn.com/h240/pr.png",
+
+  // AMÉRICA DEL NORTE
+  "estados unidos": "https://flagcdn.com/h240/us.png",
+  "usa": "https://flagcdn.com/h240/us.png",
+  "united states": "https://flagcdn.com/h240/us.png",
+  "canada": "https://flagcdn.com/h240/ca.png",
+
+  // EUROPA - OCCIDENTAL
+  "espana": "https://flagcdn.com/h240/es.png",
+  "españa": "https://flagcdn.com/h240/es.png",
+  "spain": "https://flagcdn.com/h240/es.png",
+  "francia": "https://flagcdn.com/h240/fr.png",
+  "france": "https://flagcdn.com/h240/fr.png",
+  "alemania": "https://flagcdn.com/h240/de.png",
+  "germany": "https://flagcdn.com/h240/de.png",
+  "italia": "https://flagcdn.com/h240/it.png",
+  "italy": "https://flagcdn.com/h240/it.png",
+  "inglaterra": "https://flagcdn.com/h240/gb-eng.png",
+  "england": "https://flagcdn.com/h240/gb-eng.png",
+  "portugal": "https://flagcdn.com/h240/pt.png",
+  "holanda": "https://flagcdn.com/h240/nl.png",
+  "paises bajos": "https://flagcdn.com/h240/nl.png",
+  "países bajos": "https://flagcdn.com/h240/nl.png",
+  "netherlands": "https://flagcdn.com/h240/nl.png",
+  "belgica": "https://flagcdn.com/h240/be.png",
+  "bélgica": "https://flagcdn.com/h240/be.png",
+  "belgium": "https://flagcdn.com/h240/be.png",
+  "suiza": "https://flagcdn.com/h240/ch.png",
+  "switzerland": "https://flagcdn.com/h240/ch.png",
+  "austria": "https://flagcdn.com/h240/at.png",
+  "irlanda": "https://flagcdn.com/h240/ie.png",
+  "ireland": "https://flagcdn.com/h240/ie.png",
+  "gales": "https://flagcdn.com/h240/gb-wls.png",
+  "wales": "https://flagcdn.com/h240/gb-wls.png",
+  "escocia": "https://flagcdn.com/h240/gb-sct.png",
+  "scotland": "https://flagcdn.com/h240/gb-sct.png",
+  "irlanda del norte": "https://flagcdn.com/h240/gb-nir.png",
+  "northern ireland": "https://flagcdn.com/h240/gb-nir.png",
+
+  // EUROPA - NÓRDICA
+  "suecia": "https://flagcdn.com/h240/se.png",
+  "sweden": "https://flagcdn.com/h240/se.png",
+  "noruega": "https://flagcdn.com/h240/no.png",
+  "norway": "https://flagcdn.com/h240/no.png",
+  "dinamarca": "https://flagcdn.com/h240/dk.png",
+  "denmark": "https://flagcdn.com/h240/dk.png",
+  "finlandia": "https://flagcdn.com/h240/fi.png",
+  "finland": "https://flagcdn.com/h240/fi.png",
+  "islandia": "https://flagcdn.com/h240/is.png",
+  "iceland": "https://flagcdn.com/h240/is.png",
+
+  // EUROPA - ORIENTAL
+  "polonia": "https://flagcdn.com/h240/pl.png",
+  "poland": "https://flagcdn.com/h240/pl.png",
+  "checa": "https://flagcdn.com/h240/cz.png",
+  "republica checa": "https://flagcdn.com/h240/cz.png",
+  "república checa": "https://flagcdn.com/h240/cz.png",
+  "czech republic": "https://flagcdn.com/h240/cz.png",
+  "eslovaquia": "https://flagcdn.com/h240/sk.png",
+  "slovakia": "https://flagcdn.com/h240/sk.png",
+  "hungria": "https://flagcdn.com/h240/hu.png",
+  "hungría": "https://flagcdn.com/h240/hu.png",
+  "hungary": "https://flagcdn.com/h240/hu.png",
+  "rumania": "https://flagcdn.com/h240/ro.png",
+  "romania": "https://flagcdn.com/h240/ro.png",
+  "bulgaria": "https://flagcdn.com/h240/bg.png",
+  "croacia": "https://flagcdn.com/h240/hr.png",
+  "croatia": "https://flagcdn.com/h240/hr.png",
+  "eslovenia": "https://flagcdn.com/h240/si.png",
+  "slovenia": "https://flagcdn.com/h240/si.png",
+  "serbia": "https://flagcdn.com/h240/rs.png",
+  "bosnia": "https://flagcdn.com/h240/ba.png",
+  "bosnia y herzegovina": "https://flagcdn.com/h240/ba.png",
+  "bosnia and herzegovina": "https://flagcdn.com/h240/ba.png",
+  "montenegro": "https://flagcdn.com/h240/me.png",
+  "macedonia": "https://flagcdn.com/h240/mk.png",
+  "macedonia del norte": "https://flagcdn.com/h240/mk.png",
+  "north macedonia": "https://flagcdn.com/h240/mk.png",
+  "albania": "https://flagcdn.com/h240/al.png",
+  "kosovo": "https://flagcdn.com/h240/xk.png",
+
+  // EUROPA - BÁLTICA
+  "ucrania": "https://flagcdn.com/h240/ua.png",
+  "ukraine": "https://flagcdn.com/h240/ua.png",
+  "bielorrusia": "https://flagcdn.com/h240/by.png",
+  "belarus": "https://flagcdn.com/h240/by.png",
+  "lituania": "https://flagcdn.com/h240/lt.png",
+  "lithuania": "https://flagcdn.com/h240/lt.png",
+  "letonia": "https://flagcdn.com/h240/lv.png",
+  "latvia": "https://flagcdn.com/h240/lv.png",
+  "estonia": "https://flagcdn.com/h240/ee.png",
+  "moldavia": "https://flagcdn.com/h240/md.png",
+  "moldova": "https://flagcdn.com/h240/md.png",
+
+  // EUROPA - SUR
+  "grecia": "https://flagcdn.com/h240/gr.png",
+  "greece": "https://flagcdn.com/h240/gr.png",
+  "turquia": "https://flagcdn.com/h240/tr.png",
+  "turquía": "https://flagcdn.com/h240/tr.png",
+  "turkey": "https://flagcdn.com/h240/tr.png",
+  "chipre": "https://flagcdn.com/h240/cy.png",
+  "cyprus": "https://flagcdn.com/h240/cy.png",
+  "malta": "https://flagcdn.com/h240/mt.png",
+  "luxemburgo": "https://flagcdn.com/h240/lu.png",
+  "luxembourg": "https://flagcdn.com/h240/lu.png",
+  "liechtenstein": "https://flagcdn.com/h240/li.png",
+  "andorra": "https://flagcdn.com/h240/ad.png",
+  "san marino": "https://flagcdn.com/h240/sm.png",
+  "monaco": "https://flagcdn.com/h240/mc.png",
+  "mónaco": "https://flagcdn.com/h240/mc.png",
+  "vaticano": "https://flagcdn.com/h240/va.png",
+  "vatican": "https://flagcdn.com/h240/va.png",
+
+  // EUROPA - RUSIA
+  "rusia": "https://flagcdn.com/h240/ru.png",
+  "russia": "https://flagcdn.com/h240/ru.png",
+
+  // ASIA - ORIENTAL
+  "japon": "https://flagcdn.com/h240/jp.png",
+  "japón": "https://flagcdn.com/h240/jp.png",
+  "japan": "https://flagcdn.com/h240/jp.png",
+  "corea del sur": "https://flagcdn.com/h240/kr.png",
+  "south korea": "https://flagcdn.com/h240/kr.png",
+  "corea del norte": "https://flagcdn.com/h240/kp.png",
+  "north korea": "https://flagcdn.com/h240/kp.png",
+  "china": "https://flagcdn.com/h240/cn.png",
+  "mongolia": "https://flagcdn.com/h240/mn.png",
+  "taiwan": "https://flagcdn.com/h240/tw.png",
+  "hong kong": "https://flagcdn.com/h240/hk.png",
+
+  // ASIA - SUDESTE
+  "tailandia": "https://flagcdn.com/h240/th.png",
+  "thailand": "https://flagcdn.com/h240/th.png",
+  "vietnam": "https://flagcdn.com/h240/vn.png",
+  "malasia": "https://flagcdn.com/h240/my.png",
+  "malaysia": "https://flagcdn.com/h240/my.png",
+  "singapur": "https://flagcdn.com/h240/sg.png",
+  "singapore": "https://flagcdn.com/h240/sg.png",
+  "indonesia": "https://flagcdn.com/h240/id.png",
+  "filipinas": "https://flagcdn.com/h240/ph.png",
+  "philippines": "https://flagcdn.com/h240/ph.png",
+  "myanmar": "https://flagcdn.com/h240/mm.png",
+  "camboya": "https://flagcdn.com/h240/kh.png",
+  "cambodia": "https://flagcdn.com/h240/kh.png",
+  "laos": "https://flagcdn.com/h240/la.png",
+  "brunei": "https://flagcdn.com/h240/bn.png",
+  "timor oriental": "https://flagcdn.com/h240/tl.png",
+  "east timor": "https://flagcdn.com/h240/tl.png",
+
+  // ASIA - SUR
+  "india": "https://flagcdn.com/h240/in.png",
+  "pakistan": "https://flagcdn.com/h240/pk.png",
+  "bangladesh": "https://flagcdn.com/h240/bd.png",
+  "sri lanka": "https://flagcdn.com/h240/lk.png",
+  "nepal": "https://flagcdn.com/h240/np.png",
+  "butan": "https://flagcdn.com/h240/bt.png",
+  "bhutan": "https://flagcdn.com/h240/bt.png",
+  "maldivas": "https://flagcdn.com/h240/mv.png",
+  "maldives": "https://flagcdn.com/h240/mv.png",
+
+  // ASIA - OCCIDENTAL (MEDIO ORIENTE)
+  "iran": "https://flagcdn.com/h240/ir.png",
+  "irán": "https://flagcdn.com/h240/ir.png",
+  "iraq": "https://flagcdn.com/h240/iq.png",
+  "irak": "https://flagcdn.com/h240/iq.png",
+  "arabia saudita": "https://flagcdn.com/h240/sa.png",
+  "saudi arabia": "https://flagcdn.com/h240/sa.png",
+  "emiratos arabes": "https://flagcdn.com/h240/ae.png",
+  "emiratos árabes": "https://flagcdn.com/h240/ae.png",
+  "united arab emirates": "https://flagcdn.com/h240/ae.png",
+  "qatar": "https://flagcdn.com/h240/qa.png",
+  "kuwait": "https://flagcdn.com/h240/kw.png",
+  "bahrain": "https://flagcdn.com/h240/bh.png",
+  "barein": "https://flagcdn.com/h240/bh.png",
+  "oman": "https://flagcdn.com/h240/om.png",
+  "yemen": "https://flagcdn.com/h240/ye.png",
+  "israel": "https://flagcdn.com/h240/il.png",
+  "jordania": "https://flagcdn.com/h240/jo.png",
+  "jordan": "https://flagcdn.com/h240/jo.png",
+  "libano": "https://flagcdn.com/h240/lb.png",
+  "líbano": "https://flagcdn.com/h240/lb.png",
+  "lebanon": "https://flagcdn.com/h240/lb.png",
+  "siria": "https://flagcdn.com/h240/sy.png",
+  "syria": "https://flagcdn.com/h240/sy.png",
+  "afganistan": "https://flagcdn.com/h240/af.png",
+  "afganistán": "https://flagcdn.com/h240/af.png",
+  "afghanistan": "https://flagcdn.com/h240/af.png",
+
+  // ASIA - CENTRAL
+  "uzbekistan": "https://flagcdn.com/h240/uz.png",
+  "uzbekistán": "https://flagcdn.com/h240/uz.png",
+  "kazajistan": "https://flagcdn.com/h240/kz.png",
+  "kazajistán": "https://flagcdn.com/h240/kz.png",
+  "kazakhstan": "https://flagcdn.com/h240/kz.png",
+  "kirguistan": "https://flagcdn.com/h240/kg.png",
+  "kirguistán": "https://flagcdn.com/h240/kg.png",
+  "kyrgyzstan": "https://flagcdn.com/h240/kg.png",
+  "tayikistan": "https://flagcdn.com/h240/tj.png",
+  "tayikistán": "https://flagcdn.com/h240/tj.png",
+  "tajikistan": "https://flagcdn.com/h240/tj.png",
+  "turkmenistan": "https://flagcdn.com/h240/tm.png",
+  "turkmenistán": "https://flagcdn.com/h240/tm.png",
+  "azerbaiyan": "https://flagcdn.com/h240/az.png",
+  "azerbaiyán": "https://flagcdn.com/h240/az.png",
+  "azerbaijan": "https://flagcdn.com/h240/az.png",
+  "armenia": "https://flagcdn.com/h240/am.png",
+  "georgia": "https://flagcdn.com/h240/ge.png",
+
+  // ÁFRICA - NORTE
+  "marruecos": "https://flagcdn.com/h240/ma.png",
+  "morocco": "https://flagcdn.com/h240/ma.png",
+  "argelia": "https://flagcdn.com/h240/dz.png",
+  "algeria": "https://flagcdn.com/h240/dz.png",
+  "tunez": "https://flagcdn.com/h240/tn.png",
+  "túnez": "https://flagcdn.com/h240/tn.png",
+  "tunisia": "https://flagcdn.com/h240/tn.png",
+  "libia": "https://flagcdn.com/h240/ly.png",
+  "libya": "https://flagcdn.com/h240/ly.png",
+  "egipto": "https://flagcdn.com/h240/eg.png",
+  "egypt": "https://flagcdn.com/h240/eg.png",
+  "sudan": "https://flagcdn.com/h240/sd.png",
+
+  // ÁFRICA - OCCIDENTAL
+  "senegal": "https://flagcdn.com/h240/sn.png",
+  "mali": "https://flagcdn.com/h240/ml.png",
+  "burkina faso": "https://flagcdn.com/h240/bf.png",
+  "costa de marfil": "https://flagcdn.com/h240/ci.png",
+  "cote d'ivoire": "https://flagcdn.com/h240/ci.png",
+  "ghana": "https://flagcdn.com/h240/gh.png",
+  "nigeria": "https://flagcdn.com/h240/ng.png",
+  "niger": "https://flagcdn.com/h240/ne.png",
+  "guinea": "https://flagcdn.com/h240/gn.png",
+  "guinea ecuatorial": "https://flagcdn.com/h240/gq.png",
+  "equatorial guinea": "https://flagcdn.com/h240/gq.png",
+  "guinea-bissau": "https://flagcdn.com/h240/gw.png",
+  "gambia": "https://flagcdn.com/h240/gm.png",
+  "sierra leona": "https://flagcdn.com/h240/sl.png",
+  "liberia": "https://flagcdn.com/h240/lr.png",
+  "mauritania": "https://flagcdn.com/h240/mr.png",
+  "cabo verde": "https://flagcdn.com/h240/cv.png",
+  "cape verde": "https://flagcdn.com/h240/cv.png",
+  "benin": "https://flagcdn.com/h240/bj.png",
+  "togo": "https://flagcdn.com/h240/tg.png",
+
+  // ÁFRICA - CENTRAL
+  "camerun": "https://flagcdn.com/h240/cm.png",
+  "cameroon": "https://flagcdn.com/h240/cm.png",
+  "chad": "https://flagcdn.com/h240/td.png",
+  "republica centroafricana": "https://flagcdn.com/h240/cf.png",
+  "central african republic": "https://flagcdn.com/h240/cf.png",
+  "gabon": "https://flagcdn.com/h240/ga.png",
+  "santo tome": "https://flagcdn.com/h240/st.png",
+  "sao tome and principe": "https://flagcdn.com/h240/st.png",
+  "republica del congo": "https://flagcdn.com/h240/cg.png",
+  "república del congo": "https://flagcdn.com/h240/cg.png",
+  "republic of the congo": "https://flagcdn.com/h240/cg.png",
+  "rd congo": "https://flagcdn.com/h240/cd.png",
+  "democratic republic of the congo": "https://flagcdn.com/h240/cd.png",
+  "angola": "https://flagcdn.com/h240/ao.png",
+
+  // ÁFRICA - ORIENTAL
+  "etiopia": "https://flagcdn.com/h240/et.png",
+  "ethiopia": "https://flagcdn.com/h240/et.png",
+  "eritrea": "https://flagcdn.com/h240/er.png",
+  "somalia": "https://flagcdn.com/h240/so.png",
+  "kenia": "https://flagcdn.com/h240/ke.png",
+  "kenya": "https://flagcdn.com/h240/ke.png",
+  "uganda": "https://flagcdn.com/h240/ug.png",
+  "tanzania": "https://flagcdn.com/h240/tz.png",
+  "ruanda": "https://flagcdn.com/h240/rw.png",
+  "rwanda": "https://flagcdn.com/h240/rw.png",
+  "burundi": "https://flagcdn.com/h240/bi.png",
+  "djibouti": "https://flagcdn.com/h240/dj.png",
+  "yibuti": "https://flagcdn.com/h240/dj.png",
+
+  // ÁFRICA - AUSTRAL
+  "sudafrica": "https://flagcdn.com/h240/za.png",
+  "sudáfrica": "https://flagcdn.com/h240/za.png",
+  "south africa": "https://flagcdn.com/h240/za.png",
+  "namibia": "https://flagcdn.com/h240/na.png",
+  "botsuana": "https://flagcdn.com/h240/bw.png",
+  "botswana": "https://flagcdn.com/h240/bw.png",
+  "zimbabwe": "https://flagcdn.com/h240/zw.png",
+  "zambia": "https://flagcdn.com/h240/zm.png",
+  "malaui": "https://flagcdn.com/h240/mw.png",
+  "malawi": "https://flagcdn.com/h240/mw.png",
+  "mozambique": "https://flagcdn.com/h240/mz.png",
+  "madagascar": "https://flagcdn.com/h240/mg.png",
+  "mauricio": "https://flagcdn.com/h240/mu.png",
+  "mauritius": "https://flagcdn.com/h240/mu.png",
+  "seychelles": "https://flagcdn.com/h240/sc.png",
+  "suazilandia": "https://flagcdn.com/h240/sz.png",
+  "eswatini": "https://flagcdn.com/h240/sz.png",
+  "lesoto": "https://flagcdn.com/h240/ls.png",
+  "lesotho": "https://flagcdn.com/h240/ls.png",
+  "comoras": "https://flagcdn.com/h240/km.png",
+  "comoros": "https://flagcdn.com/h240/km.png",
+
+  // OCEANÍA
+  "australia": "https://flagcdn.com/h240/au.png",
+  "nueva zelanda": "https://flagcdn.com/h240/nz.png",
+  "new zealand": "https://flagcdn.com/h240/nz.png",
+  "fiyi": "https://flagcdn.com/h240/fj.png",
+  "fiji": "https://flagcdn.com/h240/fj.png",
+  "papua nueva guinea": "https://flagcdn.com/h240/pg.png",
+  "papua new guinea": "https://flagcdn.com/h240/pg.png",
+  "samoa": "https://flagcdn.com/h240/ws.png",
+  "tonga": "https://flagcdn.com/h240/to.png",
+  "vanuatu": "https://flagcdn.com/h240/vu.png",
+  "islas salomon": "https://flagcdn.com/h240/sb.png",
+  "solomon islands": "https://flagcdn.com/h240/sb.png",
+  "palau": "https://flagcdn.com/h240/pw.png",
+  "nauru": "https://flagcdn.com/h240/nr.png",
+  "kiribati": "https://flagcdn.com/h240/ki.png",
+  "tuvalu": "https://flagcdn.com/h240/tv.png",
+  "islas marshall": "https://flagcdn.com/h240/mh.png",
+  "marshall islands": "https://flagcdn.com/h240/mh.png",
+  "micronesia": "https://flagcdn.com/h240/fm.png",
+  "samoa americana": "https://flagcdn.com/h240/as.png",
+  "american samoa": "https://flagcdn.com/h240/as.png",
+  "guam": "https://flagcdn.com/h240/gu.png",
+  "islas cook": "https://flagcdn.com/h240/ck.png",
+  "cook islands": "https://flagcdn.com/h240/ck.png",
+  "niue": "https://flagcdn.com/h240/nu.png",
+  "polinesia francesa": "https://flagcdn.com/h240/pf.png",
+  "french polynesia": "https://flagcdn.com/h240/pf.png",
+  "nueva caledonia": "https://flagcdn.com/h240/nc.png",
+  "new caledonia": "https://flagcdn.com/h240/nc.png",
+
+  // OTROS TERRITORIOS
+  "islas virgenes": "https://flagcdn.com/h240/vi.png",
+  "virgin islands": "https://flagcdn.com/h240/vi.png",
+  "bermudas": "https://flagcdn.com/h240/bm.png",
+  "bermuda": "https://flagcdn.com/h240/bm.png",
+  "aruba": "https://flagcdn.com/h240/aw.png",
+  "curazao": "https://flagcdn.com/h240/cw.png",
+  "curaçao": "https://flagcdn.com/h240/cw.png",
+  "curacao": "https://flagcdn.com/h240/cw.png",
+  "islas cayman": "https://flagcdn.com/h240/ky.png",
+  "cayman islands": "https://flagcdn.com/h240/ky.png",
+  "turks y caicos": "https://flagcdn.com/h240/tc.png",
+  "turks and caicos": "https://flagcdn.com/h240/tc.png",
+  "groenlandia": "https://flagcdn.com/h240/gl.png",
+  "greenland": "https://flagcdn.com/h240/gl.png",
+  "islas feroe": "https://flagcdn.com/h240/fo.png",
+  "faroe islands": "https://flagcdn.com/h240/fo.png",
+  "gibraltar": "https://flagcdn.com/h240/gi.png",
+  "malvinas": "https://flagcdn.com/h240/fk.png",
+  "falkland islands": "https://flagcdn.com/h240/fk.png",
+  "antartida": "https://flagcdn.com/h240/aq.png",
+  "antarctica": "https://flagcdn.com/h240/aq.png",
+};
+
+// =====================================================
 // DATOS DE EVENTOS
 // =====================================================
 const eventsData = [
@@ -854,64 +1814,99 @@ const eventsData = [
   { time: "22:10", match: "Liga BetPlay: Atlético Bucaramanga vs Santa Fe", link: "https://streamx339.cloud/global1.php?channel=winplus" },
   { time: "22:10", match: "Liga BetPlay: Atlético Bucaramanga vs Santa Fe", link: "https://streamx339.cloud/global1.php?channel=winplus2" },
   { time: "22:15", match: "Copa Argentina: Belgrano vs Atlético Rafaela", link: "https://streamx339.cloud/global1.php?channel=tyc" },
-  { time: "22:15", match: "Copa Argentina: Belgrano vs Atlético Rafaela", link: "https://streamx339.cloud/global1.php?channel=tycint" },
-  { time: "23:30", match: "F1 | GP de Japón: Entrenamientos #3", link: "https://streamx339.cloud/global1.php?channel=disney1" },
-  { time: "23:30", match: "F1 | GP de Japón: Entrenamientos #3", link: "https://streamx339.cloud/global1.php?channel=daznf1" },
-  { time: "23:30", match: "F1 | GP de Japón: Entrenamientos #3", link: "https://streamx339.cloud/global1.php?channel=fox1ar" },
-  { time: "23:30", match: "F1 | GP de Japón: Entrenamientos #3", link: "https://streamx339.cloud/global1.php?channel=sportv3" },
-  { time: "03:00", match: "F1 | GP de Japón: Clasificación", link: "https://streamx339.cloud/global1.php?channel=disney1" },
-  { time: "03:00", match: "F1 | GP de Japón: Clasificación", link: "https://streamx339.cloud/global1.php?channel=daznf1" },
-  { time: "03:00", match: "F1 | GP de Japón: Clasificación", link: "https://streamx339.cloud/global1.php?channel=espn" },
-  { time: "03:00", match: "F1 | GP de Japón: Clasificación", link: "https://streamx339.cloud/global1.php?channel=fox1ar" },
-  { time: "03:00", match: "F1 | GP de Japón: Clasificación", link: "https://streamx339.cloud/global1.php?channel=sportv3" }
+  { time: "22:15", match: "Copa Argentina: Belgrano vs Atlético Rafaela", link: "https://streamx339.cloud/global1.php?channel=tycint" }
 ];
 
 const leagueMap = {
-  'Super Lig': 'Super Lig',
-  'UEFA Champions League': 'UCL',
-  'UEFA Europa League': 'UEL',
-  'Liga BetPlay': 'BetPlay',
-  'Copa de Primera': 'Primera',
-  'Liga Profesional': 'LPF',
-  'CONCACAF Champions Cup': 'Concacaf',
-  'Brasileirão': 'Brasil',
-  'Copa del Rey de Arabia': 'Arabia',
-  'Liga MX': 'Liga MX',
-  'Amistoso Internacional': 'Amistoso',
-  'Copa Argentina': 'Copa Arg',
-  'F1 | GP de Japón': 'F1'
+  'Super Lig': 'Super Lig', 'UEFA Champions League': 'UCL', 'UEFA Europa League': 'UEL',
+  'Liga BetPlay': 'BetPlay', 'Copa de Primera': 'Primera', 'Liga Profesional': 'LPF',
+  'CONCACAF Champions Cup': 'Concacaf', 'Brasileirão': 'Brasil', 'Copa del Rey de Arabia': 'Arabia',
+  'Liga MX': 'Liga MX', 'Amistoso Internacional': 'Amistoso', 'Copa Argentina': 'Copa Arg', 'F1 | GP de Japón': 'F1'
 };
 
 const channelNameMap = {
   'disney1': 'Disney+ 1', 'disney2': 'Disney+ 2', 'disney3': 'Disney+ 3', 'disney4': 'Disney+ 4',
   'disney5': 'Disney+ 5', 'disney6': 'Disney+ 6', 'disney7': 'Disney+ 7', 'disney8': 'Disney+ 8',
-  'max1': 'Max 1', 'max2': 'Max 2', 'max3': 'Max 3',
-  'espn': 'ESPN', 'espn2': 'ESPN 2', 'espn3': 'ESPN 3', 'espn5': 'ESPN 5',
-  'espnmx': 'ESPN MX', 'espnpremium': 'ESPN Premium',
-  'tudnus': 'TUDN',
-  'fox1ar': 'Fox Sports 1 AR', 'fox2ar': 'Fox Sports 2 AR',
-  'foxone1': 'Fox Sports 1', 'foxone2': 'Fox Sports 2', 'foxone3': 'Fox Sports 3', 'foxone4': 'Fox Sports 4',
-  'foxdeportes': 'Fox Deportes',
-  'paramount1': 'Paramount+ 1', 'paramount2': 'Paramount+ 2', 'paramount3': 'Paramount+ 3', 'paramount4': 'Paramount+ 4',
-  'winplus': 'Win Sports+', 'winplus2': 'Win Sports+ 2',
-  'fanatiz1': 'Fanatiz 1', 'fanatiz2': 'Fanatiz 2', 'fanatiz3': 'Fanatiz 3', 'fanatiz4': 'Fanatiz 4',
-  'fanatiz5': 'Fanatiz 5', 'fanatiz6': 'Fanatiz 6', 'fanatiz7': 'Fanatiz 7', 'fanatiz8': 'Fanatiz 8',
-  'fanatiz9': 'Fanatiz 9', 'fanatiz10': 'Fanatiz 10',
-  'tntar': 'TNT Sports', 'tnt1uk': 'TNT Sports UK',
-  'tyc': 'TyC Sports', 'tycint': 'TyC Sports Int',
-  'winsports': 'Win Sports',
-  'premiere1': 'Premiere 1', 'premiere3': 'Premiere 3', 'premiere4': 'Premiere 4',
-  'premiere5': 'Premiere 5', 'premiere6': 'Premiere 6', 'premiere7': 'Premiere 7',
-  'universo': 'Universo',
-  'clarosports': 'Claro Sports',
-  'telefe': 'Telefe',
-  'daznf1': 'DAZN F1',
-  'sportv1': 'Sportv 1', 'sportv3': 'Sportv 3'
+  'max1': 'Max 1', 'max2': 'Max 2', 'max3': 'Max 3', 'espn': 'ESPN', 'espn2': 'ESPN 2', 'espn3': 'ESPN 3',
+  'espn5': 'ESPN 5', 'espnmx': 'ESPN MX', 'espnpremium': 'ESPN Premium', 'tudnus': 'TUDN',
+  'fox1ar': 'Fox Sports 1 AR', 'fox2ar': 'Fox Sports 2 AR', 'foxdeportes': 'Fox Deportes',
+  'paramount1': 'Paramount+ 1', 'paramount2': 'Paramount+ 2', 'winplus': 'Win Sports+',
+  'winplus2': 'Win Sports+ 2', 'fanatiz1': 'Fanatiz 1', 'fanatiz2': 'Fanatiz 2', 'fanatiz3': 'Fanatiz 3',
+  'tyc': 'TyC Sports', 'tycint': 'TyC Sports Int', 'clarosports': 'Claro Sports',
+  'telefe': 'Telefe', 'daznf1': 'DAZN F1', 'sportv1': 'Sportv 1', 'sportv3': 'Sportv 3'
 };
 
 // Estado global
 let groupedEventsCache = [];
 let openDropdowns = new Set();
+
+// =====================================================
+// FUNCIONES DE ESCUDOS
+// =====================================================
+
+function normalizeTeamName(name) {
+  if (!name) return "";
+  return name.toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9\s]/g, "")
+    .replace(/\s+/g, " ").trim();
+}
+
+function getTeamLogo(teamName) {
+  if (!teamName) return null;
+  const normalized = normalizeTeamName(teamName);
+  
+  // Búsqueda directa
+  if (teamLogosDB[normalized]) return teamLogosDB[normalized];
+  
+  // Búsqueda con variaciones
+  const variations = [
+    normalized, normalized.replace(/fc$/i, "").trim(),
+    normalized.replace(/^club/i, "").trim(), normalized.replace(/cf$/i, "").trim(),
+    normalized.replace(/^cd/i, "").trim(), normalized.replace(/^ca/i, "").trim(),
+    normalized.replace(/^rcd/i, "").trim(), normalized.replace(/^rc/i, "").trim(),
+    normalized.replace(/sc$/i, "").trim(), normalized.replace(/^ac/i, "").trim()
+  ];
+  
+  for (const variation of variations) {
+    if (teamLogosDB[variation]) return teamLogosDB[variation];
+  }
+  
+  // Búsqueda parcial
+  for (const [key, url] of Object.entries(teamLogosDB)) {
+    if (normalized.includes(key) || key.includes(normalized)) return url;
+  }
+  
+  return null;
+}
+
+function extractTeamsFromMatch(matchText) {
+  const withoutCompetition = matchText.replace(/^[^:]+:\s*/, '');
+  const vsMatch = withoutCompetition.match(/(.+?)\s+vs\s+(.+)/i);
+  if (vsMatch) {
+    return { team1: vsMatch[1].trim(), team2: vsMatch[2].trim() };
+  }
+  return { team1: withoutCompetition, team2: null };
+}
+
+function generateMatchHTML(matchText) {
+  const { team1, team2 } = extractTeamsFromMatch(matchText);
+  const logo1 = getTeamLogo(team1);
+  const logo2 = getTeamLogo(team2);
+  
+  const logo1HTML = logo1 
+    ? `<img src="${logo1}" alt="${team1}" class="team-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><div class="team-logo-placeholder" style="display:none;"></div>`
+    : `<div class="team-logo-placeholder"></div>`;
+    
+  const logo2HTML = logo2 
+    ? `<img src="${logo2}" alt="${team2}" class="team-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><div class="team-logo-placeholder" style="display:none;"></div>`
+    : `<div class="team-logo-placeholder"></div>`;
+  
+  return `
+    <div class="team-section">${logo1HTML}<span>${team1}</span></div>
+    ${team2 ? `<span class="vs-text">VS</span><div class="team-section">${logo2HTML}<span>${team2}</span></div>` : ''}
+  `;
+}
 
 // =====================================================
 // FUNCIONES UTILITARIAS
@@ -935,7 +1930,6 @@ function formatChannelName(channel) {
 
 function groupEventsByMatch(events) {
   const grouped = {};
-  
   events.forEach(ev => {
     const key = `${ev.time}_${ev.match}`;
     if (!grouped[key]) {
@@ -946,11 +1940,9 @@ function groupEventsByMatch(events) {
       grouped[key].channels.push({ name: channel, link: ev.link, displayName: formatChannelName(channel) });
     }
   });
-  
   Object.values(grouped).forEach(group => {
     group.channels.sort((a, b) => a.displayName.localeCompare(b.displayName));
   });
-  
   return Object.values(grouped);
 }
 
@@ -965,19 +1957,9 @@ function getStatus(eventTime) {
   const now = new Date();
   const start = getEventDate(eventTime);
   const end = new Date(start.getTime() + 2 * 60 * 60 * 1000);
-
   if (now < start) return "PROXIMO";
   if (now >= start && now <= end) return "EN VIVO";
   return "FINALIZADO";
-}
-
-function extractTeams(matchText) {
-  const withoutCompetition = matchText.replace(/^[^:]+:\s*/, '');
-  const vsMatch = withoutCompetition.match(/(.+?)\s+vs\s+(.+)/i);
-  if (vsMatch) {
-    return { team1: vsMatch[1].trim(), team2: vsMatch[2].trim() };
-  }
-  return { team1: withoutCompetition, team2: null };
 }
 
 // =====================================================
@@ -998,8 +1980,6 @@ function updateStats(list) {
 function toggleDropdown(matchId) {
   const dropdown = document.getElementById(`dropdown-${matchId}`);
   const chevron = document.getElementById(`chevron-${matchId}`);
-  
-  // Cerrar otros dropdowns
   openDropdowns.forEach(id => {
     if (id !== matchId) {
       const otherDropdown = document.getElementById(`dropdown-${id}`);
@@ -1009,7 +1989,6 @@ function toggleDropdown(matchId) {
     }
   });
   openDropdowns.clear();
-  
   if (dropdown.classList.contains('hidden')) {
     dropdown.classList.remove('hidden');
     chevron.classList.add('open');
@@ -1021,32 +2000,17 @@ function toggleDropdown(matchId) {
 }
 
 function selectChannel(matchId, link, name) {
-  const btn = document.getElementById(`channel-btn-${matchId}`);
-  const dropdown = document.getElementById(`dropdown-${matchId}`);
-  const chevron = document.getElementById(`chevron-${matchId}`);
-  
-  // Actualizar texto del botón
-  btn.innerHTML = `<span>${name}</span><span class="chevron" id="chevron-${matchId}">▼</span>`;
-  
-  // Actualizar canal seleccionado
   const card = document.querySelector(`[data-match-id="${matchId}"]`);
   card.dataset.selectedChannel = link;
-  
-  // Cerrar dropdown
-  dropdown.classList.add('hidden');
+  const btn = document.getElementById(`channel-btn-${matchId}`);
+  btn.innerHTML = `<span>${name}</span><span class="chevron" id="chevron-${matchId}">▼</span>`;
+  document.getElementById(`dropdown-${matchId}`).classList.add('hidden');
   openDropdowns.delete(matchId);
-  
-  // Actualizar opciones activas
-  const options = dropdown.querySelectorAll('.channel-option');
-  options.forEach(opt => {
-    opt.classList.toggle('active', opt.dataset.link === link);
-  });
 }
 
 function renderEvents(list = eventsData) {
   const container = document.getElementById("events");
   container.innerHTML = "";
-  
   groupedEventsCache = groupEventsByMatch(list);
   updateStats(list);
 
@@ -1070,7 +2034,6 @@ function renderEvents(list = eventsData) {
     const league = getLeague(ev.match);
     const hasMultipleChannels = ev.channels.length > 1;
     const matchId = `${ev.time}-${ev.match.replace(/[^a-zA-Z0-9]/g, '-')}`;
-    const { team1, team2 } = extractTeams(ev.match);
 
     const card = document.createElement("div");
     card.className = `glass-card ${isActive ? 'live' : ''} ${isFinished ? 'finished' : ''}`;
@@ -1091,7 +2054,6 @@ function renderEvents(list = eventsData) {
             <div class="channel-dropdown hidden" id="dropdown-${matchId}">
               ${ev.channels.map(ch => `
                 <button class="channel-option ${ch.link === ev.channels[0].link ? 'active' : ''}" 
-                        data-link="${ch.link}"
                         onclick="selectChannel('${matchId}', '${ch.link}', '${ch.displayName}')">
                   ${ch.displayName}
                 </button>
@@ -1111,10 +2073,7 @@ function renderEvents(list = eventsData) {
             <span class="time">${ev.time}</span>
             <span class="league-badge">${league}</span>
           </div>
-          <div class="match">
-            <span>${team1}</span>
-            ${team2 ? `<span class="vs-text">VS</span><span>${team2}</span>` : ''}
-          </div>
+          <div class="match">${generateMatchHTML(ev.match)}</div>
           <div class="status-badge ${isActive ? 'status-live' : isFinished ? 'status-finished' : 'status-upcoming'}">
             ${isActive ? '<span class="pulse-dot"></span>' : isFinished ? '✓' : '⏳'}
             <span>${status}</span>
@@ -1144,13 +2103,9 @@ function renderEvents(list = eventsData) {
 function watchMatch(matchId) {
   const card = document.querySelector(`[data-match-id="${matchId}"]`);
   if (!card) return;
-  
   const selectedLink = card.dataset.selectedChannel;
   const matchText = card.querySelector('.match').textContent;
-  
-  if (selectedLink) {
-    openPlayer(selectedLink, matchText);
-  }
+  if (selectedLink) openPlayer(selectedLink, matchText);
 }
 
 function openPlayer(link, matchTitle) {
@@ -1167,65 +2122,45 @@ function closePlayer() {
 }
 
 function filterEvents(text) {
-  const filtered = eventsData.filter(e =>
-    e.match.toLowerCase().includes(text.toLowerCase())
-  );
+  const filtered = eventsData.filter(e => e.match.toLowerCase().includes(text.toLowerCase()));
   renderEvents(filtered);
 }
 
 function updateStatuses() {
   const cards = document.querySelectorAll('.glass-card');
-  let liveCount = 0;
-  let upcomingCount = 0;
-  
+  let liveCount = 0, upcomingCount = 0;
   cards.forEach(card => {
     const time = card.dataset.time;
     if (!time) return;
-    
     const status = getStatus(time);
     const statusEl = card.querySelector('.status-badge');
     const btn = card.querySelector('.btn-watch');
-    
     if (status === "EN VIVO") liveCount++;
     else if (status === "PROXIMO") upcomingCount++;
-    
-    // Solo actualizar si cambió el estado
     const currentStatusText = statusEl.querySelector('span:last-child').textContent;
     if (currentStatusText !== status) {
-      // Actualizar clase de status
       statusEl.className = `status-badge ${status === 'EN VIVO' ? 'status-live' : status === 'FINALIZADO' ? 'status-finished' : 'status-upcoming'}`;
-      
-      // Actualizar contenido de status
-      statusEl.innerHTML = `${
-        status === 'EN VIVO' ? '<span class="pulse-dot"></span>' : status === 'FINALIZADO' ? '✓' : '⏳'
-      }<span>${status}</span>`;
-      
-      // Actualizar clase de la card
+      statusEl.innerHTML = `${status === 'EN VIVO' ? '<span class="pulse-dot"></span>' : status === 'FINALIZADO' ? '✓' : '⏳'}<span>${status}</span>`;
       card.classList.remove('live', 'finished');
       if (status === 'EN VIVO') card.classList.add('live');
       if (status === 'FINALIZADO') card.classList.add('finished');
-      
-      // Actualizar botón
       if (btn) {
         const isActive = status === "EN VIVO";
         btn.className = `btn-watch ${isActive ? 'enabled' : 'disabled'}`;
         btn.onclick = isActive ? () => watchMatch(card.dataset.matchId) : null;
         btn.innerHTML = `<span>${isActive ? '▶' : '⏳'}</span><span>${isActive ? 'Ver' : 'Próximo'}</span>`;
       }
-      
-      // Ocultar acciones si finalizó
       if (status === 'FINALIZADO') {
         const actions = card.querySelector('.card-actions');
         if (actions) actions.style.display = 'none';
       }
     }
   });
-  
   document.getElementById("live-count").textContent = `${liveCount} EN VIVO`;
   document.getElementById("upcoming-count").textContent = `${upcomingCount} PRÓXIMOS`;
 }
 
-// Cerrar dropdowns al hacer click fuera
+// Event listeners
 document.addEventListener('click', (e) => {
   if (!e.target.closest('.channel-selector')) {
     openDropdowns.forEach(id => {
@@ -1238,15 +2173,12 @@ document.addEventListener('click', (e) => {
   }
 });
 
-// Cerrar player con Escape
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') closePlayer();
 });
 
 // Inicializar
 renderEvents();
-
-// Actualizar estados cada segundo
 setInterval(updateStatuses, 1000);
 </script>
 
