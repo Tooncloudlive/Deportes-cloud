@@ -39,7 +39,7 @@ jobs:
       - name: 📦 Instalar dependencias
         run: |
           echo "Instalando dependencias..."
-          npm ci
+          npm install
       
       # 4. Instalar Playwright browsers
       - name: 🎭 Instalar Playwright browsers
