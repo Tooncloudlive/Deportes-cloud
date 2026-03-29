@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>en Vivo</title>
+<title>ToonCloud Deportes</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
 * {
@@ -16,134 +16,192 @@
 }
 
 :root {
-  --primary: #f767d8;
-  --primary-glow: rgba(247, 103, 216, 0.4);
-  --secondary: #7c3aed;
+  --pink-primary: #f767d8;
+  --purple-primary: #7c3aed;
+  --pink-glow: rgba(247, 103, 216, 0.5);
+  --purple-glow: rgba(124, 58, 237, 0.4);
   --bg-dark: #0a0a0f;
-  --bg-card: rgba(255, 255, 255, 0.03);
-  --bg-card-hover: rgba(255, 255, 255, 0.06);
-  --text-primary: #ffffff;
-  --text-secondary: #a1a1aa;
-  --border: rgba(255, 255, 255, 0.08);
   --success: #22c55e;
   --warning: #f59e0b;
   --danger: #ef4444;
+  --glass-bg: rgba(255, 255, 255, 0.03);
+  --glass-bg-hover: rgba(255, 255, 255, 0.06);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-border-hover: rgba(247, 103, 216, 0.25);
 }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
   background: var(--bg-dark);
-  color: var(--text-primary);
+  color: #ffffff;
   min-height: 100vh;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Animated background gradient */
-body::before {
-  content: '';
+/* Ambient Background */
+.ambient-bg {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: 
-    radial-gradient(ellipse at 20% 20%, rgba(247, 103, 216, 0.08) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 80%, rgba(124, 58, 237, 0.06) 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 50%, rgba(247, 103, 216, 0.03) 0%, transparent 70%);
+  inset: 0;
   pointer-events: none;
   z-index: 0;
+  overflow: hidden;
+}
+
+.ambient-bg::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: 
+    radial-gradient(ellipse at 20% 20%, rgba(247, 103, 216, 0.12) 0%, transparent 40%),
+    radial-gradient(ellipse at 80% 80%, rgba(124, 58, 237, 0.08) 0%, transparent 40%),
+    radial-gradient(ellipse at 50% 50%, rgba(247, 103, 216, 0.05) 0%, transparent 60%);
+  animation: ambient-float 20s ease-in-out infinite;
+}
+
+.ambient-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  pointer-events: none;
+}
+
+.ambient-orb-1 {
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(247, 103, 216, 0.3) 0%, transparent 70%);
+  top: 10%;
+  left: -10%;
+  animation: float 8s ease-in-out infinite;
+}
+
+.ambient-orb-2 {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(124, 58, 237, 0.3) 0%, transparent 70%);
+  bottom: 10%;
+  right: -5%;
+  animation: float 10s ease-in-out infinite reverse;
+}
+
+@keyframes ambient-float {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  33% { transform: translate(2%, 2%) rotate(1deg); }
+  66% { transform: translate(-1%, 1%) rotate(-1deg); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
 }
 
 .container {
   position: relative;
   z-index: 1;
-  max-width: 1000px;
-  margin: auto;
+  max-width: 900px;
+  margin: 0 auto;
   padding: 40px 20px;
 }
 
 /* Header */
 header {
   text-align: center;
-  margin-bottom: 40px;
-  padding: 20px 0;
+  margin-bottom: 32px;
 }
 
 .logo {
   display: inline-flex;
   align-items: center;
-  gap: 15px;
-  margin-bottom: 10px;
+  gap: 16px;
+  margin-bottom: 16px;
 }
 
 .logo-icon {
-  width: 50px;
-  height: 50px;
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  border-radius: 14px;
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, var(--pink-primary), var(--purple-primary));
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
-  animation: pulse 2s ease-in-out infinite;
+  font-size: 28px;
+  animation: logo-pulse 2s ease-in-out infinite;
 }
 
-@keyframes pulse {
-  0%, 100% { box-shadow: 0 0 20px var(--primary-glow); }
-  50% { box-shadow: 0 0 40px var(--primary-glow), 0 0 60px var(--primary-glow); }
+@keyframes logo-pulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(247, 103, 216, 0.4); }
+  50% { box-shadow: 0 0 40px rgba(247, 103, 216, 0.7), 0 0 60px rgba(124, 58, 237, 0.4); }
 }
 
 h1 {
-  font-family: 'Orbitron', sans-serif;
-  font-size: 2.5rem;
+  font-size: 2rem;
   font-weight: 700;
-  background: linear-gradient(135deg, #fff 0%, var(--primary) 100%);
+  background: linear-gradient(135deg, #fff 0%, var(--pink-primary) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  letter-spacing: -1px;
+  letter-spacing: -0.5px;
 }
 
 .subtitle {
-  color: var(--text-secondary);
-  font-size: 1rem;
-  font-weight: 400;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.875rem;
+  max-width: 600px;
+  margin: 0 auto 8px;
+  line-height: 1.6;
 }
 
-/* Stats bar */
+.copyright {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 0.75rem;
+}
+
+/* Stats Bar */
 .stats-bar {
   display: flex;
   justify-content: center;
-  gap: 30px;
-  margin-bottom: 30px;
+  gap: 16px;
+  margin-bottom: 24px;
   flex-wrap: wrap;
 }
 
-.stat-item {
-  display: flex;
+.stats-pill {
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   padding: 10px 20px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 50px;
-  font-size: 0.9rem;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
 }
 
-.stat-item .dot {
+.pulse-dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  animation: blink 1.5s ease-in-out infinite;
-}
-
-.stat-item.live .dot {
   background: var(--success);
-  box-shadow: 0 0 10px var(--success);
+  animation: pulse-dot 1.5s ease-in-out infinite;
 }
 
-.stat-item.upcoming .dot {
+@keyframes pulse-dot {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.7; }
+}
+
+.blink-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
   background: var(--warning);
+  animation: blink 1.5s ease-in-out infinite;
 }
 
 @keyframes blink {
@@ -154,7 +212,7 @@ h1 {
 /* Search */
 .search-container {
   position: relative;
-  margin-bottom: 30px;
+  margin-bottom: 24px;
 }
 
 .search-icon {
@@ -162,527 +220,47 @@ h1 {
   left: 20px;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--text-secondary);
+  color: rgba(255, 255, 255, 0.4);
   font-size: 1.1rem;
 }
 
 .search {
   width: 100%;
-  padding: 16px 20px 16px 55px;
+  padding: 16px 20px 16px 56px;
   border-radius: 16px;
-  border: 1px solid var(--border);
-  background: var(--bg-card);
-  color: var(--text-primary);
+  border: 1px solid var(--glass-border);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  color: #ffffff;
   font-size: 1rem;
-  font-family: 'Inter', sans-serif;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
+  font-family: inherit;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .search::placeholder {
-  color: var(--text-secondary);
+  color: rgba(255, 255, 255, 0.4);
 }
 
 .search:focus {
   outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px var(--primary-glow);
-  background: var(--bg-card-hover);
+  border-color: var(--pink-primary);
+  box-shadow: 0 0 0 3px rgba(247, 103, 216, 0.2);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%);
 }
 
-/* Section headers */
-.section-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
-  padding: 0 10px;
-}
-
-.section-title {
-  font-size: 0.85rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  color: var(--text-secondary);
-}
-
-.section-line {
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(90deg, var(--border) 0%, transparent 100%);
-}
-
-/* Cards */
-#events {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.card {
-  position: relative;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 20px 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  backdrop-filter: blur(10px);
-  overflow: hidden;
-}
-
-.card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 4px;
-  height: 100%;
-  background: linear-gradient(180deg, var(--primary), var(--secondary));
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.card:hover {
-  background: var(--bg-card-hover);
-  border-color: rgba(247, 103, 216, 0.2);
-  transform: translateX(5px);
-}
-
-.card:hover::before {
-  opacity: 1;
-}
-
-.card.live {
-  border-color: rgba(34, 197, 94, 0.3);
-  background: linear-gradient(90deg, rgba(34, 197, 94, 0.05) 0%, var(--bg-card) 100%);
-}
-
-.card.live::before {
-  background: linear-gradient(180deg, var(--success), #16a34a);
-  opacity: 1;
-}
-
-.card.finished {
-  opacity: 0.6;
-}
-
-.info {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  flex: 1;
-}
-
-.time-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.time {
-  font-family: 'Orbitron', sans-serif;
-  font-size: 1.3rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  letter-spacing: 1px;
-}
-
-.league-badge {
-  font-size: 0.7rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  padding: 4px 10px;
-  background: rgba(247, 103, 216, 0.15);
-  color: var(--primary);
-  border-radius: 20px;
-}
-
-/* Match with team logos */
-.match {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 1rem;
-  font-weight: 500;
-  color: var(--text-primary);
-  line-height: 1.4;
-  flex-wrap: wrap;
-}
-
-.team-section {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.team-logo {
-  width: 28px;
-  height: 28px;
-  object-fit: contain;
-  border-radius: 4px;
-}
-
-.team-logo-placeholder {
-  width: 28px;
-  height: 28px;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.vs-text {
-  color: var(--text-secondary);
-  font-weight: 600;
-  font-size: 0.85rem;
-  margin: 0 4px;
-}
-
-.status {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.status.live {
-  color: var(--success);
-}
-
-.status.upcoming {
-  color: var(--warning);
-}
-
-.status.finished {
-  color: var(--text-secondary);
-}
-
-.status-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-}
-
-.status.live .status-dot {
-  background: var(--success);
-  animation: pulse-dot 1.5s ease-in-out infinite;
-}
-
-.status.upcoming .status-dot {
-  background: var(--warning);
-}
-
-.status.finished .status-dot {
-  background: var(--text-secondary);
-}
-
-@keyframes pulse-dot {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.3); opacity: 0.7; }
-}
-
-/* Channel selector */
-.channel-selector {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  align-items: flex-end;
-}
-
-.channel-select {
-  padding: 10px 16px;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--text-primary);
-  font-size: 0.85rem;
-  font-family: 'Inter', sans-serif;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  min-width: 140px;
-}
-
-.channel-select:hover {
-  border-color: var(--primary);
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.channel-select:focus {
-  outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px var(--primary-glow);
-}
-
-.channel-select option {
-  background: var(--bg-dark);
-  color: var(--text-primary);
-  padding: 8px;
-}
-
-.channels-count {
-  font-size: 0.75rem;
-  color: var(--text-secondary);
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.channels-count::before {
-  content: '📡';
-  font-size: 0.9rem;
-}
-
-/* Button */
-.btn-watch {
-  padding: 12px 24px;
-  border-radius: 12px;
-  border: none;
-  font-weight: 600;
-  font-size: 0.9rem;
-  font-family: 'Inter', sans-serif;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.btn-watch.enabled {
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  color: white;
-  box-shadow: 0 4px 20px var(--primary-glow);
-}
-
-.btn-watch.enabled:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 30px var(--primary-glow);
-}
-
-.btn-watch.enabled:active {
-  transform: translateY(0);
-}
-
-.btn-watch.disabled {
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--text-secondary);
-  cursor: not-allowed;
-}
-
-/* Player */
-.player-overlay {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.9);
-  backdrop-filter: blur(10px);
-  z-index: 1000;
-  padding: 40px 20px;
-  animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.player-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.player-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid var(--border);
-}
-
-.player-title {
-  font-family: 'Orbitron', sans-serif;
-  font-size: 1.2rem;
-  font-weight: 600;
-}
-
-.btn-close {
-  padding: 10px 24px;
-  background: rgba(239, 68, 68, 0.2);
-  color: var(--danger);
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  border-radius: 10px;
-  font-weight: 600;
-  font-family: 'Inter', sans-serif;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.btn-close:hover {
-  background: rgba(239, 68, 68, 0.3);
-}
-
-.player-wrapper {
-  flex: 1;
-  background: var(--bg-card);
-  border-radius: 20px;
-  overflow: hidden;
-  border: 1px solid var(--border);
-}
-
-#video-player {
-  width: 100%;
-  height: 100%;
-  border: none;
-  background: #000;
-}
-
-#iframe-player {
-  width: 100%;
-  height: 100%;
-  border: none;
-  background: #000;
-}
-
-/* Empty state */
-.empty-state {
-  text-align: center;
-  padding: 60px 20px;
-  color: var(--text-secondary);
-}
-
-.empty-state-icon {
-  font-size: 4rem;
-  margin-bottom: 20px;
-  opacity: 0.5;
-}
-
-.empty-state-text {
-  font-size: 1.1rem;
-}
-
-/* Scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--bg-dark);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.15);
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  h1 {
-    font-size: 1.8rem;
-  }
-  
-  .card {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 15px;
-    padding: 18px;
-  }
-  
-  .channel-selector {
-    width: 100%;
-    align-items: stretch;
-  }
-  
-  .channel-select {
-    width: 100%;
-  }
-  
-  .btn-watch {
-    width: 100%;
-    justify-content: center;
-  }
-  
-  .stats-bar {
-    gap: 15px;
-  }
-  
-  .stat-item {
-    padding: 8px 16px;
-    font-size: 0.8rem;
-  }
-  
-  .player-overlay {
-    padding: 20px 15px;
-  }
-  
-  .player-header {
-    flex-direction: column;
-    gap: 15px;
-    align-items: flex-start;
-  }
-  
-  .btn-close {
-    width: 100%;
-    justify-content: center;
-  }
-  
-  .match {
-    font-size: 0.9rem;
-  }
-  
-  .team-logo, .team-logo-placeholder {
-    width: 24px;
-    height: 24px;
-  }
-}
-
-/* Loading animation */
-.loading {
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  border-top-color: var(--primary);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-/* Banner Publicitario */
+/* Banner */
 .banner-container {
-  width: 100%;
   display: flex;
   justify-content: center;
-  margin: 20px 0 30px 0;
-  padding: 0 10px;
+  margin-bottom: 24px;
 }
 
 .banner-container a {
   display: block;
   border-radius: 12px;
   overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: all 0.3s ease;
 }
 
 .banner-container a:hover {
@@ -697,25 +275,501 @@ h1 {
   border-radius: 12px;
 }
 
-/* Responsive banner */
-@media (max-width: 768px) {
-  .banner-container {
-    margin: 15px 0 25px 0;
-    padding: 0 5px;
-  }
+/* Section Header */
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding: 0 4px;
+}
 
-  .banner-img {
-    width: 100%;
+.section-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.section-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+}
+
+/* Glass Cards */
+.glass-card {
+  position: relative;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 20px 24px;
+  margin-bottom: 12px;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+  animation: slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+
+.glass-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%, rgba(255, 255, 255, 0.03) 100%);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.glass-card:hover {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%);
+  border-color: var(--glass-border-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 30px rgba(247, 103, 216, 0.15);
+}
+
+.glass-card.live {
+  border-color: rgba(34, 197, 94, 0.3);
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+}
+
+.glass-card.live::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 3px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--success), #16a34a);
+  border-radius: 20px 0 0 20px;
+}
+
+.glass-card.finished {
+  opacity: 0.5;
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Card Content */
+.card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: relative;
+  z-index: 1;
+}
+
+@media (min-width: 640px) {
+  .card-content {
+    flex-direction: row;
+    align-items: center;
   }
 }
 
+.card-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.time-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.time {
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: #ffffff;
+}
+
+.league-badge {
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 4px 10px;
+  background: rgba(247, 103, 216, 0.15);
+  color: var(--pink-primary);
+  border-radius: 9999px;
+}
+
+.match {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: #ffffff;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.vs-text {
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+/* Status Badge */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: 9999px;
+}
+
+.status-live {
+  background: rgba(34, 197, 94, 0.15);
+  color: var(--success);
+}
+
+.status-upcoming {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--warning);
+}
+
+.status-finished {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Card Actions */
+.card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+@media (min-width: 640px) {
+  .card-actions {
+    align-items: flex-end;
+  }
+}
+
+/* Channel Selector */
+.channel-selector {
+  position: relative;
+}
+
+.channel-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  font-size: 0.875rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 140px;
+  justify-content: space-between;
+}
+
+.channel-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.channel-dropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  min-width: 180px;
+  background: linear-gradient(135deg, rgba(30, 30, 40, 0.95) 0%, rgba(20, 20, 30, 0.95) 100%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 8px;
+  z-index: 10;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.channel-option {
+  display: block;
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 0.875rem;
+  text-align: left;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.channel-option:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.channel-option.active {
+  background: rgba(247, 103, 216, 0.2);
+  color: var(--pink-primary);
+}
+
+.single-channel {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Watch Button */
+.btn-watch {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-family: inherit;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-watch.enabled {
+  background: linear-gradient(135deg, var(--pink-primary), var(--purple-primary));
+  color: white;
+  box-shadow: 0 4px 20px rgba(247, 103, 216, 0.3);
+}
+
+.btn-watch.enabled:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(247, 103, 216, 0.5);
+}
+
+.btn-watch.enabled:active {
+  transform: translateY(0);
+}
+
+.btn-watch.disabled {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.4);
+  cursor: not-allowed;
+}
+
+/* Player Overlay */
+.player-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  z-index: 1000;
+  padding: 20px;
+  animation: fade-in 0.3s ease;
+}
+
+.player-overlay.active {
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.player-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.player-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.player-title-icon {
+  color: var(--pink-primary);
+}
+
+.btn-close {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-family: inherit;
+  background: rgba(239, 68, 68, 0.2);
+  color: var(--danger);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-close:hover {
+  background: rgba(239, 68, 68, 0.3);
+}
+
+.player-wrapper {
+  flex: 1;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+#iframe-player {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: #000;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  animation: scale-in 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.empty-state-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  opacity: 0.3;
+}
+
+.empty-state-text {
+  font-size: 1.125rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.empty-state-subtext {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.3);
+  margin-top: 8px;
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .container {
+    padding: 24px 16px;
+  }
+  
+  h1 {
+    font-size: 1.5rem;
+  }
+  
+  .logo-icon {
+    width: 48px;
+    height: 48px;
+    font-size: 24px;
+  }
+  
+  .glass-card {
+    padding: 16px 20px;
+  }
+  
+  .time {
+    font-size: 1.125rem;
+  }
+  
+  .match {
+    font-size: 0.875rem;
+  }
+  
+  .btn-watch {
+    width: 100%;
+  }
+  
+  .channel-btn {
+    width: 100%;
+  }
+  
+  .player-header {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  
+  .btn-close {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .player-title {
+    font-size: 0.875rem;
+  }
+}
+
+/* Chevron icon */
+.chevron {
+  transition: transform 0.2s ease;
+}
+
+.chevron.open {
+  transform: rotate(180deg);
+}
+
+.hidden {
+  display: none !important;
+}
 </style>
-<base target="_blank">
-<base target="_blank">
 <base target="_blank">
 </head>
 
 <body>
+
+<div class="ambient-bg">
+  <div class="ambient-orb ambient-orb-1"></div>
+  <div class="ambient-orb ambient-orb-2"></div>
+</div>
 
 <div class="container">
   <header>
@@ -724,16 +778,16 @@ h1 {
       <h1>ToonCloud Deportes</h1>
     </div>
     <p class="subtitle">Este sitio no aloja ni transmite contenido propio. Todo el material proviene de fuentes públicas externas. No tenemos control ni responsabilidad sobre dicho contenido ni sobre los enlaces compartidos.</p>
-  <p class="subtitle">Larvas S.A ©</p>
+    <p class="copyright">Larvas S.A ©</p>
   </header>
 
   <div class="stats-bar">
-    <div class="stat-item live">
-      <span class="dot"></span>
+    <div class="stats-pill">
+      <span class="pulse-dot"></span>
       <span id="live-count">0 EN VIVO</span>
     </div>
-    <div class="stat-item upcoming">
-      <span class="dot"></span>
+    <div class="stats-pill">
+      <span class="blink-dot"></span>
       <span id="upcoming-count">0 PRÓXIMOS</span>
     </div>
   </div>
@@ -743,10 +797,10 @@ h1 {
     <input class="search" placeholder="Buscar partidos, equipos, ligas..." oninput="filterEvents(this.value)">
   </div>
 
-  <!-- Banner Publicitario 1xBet -->
+  <!-- Banner Publicitario -->
   <div class="banner-container">
     <a href="https://refbanners.com/I?tag=d_5378140m_99260c_&site=5378140&ad=99260" target="_blank" rel="noopener noreferrer">
-      <img src="Media99260__WEEKEND-BOOSTER_970x90.gif" alt="1xBet Weekend Booster - ¡Bonos todos los viernes!" class="banner-img">
+      <img src="Media99260__WEEKEND-BOOSTER_970x90.gif" alt="1xBet Weekend Booster" class="banner-img">
     </a>
   </div>
 
@@ -759,1032 +813,26 @@ h1 {
 </div>
 
 <div class="player-overlay" id="player">
-  <div class="player-container">
-    <div class="player-header">
-      <span class="player-title">📺 Reproductor en Vivo</span>
-      <button class="btn-close" onclick="closePlayer()">
-        <span>✕</span>
-        <span>Cerrar</span>
-      </button>
+  <div class="player-header">
+    <div class="player-title">
+      <span class="player-title-icon">📺</span>
+      <span id="player-title-text">Reproductor en Vivo</span>
     </div>
-    <div class="player-wrapper">
-      <iframe id="iframe-player" allowfullscreen></iframe>
-    </div>
+    <button class="btn-close" onclick="closePlayer()">
+      <span>✕</span>
+      <span>Cerrar</span>
+    </button>
+  </div>
+  <div class="player-wrapper">
+    <iframe id="iframe-player" allowfullscreen></iframe>
   </div>
 </div>
 
 <script>
 // =====================================================
-// BASE DE DATOS DE ESCUDOS - SISTEMA GITHUB
-// =====================================================
-// URL base para los escudos en GitHub Raw
-const GITHUB_SHIELDS_BASE = "https://raw.githubusercontent.com/Tooncloudlive/Deportes-cloud/main/escudos";
-
-// Mapeo de equipos a sus carpetas de liga y nombre de archivo
-// Formato: "nombre equipo": ["carpeta_liga", "nombre_archivo"]
-const teamLogosDB = {
-  // === LIGA BETPLAY (COLOMBIA) - ligamayor ===
-  "aguilas": ["ligamayor", "aguilas"],
-  "rionegro aguilas": ["ligamayor", "aguilas"],
-  "aguilas doradas": ["ligamayor", "aguilas"],
-  "alianza": ["ligamayor", "alianza"],
-  "alianza fc": ["ligamayor", "alianza"],
-  "alianza petrolera": ["ligamayor", "alianza"],
-  "america": ["ligamayor", "americacali"],
-  "america de cali": ["ligamayor", "americacali"],
-  "america cali": ["ligamayor", "americacali"],
-  "atletico nacional": ["ligamayor", "atleticonacional"],
-  "nacional": ["ligamayor", "atleticonacional"],
-  "boyaca chico": ["ligamayor", "boyacachico"],
-  "chico": ["ligamayor", "boyacachico"],
-  "bucaramanga": ["ligamayor", "bucaramanga"],
-  "atletico bucaramanga": ["ligamayor", "bucaramanga"],
-  "atl. bucaramanga": ["ligamayor", "bucaramanga"],
-  "cali": ["ligamayor", "cali"],
-  "deportivo cali": ["ligamayor", "cali"],
-  "cucuta": ["ligamayor", "cucuta"],
-  "cucuta deportivo": ["ligamayor", "cucuta"],
-  "fortaleza": ["ligamayor", "fortaleza"],
-  "fortaleza fc": ["ligamayor", "fortaleza"],
-  "independiente medellin": ["ligamayor", "independientemedellin"],
-  "medellin": ["ligamayor", "independientemedellin"],
-  "jaguares": ["ligamayor", "jaguares"],
-  "jaguares de cordoba": ["ligamayor", "jaguares"],
-  "junior": ["ligamayor", "junior"],
-  "junior de barranquilla": ["ligamayor", "junior"],
-  "llaneros": ["ligamayor", "llaneros"],
-  "llaneros fc": ["ligamayor", "llaneros"],
-  "millonarios": ["ligamayor", "millonarios"],
-  "once caldas": ["ligamayor", "oncecaldas"],
-  "pasto": ["ligamayor", "pasto"],
-  "deportivo pasto": ["ligamayor", "pasto"],
-  "pereira": ["ligamayor", "pereira"],
-  "deportivo pereira": ["ligamayor", "pereira"],
-  "santa fe": ["ligamayor", "santafe"],
-  "independiente santa fe": ["ligamayor", "santafe"],
-  "tolima": ["ligamayor", "tolima"],
-  "deportes tolima": ["ligamayor", "tolima"],
-  "union magdalena": ["ligamayor", "unionmagdalena"],
-  "envigado": ["ligamayor", "envigado"],
-  "patriotas": ["ligamayor", "patriotas"],
-  "atletico huila": ["ligamayor", "atleticohuila"],
-  "huila": ["ligamayor", "atleticohuila"],
-
-  // === LIGA CHILE ===
-  "colo colo": ["primeradivision chile", "colocolo"],
-  "limache": ["primeradivision chile", "limache"],
-  "nublense": ["primeradivision chile", "nublense"],
-  "u. catolica": ["primeradivision chile", "ucatolica"],
-  "universidad catolica": ["primeradivision chile", "ucatolica"],
-  "catolica": ["primeradivision chile", "ucatolica"],
-  "u. de concepcion": ["primeradivision chile", "uconcepcion"],
-  "universidad de concepcion": ["primeradivision chile", "uconcepcion"],
-  "audax italiano": ["primeradivision chile", "audaxitaliano"],
-  "u. la calera": ["primeradivision chile", "ulacalera"],
-  "union la calera": ["primeradivision chile", "ulacalera"],
-  "u. de chile": ["primeradivision chile", "udechile"],
-  "universidad de chile": ["primeradivision chile", "udechile"],
-  "o'higgins": ["primeradivision chile", "ohiggins"],
-  "ohiggins": ["primeradivision chile", "ohiggins"],
-  "la serena": ["primeradivision chile", "laserena"],
-  "deportes la serena": ["primeradivision chile", "laserena"],
-  "coquimbo": ["primeradivision chile", "coquimbo"],
-  "coquimbo unido": ["primeradivision chile", "coquimbo"],
-  "huachipato": ["primeradivision chile", "huachipato"],
-  "palestino": ["primeradivision chile", "palestino"],
-  "everton": ["primeradivision chile", "everton"],
-  "cobresal": ["primeradivision chile", "cobresal"],
-  "union espanola": ["primeradivision chile", "unionespanola"],
-  "espanola": ["primeradivision chile", "unionespanola"],
-
-  // === LIGA MX (MEXICO) ===
-  "chivas": ["ligamx", "chivas"],
-  "guadalajara": ["ligamx", "chivas"],
-  "c.d. guadalajara": ["ligamx", "chivas"],
-  "cruz azul": ["ligamx", "cruzazul"],
-  "toluca": ["ligamx", "toluca"],
-  "deportivo toluca": ["ligamx", "toluca"],
-  "pachuca": ["ligamx", "pachuca"],
-  "pumas": ["ligamx", "pumas"],
-  "pumas unam": ["ligamx", "pumas"],
-  "unam": ["ligamx", "pumas"],
-  "tigres": ["ligamx", "tigres"],
-  "tigres uanl": ["ligamx", "tigres"],
-  "u.a.n.l.": ["ligamx", "tigres"],
-  "club america": ["ligamx", "america"],
-  "america": ["ligamx", "america"],
-  "cf america": ["ligamx", "america"],
-  "atlas": ["ligamx", "atlas"],
-  "f.c. atlas": ["ligamx", "atlas"],
-  "monterrey": ["ligamx", "monterrey"],
-  "c.f. monterrey": ["ligamx", "monterrey"],
-  "tijuana": ["ligamx", "tiuana"],
-  "club tijuana": ["ligamx", "tiuana"],
-  "xolos": ["ligamx", "tiuana"],
-  "puebla": ["ligamx", "puebla"],
-  "club puebla": ["ligamx", "puebla"],
-  "atletico san luis": ["ligamx", "atleticosanluis"],
-  "san luis": ["ligamx", "atleticosanluis"],
-  "juarez": ["ligamx", "juarez"],
-  "fc juarez": ["ligamx", "juarez"],
-  "necaxa": ["ligamx", "necaxa"],
-  "club necaxa": ["ligamx", "necaxa"],
-  "mazatlan": ["ligamx", "mazatlan"],
-  "mazatlan fc": ["ligamx", "mazatlan"],
-  "leon": ["ligamx", "leon"],
-  "club leon": ["ligamx", "leon"],
-  "queretaro": ["ligamx", "queretaro"],
-  "queretaro fc": ["ligamx", "queretaro"],
-  "santos": ["ligamx", "santos"],
-  "santos laguna": ["ligamx", "santos"],
-
-  // === LIGA ARGENTINA ===
-  "velez": ["primeradivision argentina", "velez"],
-  "velez sarsfield": ["primeradivision argentina", "velez"],
-  "estudiantes": ["primeradivision argentina", "estudiantes"],
-  "estudiantes de la plata": ["primeradivision argentina", "estudiantes"],
-  "union": ["primeradivision argentina", "union"],
-  "union de santa fe": ["primeradivision argentina", "union"],
-  "defensa": ["primeradivision argentina", "defensa"],
-  "defensa y justicia": ["primeradivision argentina", "defensa"],
-  "lanus": ["primeradivision argentina", "lanus"],
-  "talleres": ["primeradivision argentina", "talleres"],
-  "talleres de cordoba": ["primeradivision argentina", "talleres"],
-  "boca": ["primeradivision argentina", "boca"],
-  "boca juniors": ["primeradivision argentina", "boca"],
-  "boca jrs.": ["primeradivision argentina", "boca"],
-  "independiente": ["primeradivision argentina", "independiente"],
-  "ca independiente": ["primeradivision argentina", "independiente"],
-  "platense": ["primeradivision argentina", "platense"],
-  "san lorenzo": ["primeradivision argentina", "sanlorenzo"],
-  "central cordoba": ["primeradivision argentina", "centralcordoba"],
-  "central cordoba sde": ["primeradivision argentina", "centralcordoba"],
-  "instituto": ["primeradivision argentina", "instituto"],
-  "instituto de cordoba": ["primeradivision argentina", "instituto"],
-  "riestra": ["primeradivision argentina", "riestra"],
-  "deportivo riestra": ["primeradivision argentina", "riestra"],
-  "newells": ["primeradivision argentina", "newells"],
-  "newell's": ["primeradivision argentina", "newells"],
-  "newell's old boys": ["primeradivision argentina", "newells"],
-  "ind. rivadavia": ["primeradivision argentina", "independienteriv"],
-  "independiente rivadavia": ["primeradivision argentina", "independienteriv"],
-  "belgrano": ["primeradivision argentina", "belgrano"],
-  "belgrano de cordoba": ["primeradivision argentina", "belgrano"],
-  "central": ["primeradivision argentina", "rosariocentral"],
-  "rosario central": ["primeradivision argentina", "rosariocentral"],
-  "tigre": ["primeradivision argentina", "tigre"],
-  "club atletico tigre": ["primeradivision argentina", "tigre"],
-  "river": ["primeradivision argentina", "river"],
-  "river plate": ["primeradivision argentina", "river"],
-  "racing": ["primeradivision argentina", "racing"],
-  "racing club": ["primeradivision argentina", "racing"],
-  "barracas": ["primeradivision argentina", "barracas"],
-  "barracas central": ["primeradivision argentina", "barracas"],
-  "gimnasia": ["primeradivision argentina", "gimnasia"],
-  "gimnasia y esgrima": ["primeradivision argentina", "gimnasia"],
-  "gimnasia la plata": ["primeradivision argentina", "gimnasia"],
-  "huracan": ["primeradivision argentina", "huracan"],
-  "argentinos": ["primeradivision argentina", "argentinos"],
-  "argentinos juniors": ["primeradivision argentina", "argentinos"],
-  "banfield": ["primeradivision argentina", "banfield"],
-  "sarmiento": ["primeradivision argentina", "sarmiento"],
-  "sarmiento de junin": ["primeradivision argentina", "sarmiento"],
-  "atletico tucuman": ["primeradivision argentina", "atleticotucuman"],
-  "atl. tucuman": ["primeradivision argentina", "atleticotucuman"],
-  "aldosivi": ["primeradivision argentina", "aldosivi"],
-  "estudiantes rio cuarto": ["primeradivision argentina", "estudiantesrc"],
-  "estudiantes de rio cuarto": ["primeradivision argentina", "estudiantesrc"],
-
-  // === LIGUE 1 (FRANCIA) ===
-  "psg": ["ligue1", "psg"],
-  "paris saint-germain": ["ligue1", "psg"],
-  "paris saint germain": ["ligue1", "psg"],
-  "paris sg": ["ligue1", "psg"],
-  "lens": ["ligue1", "lens"],
-  "rc lens": ["ligue1", "lens"],
-  "marsella": ["ligue1", "marsella"],
-  "olympique de marsella": ["ligue1", "marsella"],
-  "om": ["ligue1", "marsella"],
-  "lyon": ["ligue1", "lyon"],
-  "olympique lyonnais": ["ligue1", "lyon"],
-  "ol": ["ligue1", "lyon"],
-  "lille": ["ligue1", "lille"],
-  "losc": ["ligue1", "lille"],
-  "monaco": ["ligue1", "monaco"],
-  "as monaco": ["ligue1", "monaco"],
-  "rennes": ["ligue1", "rennes"],
-  "stade rennais": ["ligue1", "rennes"],
-  "estrasburgo": ["ligue1", "strasbourg"],
-  "strasbourg": ["ligue1", "strasbourg"],
-  "rc strasbourg": ["ligue1", "strasbourg"],
-  "lorient": ["ligue1", "lorient"],
-  "fc lorient": ["ligue1", "lorient"],
-  "brest": ["ligue1", "brest"],
-  "stade brestois": ["ligue1", "brest"],
-  "toulouse": ["ligue1", "toulouse"],
-  "fc toulouse": ["ligue1", "toulouse"],
-  "angers": ["ligue1", "angers"],
-  "sco angers": ["ligue1", "angers"],
-  "paris fc": ["ligue1", "parisfc"],
-  "le havre": ["ligue1", "lehavre"],
-  "niza": ["ligue1", "nice"],
-  "nice": ["ligue1", "nice"],
-  "ogc nice": ["ligue1", "nice"],
-  "auxerre": ["ligue1", "auxerre"],
-  "aj auxerre": ["ligue1", "auxerre"],
-  "nantes": ["ligue1", "nantes"],
-  "fc nantes": ["ligue1", "nantes"],
-  "metz": ["ligue1", "metz"],
-  "fc metz": ["ligue1", "metz"],
-  "montpellier": ["ligue1", "montpellier"],
-  "mhsc": ["ligue1", "montpellier"],
-  "reims": ["ligue1", "reims"],
-  "stade de reims": ["ligue1", "reims"],
-
-  // === MLS (USA) ===
-  "nycfc": ["mls", "nycfc"],
-  "new york city fc": ["mls", "nycfc"],
-  "new york city": ["mls", "nycfc"],
-  "nashville": ["mls", "nashville"],
-  "nashville sc": ["mls", "nashville"],
-  "inter miami": ["mls", "miami"],
-  "inter miami cf": ["mls", "miami"],
-  "ny red bulls": ["mls", "nyredbulls"],
-  "new york red bulls": ["mls", "nyredbulls"],
-  "dc united": ["mls", "dcunited"],
-  "charlotte": ["mls", "charlotte"],
-  "charlotte fc": ["mls", "charlotte"],
-  "chicago": ["mls", "chicago"],
-  "chicago fire": ["mls", "chicago"],
-  "chicago fire fc": ["mls", "chicago"],
-  "toronto": ["mls", "toronto"],
-  "toronto fc": ["mls", "toronto"],
-  "new england": ["mls", "newengland"],
-  "new england revolution": ["mls", "newengland"],
-  "revolution": ["mls", "newengland"],
-  "atlanta": ["mls", "atlanta"],
-  "atlanta united": ["mls", "atlanta"],
-  "atlanta united fc": ["mls", "atlanta"],
-  "cincinnati": ["mls", "cincinnati"],
-  "fc cincinnati": ["mls", "cincinnati"],
-  "montreal": ["mls", "montreal"],
-  "cf montreal": ["mls", "montreal"],
-  "orlando": ["mls", "orlando"],
-  "orlando city": ["mls", "orlando"],
-  "orlando city sc": ["mls", "orlando"],
-  "columbus": ["mls", "columbus"],
-  "columbus crew": ["mls", "columbus"],
-  "philadelphia": ["mls", "philadelphia"],
-  "philadelphia union": ["mls", "philadelphia"],
-  "vancouver": ["mls", "vancouver"],
-  "vancouver whitecaps": ["mls", "vancouver"],
-  "whitecaps": ["mls", "vancouver"],
-  "lafc": ["mls", "lafc"],
-  "los angeles fc": ["mls", "lafc"],
-  "san diego": ["mls", "sandiego"],
-  "san diego fc": ["mls", "sandiego"],
-  "san jose": ["mls", "sanjose"],
-  "san jose earthquakes": ["mls", "sanjose"],
-  "seattle": ["mls", "seattle"],
-  "seattle sounders": ["mls", "seattle"],
-  "seattle sounders fc": ["mls", "seattle"],
-  "real salt lake": ["mls", "saltlake"],
-  "colorado": ["mls", "colorado"],
-  "colorado rapids": ["mls", "colorado"],
-  "houston": ["mls", "houston"],
-  "houston dynamo": ["mls", "houston"],
-  "houston dynamo fc": ["mls", "houston"],
-  "dallas": ["mls", "dallas"],
-  "fc dallas": ["mls", "dallas"],
-  "la galaxy": ["mls", "lagalaxy"],
-  "los angeles galaxy": ["mls", "lagalaxy"],
-  "austin": ["mls", "austin"],
-  "austin fc": ["mls", "austin"],
-  "sporting kc": ["mls", "sportingkc"],
-  "sporting kansas city": ["mls", "sportingkc"],
-  "kansas city": ["mls", "sportingkc"],
-  "minnesota": ["mls", "minnesota"],
-  "minnesota united": ["mls", "minnesota"],
-  "minnesota united fc": ["mls", "minnesota"],
-  "portland": ["mls", "portland"],
-  "portland timbers": ["mls", "portland"],
-  "st. louis": ["mls", "stlouis"],
-  "st. louis city": ["mls", "stlouis"],
-  "st. louis city sc": ["mls", "stlouis"],
-
-  // === PREMIERSHIP (ESCOCIA) ===
-  "aberdeen": ["premiership", "aberdeen"],
-  "celtic": ["premiership", "celtic"],
-  "dundee fc": ["premiership", "dundee_fc"],
-  "dundee": ["premiership", "dundee_fc"],
-  "dundee united": ["premiership", "dundee_united"],
-  "falkirk": ["premiership", "falkirk"],
-  "heart of midlothian": ["premiership", "heart_of_midlothian"],
-  "hearts": ["premiership", "heart_of_midlothian"],
-  "hibernian": ["premiership", "hibernian"],
-  "hibs": ["premiership", "hibernian"],
-  "kilmarnock": ["premiership", "kilmarnock"],
-  "livingston": ["premiership", "livingston"],
-  "motherwell": ["premiership", "motherwell"],
-  "rangers": ["premiership", "rangers"],
-  "st mirren": ["premiership", "st_mirren"],
-  "st. mirren": ["premiership", "st_mirren"],
-
-  // === PRIMEIRA LIGA (PORTUGAL) ===
-  "porto": ["primeiraliga", "porto"],
-  "fc porto": ["primeiraliga", "porto"],
-  "sporting": ["primeiraliga", "sporting"],
-  "sporting cp": ["primeiraliga", "sporting"],
-  "sporting lisbon": ["primeiraliga", "sporting"],
-  "braga": ["primeiraliga", "braga"],
-  "sporting braga": ["primeiraliga", "braga"],
-  "sc braga": ["primeiraliga", "braga"],
-  "benfica": ["primeiraliga", "benfica"],
-  "sl benfica": ["primeiraliga", "benfica"],
-  "gil vicente": ["primeiraliga", "gilvicente"],
-  "gil vicente fc": ["primeiraliga", "gilvicente"],
-  "famalicao": ["primeiraliga", "famalicao"],
-  "fc famalicao": ["primeiraliga", "famalicao"],
-  "estoril": ["primeiraliga", "estoril"],
-  "gd estoril": ["primeiraliga", "estoril"],
-  "estoril praia": ["primeiraliga", "estoril"],
-  "moreirense": ["primeiraliga", "moreirense"],
-  "fc moreirense": ["primeiraliga", "moreirense"],
-  "guimaraes": ["primeiraliga", "vitoria"],
-  "vitoria guimaraes": ["primeiraliga", "vitoria"],
-  "vitoria": ["primeiraliga", "vitoria"],
-  "vitoria sc": ["primeiraliga", "vitoria"],
-  "arouca": ["primeiraliga", "arouca"],
-  "fc arouca": ["primeiraliga", "arouca"],
-  "rio ave": ["primeiraliga", "rioave"],
-  "casa pia": ["primeiraliga", "casapia"],
-  "casa pia ac": ["primeiraliga", "casapia"],
-  "boavista": ["primeiraliga", "boavista"],
-  "boavista fc": ["primeiraliga", "boavista"],
-  "nacional": ["primeiraliga", "nacional"],
-  "cd nacional": ["primeiraliga", "nacional"],
-
-  // === SERIE A (ITALIA) ===
-  "inter": ["seriea", "inter"],
-  "inter milan": ["seriea", "inter"],
-  "fc internazionale": ["seriea", "inter"],
-  "milan": ["seriea", "milan"],
-  "ac milan": ["seriea", "milan"],
-  "napoli": ["seriea", "napoli"],
-  "ssc napoli": ["seriea", "napoli"],
-  "como": ["seriea", "como"],
-  "como 1907": ["seriea", "como"],
-  "juventus": ["seriea", "juventus"],
-  "juve": ["seriea", "juventus"],
-  "roma": ["seriea", "roma"],
-  "as roma": ["seriea", "roma"],
-  "atalanta": ["seriea", "atalanta"],
-  "atalanta bc": ["seriea", "atalanta"],
-  "bologna": ["seriea", "bologna"],
-  "bologna fc": ["seriea", "bologna"],
-  "lazio": ["seriea", "lazio"],
-  "ss lazio": ["seriea", "lazio"],
-  "sassuolo": ["seriea", "sassuolo"],
-  "us sassuolo": ["seriea", "sassuolo"],
-  "udinese": ["seriea", "udinese"],
-  "udinese calcio": ["seriea", "udinese"],
-  "parma": ["seriea", "parma"],
-  "parma calcio": ["seriea", "parma"],
-  "genoa": ["seriea", "genoa"],
-  "genoa cfc": ["seriea", "genoa"],
-  "torino": ["seriea", "torino"],
-  "torino fc": ["seriea", "torino"],
-  "cagliari": ["seriea", "cagliari"],
-  "cagliari calcio": ["seriea", "cagliari"],
-  "fiorentina": ["seriea", "fiorentina"],
-  "acf fiorentina": ["seriea", "fiorentina"],
-  "lecce": ["seriea", "lecce"],
-  "us lecce": ["seriea", "lecce"],
-  "cremonese": ["seriea", "cremonese"],
-  "us cremonese": ["seriea", "cremonese"],
-  "pisa": ["seriea", "pisa"],
-  "pisa sc": ["seriea", "pisa"],
-  "hellas verona": ["seriea", "verona"],
-  "verona": ["seriea", "verona"],
-  "hellas": ["seriea", "verona"],
-  "monza": ["seriea", "monza"],
-  "ac monza": ["seriea", "monza"],
-  "empoli": ["seriea", "empoli"],
-  "empoli fc": ["seriea", "empoli"],
-  "frosinone": ["seriea", "frosinone"],
-  "frosinone calcio": ["seriea", "frosinone"],
-  "salernitana": ["seriea", "salernitana"],
-  "us salernitana": ["seriea", "salernitana"],
-
-  // === BRASILEIRAO (BRASIL) ===
-  "palmeiras": ["seriea_brasil", "palmeiras"],
-  "sociedade palmeiras": ["seriea_brasil", "palmeiras"],
-  "sep": ["seriea_brasil", "palmeiras"],
-  "sao paulo": ["seriea_brasil", "saopaulo"],
-  "sao paulo fc": ["seriea_brasil", "saopaulo"],
-  "spfc": ["seriea_brasil", "saopaulo"],
-  "bahia": ["seriea_brasil", "bahia"],
-  "ec bahia": ["seriea_brasil", "bahia"],
-  "fluminense": ["seriea_brasil", "fluminense"],
-  "fluminense fc": ["seriea_brasil", "fluminense"],
-  "flu": ["seriea_brasil", "fluminense"],
-  "coritiba": ["seriea_brasil", "coritiba"],
-  "coritiba fc": ["seriea_brasil", "coritiba"],
-  "coxa": ["seriea_brasil", "coritiba"],
-  "flamengo": ["seriea_brasil", "flamengo"],
-  "cr flamengo": ["seriea_brasil", "flamengo"],
-  " Mengao": ["seriea_brasil", "flamengo"],
-  "athletico-pr": ["seriea_brasil", "athleticopr"],
-  "athletico paranaense": ["seriea_brasil", "athleticopr"],
-  "furacao": ["seriea_brasil", "athleticopr"],
-  "paranaense": ["seriea_brasil", "athleticopr"],
-  "gremio": ["seriea_brasil", "gremio"],
-  "gremio fbpa": ["seriea_brasil", "gremio"],
-  "corinthians": ["seriea_brasil", "corinthians"],
-  "sc corinthians": ["seriea_brasil", "corinthians"],
-  "timao": ["seriea_brasil", "corinthians"],
-  "vasco": ["seriea_brasil", "vasco"],
-  "vasco da gama": ["seriea_brasil", "vasco"],
-  "crvg": ["seriea_brasil", "vasco"],
-  "atletico mineiro": ["seriea_brasil", "atleticomineiro"],
-  "atletico-mg": ["seriea_brasil", "atleticomineiro"],
-  "galao": ["seriea_brasil", "atleticomineiro"],
-  "bragantino": ["seriea_brasil", "bragantino"],
-  "rb bragantino": ["seriea_brasil", "bragantino"],
-  "red bull bragantino": ["seriea_brasil", "bragantino"],
-  "vitoria": ["seriea_brasil", "vitoria"],
-  "ec vitoria": ["seriea_brasil", "vitoria"],
-  "chapecoense": ["seriea_brasil", "chapecoense"],
-  "a.c. chapecoense": ["seriea_brasil", "chapecoense"],
-  "mirassol": ["seriea_brasil", "mirassol"],
-  "mirassol fc": ["seriea_brasil", "mirassol"],
-  "santos": ["seriea_brasil", "santos"],
-  "santos fc": ["seriea_brasil", "santos"],
-  "peixe": ["seriea_brasil", "santos"],
-  "internacional": ["seriea_brasil", "internacional"],
-  "sc internacional": ["seriea_brasil", "internacional"],
-  "inter": ["seriea_brasil", "internacional"],
-  "botafogo": ["seriea_brasil", "botafogo"],
-  "botafogo fr": ["seriea_brasil", "botafogo"],
-  "fogao": ["seriea_brasil", "botafogo"],
-  "cruzeiro": ["seriea_brasil", "cruzeiro"],
-  "cruzeiro ec": ["seriea_brasil", "cruzeiro"],
-  "cuiaba": ["seriea_brasil", "cuiaba"],
-  "cuiaba ec": ["seriea_brasil", "cuiaba"],
-  "fortaleza": ["seriea_brasil", "fortaleza"],
-  "fortaleza ec": ["seriea_brasil", "fortaleza"],
-  "juventude": ["seriea_brasil", "juventude"],
-  "ec juventude": ["seriea_brasil", "juventude"],
-
-  // === BUNDESLIGA (ALEMANIA) ===
-  "bayern": ["bundesliga", "bayern"],
-  "bayern munchen": ["bundesliga", "bayern"],
-  "bayern munich": ["bundesliga", "bayern"],
-  "fc bayern": ["bundesliga", "bayern"],
-  "fc bayern munchen": ["bundesliga", "bayern"],
-  "dortmund": ["bundesliga", "dortmund"],
-  "borussia dortmund": ["bundesliga", "dortmund"],
-  "bvb": ["bundesliga", "dortmund"],
-  "hoffenheim": ["bundesliga", "hoffenheim"],
-  "tsg hoffenheim": ["bundesliga", "hoffenheim"],
-  "stuttgart": ["bundesliga", "stuttgart"],
-  "vfb stuttgart": ["bundesliga", "stuttgart"],
-  "leipzig": ["bundesliga", "leipzig"],
-  "rb leipzig": ["bundesliga", "leipzig"],
-  "leverkusen": ["bundesliga", "leverkusen"],
-  "bayer leverkusen": ["bundesliga", "leverkusen"],
-  "bayer 04": ["bundesliga", "leverkusen"],
-  "eintracht": ["bundesliga", "eintracht"],
-  "eintracht frankfurt": ["bundesliga", "eintracht"],
-  "frankfurt": ["bundesliga", "eintracht"],
-  "freiburg": ["bundesliga", "freiburg"],
-  "sc freiburg": ["bundesliga", "freiburg"],
-  "friburgo": ["bundesliga", "freiburg"],
-  "union berlin": ["bundesliga", "unionberlin"],
-  "fc union berlin": ["bundesliga", "unionberlin"],
-  "augsburg": ["bundesliga", "augsburg"],
-  "fc augsburg": ["bundesliga", "augsburg"],
-  "hamburg": ["bundesliga", "hamburg"],
-  "hamburg sv": ["bundesliga", "hamburg"],
-  "hsv": ["bundesliga", "hamburg"],
-  "gladbach": ["bundesliga", "gladbach"],
-  "borussia monchengladbach": ["bundesliga", "gladbach"],
-  "borussia": ["bundesliga", "gladbach"],
-  "mainz": ["bundesliga", "mainz"],
-  "fsv mainz": ["bundesliga", "mainz"],
-  "mainz 05": ["bundesliga", "mainz"],
-  "koln": ["bundesliga", "koln"],
-  "fc koln": ["bundesliga", "koln"],
-  "cologne": ["bundesliga", "koln"],
-  "werder": ["bundesliga", "werder"],
-  "werder bremen": ["bundesliga", "werder"],
-  "st. pauli": ["bundesliga", "stpauli"],
-  "stpauli": ["bundesliga", "stpauli"],
-  "fc st. pauli": ["bundesliga", "stpauli"],
-  "wolfsburg": ["bundesliga", "wolfsburg"],
-  "vfl wolfsburg": ["bundesliga", "wolfsburg"],
-  "heidenheim": ["bundesliga", "heidenheim"],
-  "fc heidenheim": ["bundesliga", "heidenheim"],
-  "bochum": ["bundesliga", "bochum"],
-  "vfl bochum": ["bundesliga", "bochum"],
-
-  // === LA LIGA (ESPAÑA) ===
-  "barcelona": ["laliga", "barcelona"],
-  "fc barcelona": ["laliga", "barcelona"],
-  "barca": ["laliga", "barcelona"],
-  "real madrid": ["laliga", "realmadrid"],
-  "madrid": ["laliga", "realmadrid"],
-  "atletico": ["laliga", "atletico"],
-  "atletico madrid": ["laliga", "atletico"],
-  "atleti": ["laliga", "atletico"],
-  "villarreal": ["laliga", "villarreal"],
-  "villarreal cf": ["laliga", "villarreal"],
-  "betis": ["laliga", "betis"],
-  "real betis": ["laliga", "betis"],
-  "celta": ["laliga", "celta"],
-  "celta de vigo": ["laliga", "celta"],
-  "rc celta": ["laliga", "celta"],
-  "real sociedad": ["laliga", "realsociedad"],
-  "sociedad": ["laliga", "realsociedad"],
-  "espanyol": ["laliga", "espanyol"],
-  "rcd espanyol": ["laliga", "espanyol"],
-  "getafe": ["laliga", "getafe"],
-  "getafe cf": ["laliga", "getafe"],
-  "athletic": ["laliga", "athletic"],
-  "athletic bilbao": ["laliga", "athletic"],
-  "athletic club": ["laliga", "athletic"],
-  "osasuna": ["laliga", "osasuna"],
-  "ca osasuna": ["laliga", "osasuna"],
-  "girona": ["laliga", "girona"],
-  "girona fc": ["laliga", "girona"],
-  "rayo": ["laliga", "rayo"],
-  "rayo vallecano": ["laliga", "rayo"],
-  "valencia": ["laliga", "valencia"],
-  "valencia cf": ["laliga", "valencia"],
-  "sevilla": ["laliga", "sevilla"],
-  "sevilla fc": ["laliga", "sevilla"],
-  "mallorca": ["laliga", "mallorca"],
-  "rcd mallorca": ["laliga", "mallorca"],
-  "alaves": ["laliga", "alaves"],
-  "deportivo alaves": ["laliga", "alaves"],
-  "las palmas": ["laliga", "laspalmas"],
-  "ud las palmas": ["laliga", "laspalmas"],
-  "leganes": ["laliga", "leganes"],
-  "cd leganes": ["laliga", "leganes"],
-  "valladolid": ["laliga", "valladolid"],
-  "real valladolid": ["laliga", "valladolid"],
-
-  // === PREMIER LEAGUE (INGLATERRA) ===
-  "arsenal": ["championship", "arsenal"],
-  "arsenal fc": ["championship", "arsenal"],
-  "man city": ["championship", "mancity"],
-  "manchester city": ["championship", "mancity"],
-  "mcfc": ["championship", "mancity"],
-  "man utd": ["championship", "manutd"],
-  "manchester united": ["championship", "manutd"],
-  "man united": ["championship", "manutd"],
-  "mufc": ["championship", "manutd"],
-  "aston villa": ["championship", "astonvilla"],
-  "villa": ["championship", "astonvilla"],
-  "liverpool": ["championship", "liverpool"],
-  "liverpool fc": ["championship", "liverpool"],
-  "lfc": ["championship", "liverpool"],
-  "chelsea": ["championship", "chelsea"],
-  "chelsea fc": ["championship", "chelsea"],
-  "brentford": ["championship", "brentford"],
-  "brentford fc": ["championship", "brentford"],
-  "everton": ["championship", "everton"],
-  "everton fc": ["championship", "everton"],
-  "newcastle": ["championship", "newcastle"],
-  "newcastle united": ["championship", "newcastle"],
-  "newcastle utd": ["championship", "newcastle"],
-  "nufc": ["championship", "newcastle"],
-  "bournemouth": ["championship", "bournemouth"],
-  "afc bournemouth": ["championship", "bournemouth"],
-  "fulham": ["championship", "fulham"],
-  "fulham fc": ["championship", "fulham"],
-  "brighton": ["championship", "brighton"],
-  "brighton & hove albion": ["championship", "brighton"],
-  "crystal palace": ["championship", "crystalpalace"],
-  "palace": ["championship", "crystalpalace"],
-  "cpfc": ["championship", "crystalpalace"],
-  "tottenham": ["championship", "tottenham"],
-  "tottenham hotspur": ["championship", "tottenham"],
-  "spurs": ["championship", "tottenham"],
-  "thfc": ["championship", "tottenham"],
-  "nottingham forest": ["championship", "nottingham"],
-  "forest": ["championship", "nottingham"],
-  "nffc": ["championship", "nottingham"],
-  "west ham": ["championship", "westham"],
-  "west ham united": ["championship", "westham"],
-  "whufc": ["championship", "westham"],
-  "wolves": ["championship", "wolves"],
-  "wolverhampton": ["championship", "wolves"],
-  "wolverhampton wanderers": ["championship", "wolves"],
-  "wwfc": ["championship", "wolves"],
-  "leicester": ["championship", "leicester"],
-  "leicester city": ["championship", "leicester"],
-  "lcfc": ["championship", "leicester"],
-  "ipswich": ["championship", "ipswich"],
-  "ipswich town": ["championship", "ipswich"],
-  "southampton": ["championship", "southampton"],
-  "southampton fc": ["championship", "southampton"],
-  "saints": ["championship", "southampton"],
-
-  // === EREDIVISIE (HOLANDA) ===
-  "ajax": ["eredivisie", "ajax"],
-  "ajax amsterdam": ["eredivisie", "ajax"],
-  "feyenoord": ["eredivisie", "feyenoord"],
-  "psv": ["eredivisie", "psv"],
-  "psv eindhoven": ["eredivisie", "psv"],
-  "az": ["eredivisie", "az"],
-  "az alkmaar": ["eredivisie", "az"],
-  "twente": ["eredivisie", "twente"],
-  "fc twente": ["eredivisie", "twente"],
-  "utrecht": ["eredivisie", "utrecht"],
-  "fc utrecht": ["eredivisie", "utrecht"],
-  "heerenveen": ["eredivisie", "heerenveen"],
-  "sc heerenveen": ["eredivisie", "heerenveen"],
-  "vitesse": ["eredivisie", "vitesse"],
-  "sbv vitesse": ["eredivisie", "vitesse"],
-  "nec": ["eredivisie", "nec"],
-  "nec nijmegen": ["eredivisie", "nec"],
-  "sparta": ["eredivisie", "sparta"],
-  "sparta rotterdam": ["eredivisie", "sparta"],
-  "go ahead": ["eredivisie", "goahead"],
-  "go ahead eagles": ["eredivisie", "goahead"],
-  "pec zwolle": ["eredivisie", "zwolle"],
-  "zwolle": ["eredivisie", "zwolle"],
-  "fortuna": ["eredivisie", "fortuna"],
-  "fortuna sittard": ["eredivisie", "fortuna"],
-  "heracles": ["eredivisie", "heracles"],
-  "heracles almelo": ["eredivisie", "heracles"],
-  "rkc": ["eredivisie", "rkc"],
-  "rkc waalwijk": ["eredivisie", "rkc"],
-  "volendam": ["eredivisie", "volendam"],
-  "fc volendam": ["eredivisie", "volendam"],
-  "excelsior": ["eredivisie", "excelsior"],
-  "excelsior rotterdam": ["eredivisie", "excelsior"],
-  "cambuur": ["eredivisie", "cambuur"],
-  "sc cambuur": ["eredivisie", "cambuur"],
-  "groningen": ["eredivisie", "groningen"],
-  "fc groningen": ["eredivisie", "groningen"],
-  "almere": ["eredivisie", "almere"],
-  "almere city": ["eredivisie", "almere"],
-  "almere city fc": ["eredivisie", "almere"],
-  "rangers": ["eredivisie", "rangers"],
-  "glasgow rangers": ["eredivisie", "rangers"],
-  "celtic": ["eredivisie", "celtic"],
-  "celtic fc": ["eredivisie", "celtic"],
-
-  // === URUGUAY ===
-  "penarol": ["primeradivision uruguay", "penarol"],
-  "peñarol": ["primeradivision uruguay", "penarol"],
-  "nacional": ["primeradivision uruguay", "nacional"],
-  "nacional uruguay": ["primeradivision uruguay", "nacional"],
-  "club nacional": ["primeradivision uruguay", "nacional"],
-  "defensor": ["primeradivision uruguay", "defensor"],
-  "defensor sporting": ["primeradivision uruguay", "defensor"],
-  "danubio": ["primeradivision uruguay", "danubio"],
-  "danubio fc": ["primeradivision uruguay", "danubio"],
-  "montevideo wanderers": ["primeradivision uruguay", "wanderers"],
-  "wanderers": ["primeradivision uruguay", "wanderers"],
-  "cerro largo": ["primeradivision uruguay", "cerrolargo"],
-  "cerro": ["primeradivision uruguay", "cerro"],
-  "boston river": ["primeradivision uruguay", "bostonriver"],
-  "progreso": ["primeradivision uruguay", "progreso"],
-  "ca progreso": ["primeradivision uruguay", "progreso"],
-  "juventud": ["primeradivision uruguay", "juventud"],
-  "juventud las piedras": ["primeradivision uruguay", "juventud"],
-  "racing": ["primeradivision uruguay", "racing"],
-  "racing montevideo": ["primeradivision uruguay", "racing"],
-  "liverpool": ["primeradivision uruguay", "liverpool"],
-  "liverpool montevideo": ["primeradivision uruguay", "liverpool"],
-  "ca liverpool": ["primeradivision uruguay", "liverpool"],
-  "deportivo maldonado": ["primeradivision uruguay", "maldonado"],
-  "maldonado": ["primeradivision uruguay", "maldonado"],
-  "albion": ["primeradivision uruguay", "albion"],
-  "albion fc": ["primeradivision uruguay", "albion"],
-  "river plate uruguay": ["primeradivision uruguay", "riverplate"],
-  "river plate": ["primeradivision uruguay", "riverplate"],
-  "fenix": ["primeradivision uruguay", "fenix"],
-  "ca fenix": ["primeradivision uruguay", "fenix"],
-  "torque": ["primeradivision uruguay", "torque"],
-  "montevideo city torque": ["primeradivision uruguay", "torque"],
-
-  // === PARAGUAY ===
-  "olimpia": ["copadeprimera", "olimpia"],
-  "club olimpia": ["copadeprimera", "olimpia"],
-  "cerro porteno": ["copadeprimera", "cerroporteno"],
-  "cerro porteño": ["copadeprimera", "cerroporteno"],
-  "ccp": ["copadeprimera", "cerroporteno"],
-  "libertad": ["copadeprimera", "libertad"],
-  "club libertad": ["copadeprimera", "libertad"],
-  "guarani": ["copadeprimera", "guarani"],
-  "club guarani": ["copadeprimera", "guarani"],
-  "nacional asuncion": ["copadeprimera", "nacional"],
-  "nacional": ["copadeprimera", "nacional"],
-  "club nacional": ["copadeprimera", "nacional"],
-  "sportivo ameliano": ["copadeprimera", "ameliano"],
-  "ameliano": ["copadeprimera", "ameliano"],
-  "sportivo trinidense": ["copadeprimera", "trinidense"],
-  "trinidense": ["copadeprimera", "trinidense"],
-  "luqueno": ["copadeprimera", "luqueno"],
-  "sportivo luqueño": ["copadeprimera", "luqueno"],
-  "2 de mayo": ["copadeprimera", "2demayo"],
-  "2demayo": ["copadeprimera", "2demayo"],
-  "general caballero": ["copadeprimera", "caballero"],
-  "guaireña": ["copadeprimera", "guairena"],
-  "guairena": ["copadeprimera", "guairena"],
-  "resistencia": ["copadeprimera", "resistencia"],
-  "club resistencia": ["copadeprimera", "resistencia"],
-  "tacuary": ["copadeprimera", "tacuary"],
-  "club tacuary": ["copadeprimera", "tacuary"],
-  "sol de america": ["copadeprimera", "sol"],
-  "sol": ["copadeprimera", "sol"],
-
-  // === SELECCIONES ===
-  "argentina": ["selecciones", "argentina"],
-  "brasil": ["selecciones", "brasil"],
-  "brazil": ["selecciones", "brasil"],
-  "uruguay": ["selecciones", "uruguay"],
-  "chile": ["selecciones", "chile"],
-  "colombia": ["selecciones", "colombia"],
-  "peru": ["selecciones", "peru"],
-  "perú": ["selecciones", "peru"],
-  "paraguay": ["selecciones", "paraguay"],
-  "bolivia": ["selecciones", "bolivia"],
-  "ecuador": ["selecciones", "ecuador"],
-  "venezuela": ["selecciones", "venezuela"],
-  "espana": ["selecciones", "espana"],
-  "españa": ["selecciones", "espana"],
-  "spain": ["selecciones", "espana"],
-  "francia": ["selecciones", "francia"],
-  "france": ["selecciones", "francia"],
-  "alemania": ["selecciones", "alemania"],
-  "germany": ["selecciones", "alemania"],
-  "italia": ["selecciones", "italia"],
-  "italy": ["selecciones", "italia"],
-  "inglaterra": ["selecciones", "inglaterra"],
-  "england": ["selecciones", "inglaterra"],
-  "portugal": ["selecciones", "portugal"],
-  "holanda": ["selecciones", "holanda"],
-  "paises bajos": ["selecciones", "holanda"],
-  "netherlands": ["selecciones", "holanda"],
-  "belgica": ["selecciones", "belgica"],
-  "bélgica": ["selecciones", "belgica"],
-  "belgium": ["selecciones", "belgica"],
-  "croacia": ["selecciones", "croacia"],
-  "croatia": ["selecciones", "croacia"],
-  "mexico": ["selecciones", "mexico"],
-  "méxico": ["selecciones", "mexico"],
-  "estados unidos": ["selecciones", "usa"],
-  "usa": ["selecciones", "usa"],
-  "united states": ["selecciones", "usa"],
-  "canada": ["selecciones", "canada"],
-  "japon": ["selecciones", "japon"],
-  "japón": ["selecciones", "japon"],
-  "japan": ["selecciones", "japon"],
-  "corea del sur": ["selecciones", "corea"],
-  "south korea": ["selecciones", "corea"],
-  "australia": ["selecciones", "australia"],
-  "marruecos": ["selecciones", "marruecos"],
-  "morocco": ["selecciones", "marruecos"],
-  "senegal": ["selecciones", "senegal"],
-  "tunez": ["selecciones", "tunez"],
-  "túnez": ["selecciones", "tunez"],
-  "tunisia": ["selecciones", "tunez"],
-  "camerun": ["selecciones", "camerun"],
-  "cameroon": ["selecciones", "camerun"],
-  "ghana": ["selecciones", "ghana"],
-  "nigeria": ["selecciones", "nigeria"],
-  "costa rica": ["selecciones", "costarica"],
-  "panama": ["selecciones", "panama"],
-  "honduras": ["selecciones", "honduras"],
-  "guatemala": ["selecciones", "guatemala"],
-  "elsalvador": ["selecciones", "elsalvador"],
-  "el salvador": ["selecciones", "elsalvador"],
-  "suiza": ["selecciones", "suiza"],
-  "switzerland": ["selecciones", "suiza"],
-  "suecia": ["selecciones", "suecia"],
-  "sweden": ["selecciones", "suecia"],
-  "noruega": ["selecciones", "noruega"],
-  "norway": ["selecciones", "noruega"],
-  "dinamarca": ["selecciones", "dinamarca"],
-  "denmark": ["selecciones", "dinamarca"],
-  "polonia": ["selecciones", "polonia"],
-  "poland": ["selecciones", "polonia"],
-  "republica checa": ["selecciones", "checa"],
-  "república checa": ["selecciones", "checa"],
-  "czech republic": ["selecciones", "checa"],
-  "austria": ["selecciones", "austria"],
-  "hungria": ["selecciones", "hungria"],
-  "hungría": ["selecciones", "hungria"],
-  "hungary": ["selecciones", "hungria"],
-  "serbia": ["selecciones", "serbia"],
-  "eslovenia": ["selecciones", "eslovenia"],
-  "slovenia": ["selecciones", "eslovenia"],
-  "eslovaquia": ["selecciones", "eslovaquia"],
-  "slovakia": ["selecciones", "eslovaquia"],
-  "ucrania": ["selecciones", "ucrania"],
-  "ukraine": ["selecciones", "ucrania"],
-  "rusia": ["selecciones", "rusia"],
-  "russia": ["selecciones", "rusia"],
-  "turquia": ["selecciones", "turquia"],
-  "turquía": ["selecciones", "turquia"],
-  "turkey": ["selecciones", "turquia"],
-  "gales": ["selecciones", "gales"],
-  "wales": ["selecciones", "gales"],
-  "escocia": ["selecciones", "escocia"],
-  "scotland": ["selecciones", "escocia"],
-  "irlanda del norte": ["selecciones", "irlandanorte"],
-  "northern ireland": ["selecciones", "irlandanorte"],
-  "islandia": ["selecciones", "islandia"],
-  "iceland": ["selecciones", "islandia"],
-  "finlandia": ["selecciones", "finlandia"],
-  "finland": ["selecciones", "finlandia"],
-  "grecia": ["selecciones", "grecia"],
-  "greece": ["selecciones", "grecia"],
-  "romania": ["selecciones", "romania"],
-  "rumania": ["selecciones", "romania"],
-  "bulgaria": ["selecciones", "bulgaria"],
-  "albania": ["selecciones", "albania"],
-  "bosnia": ["selecciones", "bosnia"],
-  "montenegro": ["selecciones", "montenegro"],
-  "macedonia": ["selecciones", "macedonia"],
-  "armenia": ["selecciones", "armenia"],
-  "azerbaiyan": ["selecciones", "azerbaiyan"],
-  "azerbaiyán": ["selecciones", "azerbaiyan"],
-  "kazajistan": ["selecciones", "kazajistan"],
-  "kazajistán": ["selecciones", "kazajistan"],
-  "georgia": ["selecciones", "georgia"],
-  "israel": ["selecciones", "israel"],
-  "arabia saudita": ["selecciones", "arabia"],
-  "saudi arabia": ["selecciones", "arabia"],
-  "qatar": ["selecciones", "qatar"],
-  "emiratos arabes": ["selecciones", "emiratos"],
-  "emiratos árabes": ["selecciones", "emiratos"],
-  "uae": ["selecciones", "emiratos"],
-  "iran": ["selecciones", "iran"],
-  "irán": ["selecciones", "iran"],
-  "iraq": ["selecciones", "iraq"],
-  "irak": ["selecciones", "iraq"],
-  "corea del norte": ["selecciones", "coreanorte"],
-  "north korea": ["selecciones", "coreanorte"],
-  "china": ["selecciones", "china"],
-  "uzbekistan": ["selecciones", "uzbekistan"],
-  "uzbekistán": ["selecciones", "uzbekistan"],
-  "vietnam": ["selecciones", "vietnam"],
-  "vietnam": ["selecciones", "vietnam"],
-  "tailandia": ["selecciones", "tailandia"],
-  "thailand": ["selecciones", "tailandia"],
-  "malasia": ["selecciones", "malasia"],
-  "malaysia": ["selecciones", "malasia"],
-  "indonesia": ["selecciones", "indonesia"],
-  "filipinas": ["selecciones", "filipinas"],
-  "philippines": ["selecciones", "filipinas"],
-  "singapur": ["selecciones", "singapur"],
-  "singapore": ["selecciones", "singapur"],
-  "nueva zelanda": ["selecciones", "nuevazelanda"],
-  "new zealand": ["selecciones", "nuevazelanda"],
-  "fiji": ["selecciones", "fiji"],
-  "papua": ["selecciones", "papua"],
-  "sudafrica": ["selecciones", "sudafrica"],
-  "sudáfrica": ["selecciones", "sudafrica"],
-  "south africa": ["selecciones", "sudafrica"],
-  "egipto": ["selecciones", "egipto"],
-  "egypt": ["selecciones", "egipto"],
-  "argelia": ["selecciones", "argelia"],
-  "algeria": ["selecciones", "argelia"],
-  "mali": ["selecciones", "mali"],
-  "burkina faso": ["selecciones", "burkina"],
-  "costa de marfil": ["selecciones", "marfil"],
-  "cote d'ivoire": ["selecciones", "marfil"],
-  "ivory coast": ["selecciones", "marfil"],
-  "gabon": ["selecciones", "gabon"],
-  "congo": ["selecciones", "congo"],
-  "rd congo": ["selecciones", "rdcongo"],
-  "angola": ["selecciones", "angola"],
-  "zambia": ["selecciones", "zambia"],
-  "zimbabue": ["selecciones", "zimbabue"],
-  "zimbabwe": ["selecciones", "zimbabue"],
-  "kenia": ["selecciones", "kenia"],
-  "kenya": ["selecciones", "kenia"],
-  "etiopia": ["selecciones", "etiopia"],
-  "ethiopia": ["selecciones", "etiopia"],
-  "niger": ["selecciones", "niger"],
-  "liberia": ["selecciones", "liberia"],
-  "sierra leona": ["selecciones", "sierraleona"],
-  "guinea": ["selecciones", "guinea"],
-  "guinea ecuatorial": ["selecciones", "guineaecuatorial"],
-  "equatorial guinea": ["selecciones", "guineaecuatorial"],
-  "guinea-bissau": ["selecciones", "guineabisau"],
-  "guinea bissau": ["selecciones", "guineabisau"],
-  "gambia": ["selecciones", "gambia"],
-  "mauritania": ["selecciones", "mauritania"],
-  "namibia": ["selecciones", "namibia"],
-  "mozambique": ["selecciones", "mozambique"],
-  "madagascar": ["selecciones", "madagascar"],
-  "uganda": ["selecciones", "uganda"],
-  "ruanda": ["selecciones", "ruanda"],
-  "rwanda": ["selecciones", "ruanda"],
-  "burundi": ["selecciones", "burundi"],
-  "tanzania": ["selecciones", "tanzania"],
-  "sudan": ["selecciones", "sudan"],
-  "sudan del sur": ["selecciones", "sudansur"],
-  "south sudan": ["selecciones", "sudansur"],
-  "libia": ["selecciones", "libia"],
-  "libya": ["selecciones", "libia"],
-  "chad": ["selecciones", "chad"],
-  "cabo verde": ["selecciones", "caboverde"],
-  "cape verde": ["selecciones", "caboverde"],
-  "santo tome": ["selecciones", "santotome"],
-  "sao tome": ["selecciones", "santotome"],
-  "comoras": ["selecciones", "comoras"],
-  "comoros": ["selecciones", "comoras"],
-  "seychelles": ["selecciones", "seychelles"],
-  "mauricio": ["selecciones", "mauricio"],
-  "mauritius": ["selecciones", "mauricio"],
-  "eritrea": ["selecciones", "eritrea"],
-  "djibouti": ["selecciones", "djibouti"],
-  "somalia": ["selecciones", "somalia"],
-  "centroafrica": ["selecciones", "centroafrica"],
-  "republica centroafricana": ["selecciones", "centroafrica"],
-  "central african republic": ["selecciones", "centroafrica"],
-  "lesoto": ["selecciones", "lesoto"],
-  "lesotho": ["selecciones", "lesoto"],
-  "eswatini": ["selecciones", "eswatini"],
-  "suazilandia": ["selecciones", "eswatini"],
-  "swaziland": ["selecciones", "eswatini"],
-  "botsuana": ["selecciones", "botsuana"],
-  "botswana": ["selecciones", "botsuana"],
-  "malaui": ["selecciones", "malaui"],
-  "malawi": ["selecciones", "malaui"],
-  "zambia": ["selecciones", "zambia"]
-};
-
-// Función para normalizar nombres de equipos
-function normalizeTeamName(name) {
-  if (!name) return "";
-
-  return name
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "") // Quitar tildes
-    .replace(/[^a-z0-9\s]/g, "") // Quitar caracteres especiales excepto espacios
-    .replace(/\s+/g, " ") // Normalizar espacios múltiples
-    .trim();
-}
-
-// Función para obtener la URL del escudo
-function getTeamLogo(teamName) {
-  if (!teamName) return null;
-
-  const normalized = normalizeTeamName(teamName);
-
-  // Búsqueda directa
-  if (teamLogosDB[normalized]) {
-    const [folder, filename] = teamLogosDB[normalized];
-    return `${GITHUB_SHIELDS_BASE}/${folder}/${filename}.png`;
-  }
-
-  // Búsqueda con variaciones comunes
-  const variations = [
-    normalized,
-    normalized.replace(/fc$/i, "").trim(),
-    normalized.replace(/^club/i, "").trim(),
-    normalized.replace(/^cd/i, "").trim(),
-    normalized.replace(/^ca/i, "").trim(),
-    normalized.replace(/cf$/i, "").trim(),
-    normalized.replace(/^rcd/i, "").trim(),
-    normalized.replace(/^rc/i, "").trim(),
-    normalized.replace(/^sc$/i, "").trim(),
-    normalized.replace(/sc$/i, "").trim(),
-    normalized.replace(/^ac$/i, "").trim(),
-    normalized.replace(/ac$/i, "").trim(),
-  ];
-
-  for (const variation of variations) {
-    if (teamLogosDB[variation]) {
-      const [folder, filename] = teamLogosDB[variation];
-      return `${GITHUB_SHIELDS_BASE}/${folder}/${filename}.png`;
-    }
-  }
-
-  // Búsqueda parcial
-  for (const [key, value] of Object.entries(teamLogosDB)) {
-    if (normalized.includes(key) || key.includes(normalized)) {
-      const [folder, filename] = value;
-      return `${GITHUB_SHIELDS_BASE}/${folder}/${filename}.png`;
-    }
-  }
-
-  return null;
-}
-// =====================================================
 // DATOS DE EVENTOS
 // =====================================================
-let eventsData = [
+const eventsData = [
   { time: "16:00", match: "Amistoso Internacional: Grecia vs Paraguay", link: "https://streamx339.cloud/global1.php?channel=disney4" },
   { time: "16:30", match: "Amistoso Internacional: Argelia vs Guatemala", link: "https://streamx339.cloud/global1.php?channel=foxdeportes" },
   { time: "16:45", match: "Amistoso Internacional: Inglaterra vs Uruguay", link: "https://streamx339.cloud/global1.php?channel=disney5" },
@@ -1818,201 +866,87 @@ let eventsData = [
   { time: "03:00", match: "F1 | GP de Japón: Clasificación", link: "https://streamx339.cloud/global1.php?channel=sportv3" }
 ];
 
-// Guardar los eventos agrupados para actualización
+const leagueMap = {
+  'Super Lig': 'Super Lig',
+  'UEFA Champions League': 'UCL',
+  'UEFA Europa League': 'UEL',
+  'Liga BetPlay': 'BetPlay',
+  'Copa de Primera': 'Primera',
+  'Liga Profesional': 'LPF',
+  'CONCACAF Champions Cup': 'Concacaf',
+  'Brasileirão': 'Brasil',
+  'Copa del Rey de Arabia': 'Arabia',
+  'Liga MX': 'Liga MX',
+  'Amistoso Internacional': 'Amistoso',
+  'Copa Argentina': 'Copa Arg',
+  'F1 | GP de Japón': 'F1'
+};
+
+const channelNameMap = {
+  'disney1': 'Disney+ 1', 'disney2': 'Disney+ 2', 'disney3': 'Disney+ 3', 'disney4': 'Disney+ 4',
+  'disney5': 'Disney+ 5', 'disney6': 'Disney+ 6', 'disney7': 'Disney+ 7', 'disney8': 'Disney+ 8',
+  'max1': 'Max 1', 'max2': 'Max 2', 'max3': 'Max 3',
+  'espn': 'ESPN', 'espn2': 'ESPN 2', 'espn3': 'ESPN 3', 'espn5': 'ESPN 5',
+  'espnmx': 'ESPN MX', 'espnpremium': 'ESPN Premium',
+  'tudnus': 'TUDN',
+  'fox1ar': 'Fox Sports 1 AR', 'fox2ar': 'Fox Sports 2 AR',
+  'foxone1': 'Fox Sports 1', 'foxone2': 'Fox Sports 2', 'foxone3': 'Fox Sports 3', 'foxone4': 'Fox Sports 4',
+  'foxdeportes': 'Fox Deportes',
+  'paramount1': 'Paramount+ 1', 'paramount2': 'Paramount+ 2', 'paramount3': 'Paramount+ 3', 'paramount4': 'Paramount+ 4',
+  'winplus': 'Win Sports+', 'winplus2': 'Win Sports+ 2',
+  'fanatiz1': 'Fanatiz 1', 'fanatiz2': 'Fanatiz 2', 'fanatiz3': 'Fanatiz 3', 'fanatiz4': 'Fanatiz 4',
+  'fanatiz5': 'Fanatiz 5', 'fanatiz6': 'Fanatiz 6', 'fanatiz7': 'Fanatiz 7', 'fanatiz8': 'Fanatiz 8',
+  'fanatiz9': 'Fanatiz 9', 'fanatiz10': 'Fanatiz 10',
+  'tntar': 'TNT Sports', 'tnt1uk': 'TNT Sports UK',
+  'tyc': 'TyC Sports', 'tycint': 'TyC Sports Int',
+  'winsports': 'Win Sports',
+  'premiere1': 'Premiere 1', 'premiere3': 'Premiere 3', 'premiere4': 'Premiere 4',
+  'premiere5': 'Premiere 5', 'premiere6': 'Premiere 6', 'premiere7': 'Premiere 7',
+  'universo': 'Universo',
+  'clarosports': 'Claro Sports',
+  'telefe': 'Telefe',
+  'daznf1': 'DAZN F1',
+  'sportv1': 'Sportv 1', 'sportv3': 'Sportv 3'
+};
+
+// Estado global
 let groupedEventsCache = [];
+let openDropdowns = new Set();
 
 // =====================================================
-// FUNCIONES PARA ESCUDOS
+// FUNCIONES UTILITARIAS
 // =====================================================
 
-// Extraer equipos del texto del partido
-function extractTeamsFromMatch(matchText) {
-  // Eliminar el nombre de la competición (todo antes de los dos puntos)
-  const withoutCompetition = matchText.replace(/^[^:]+:\s*/, '');
-  
-  // Buscar separador vs (varias variantes)
-  const vsPatterns = [/\svs\s/i, /\svs\.\s/i, /\sVS\s/i, /\s–\s/, /\s-\s/];
-  
-  for (const pattern of vsPatterns) {
-    const parts = withoutCompetition.split(pattern);
-    if (parts.length === 2) {
-      return {
-        team1: parts[0].trim(),
-        team2: parts[1].trim()
-      };
-    }
-  }
-  
-  return { team1: withoutCompetition, team2: null };
-}
-
-// Buscar escudo de un equipo
-function getTeamLogo(teamName) {
-  if (!teamName) return null;
-  
-  // Búsqueda directa
-  if (teamLogosDB[teamName]) {
-    return teamLogosDB[teamName];
-  }
-  
-  // Búsqueda case-insensitive
-  const lowerTeamName = teamName.toLowerCase();
-  for (const [key, value] of Object.entries(teamLogosDB)) {
-    if (key.toLowerCase() === lowerTeamName) {
-      return value;
-    }
-  }
-  
-  // Búsqueda parcial (si el nombre del equipo está contenido en la clave)
-  for (const [key, value] of Object.entries(teamLogosDB)) {
-    if (key.toLowerCase().includes(lowerTeamName) || 
-        lowerTeamName.includes(key.toLowerCase())) {
-      return value;
-    }
-  }
-  
-  return null;
-}
-
-// Generar HTML para mostrar los equipos con escudos
-function generateMatchHTML(matchText) {
-  const { team1, team2 } = extractTeamsFromMatch(matchText);
-  
-  const logo1 = getTeamLogo(team1);
-  const logo2 = getTeamLogo(team2);
-  
-  const logo1HTML = logo1 
-    ? `<img src="${logo1}" alt="${team1}" class="team-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><div class="team-logo-placeholder" style="display:none;"></div>`
-    : `<div class="team-logo-placeholder"></div>`;
-    
-  const logo2HTML = logo2 
-    ? `<img src="${logo2}" alt="${team2}" class="team-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><div class="team-logo-placeholder" style="display:none;"></div>`
-    : `<div class="team-logo-placeholder"></div>`;
-  
-  return `
-    <div class="team-section">
-      ${logo1HTML}
-      <span>${team1}</span>
-    </div>
-    <span class="vs-text">VS</span>
-    <div class="team-section">
-      ${logo2HTML}
-      <span>${team2}</span>
-    </div>
-  `;
-}
-
-// =====================================================
-// FUNCIONES ORIGINALES MEJORADAS
-// =====================================================
-
-// Extraer nombre de la liga del partido
 function getLeague(match) {
-  const leagues = {
-    'Super Lig': 'Super Lig',
-    'UEFA Champions League': 'UCL',
-    'UEFA Europa League': 'UEL',
-    'Liga BetPlay': 'BetPlay',
-    'Copa de Primera': 'Primera',
-    'Liga Profesional': 'LPF',
-    'CONCACAF Champions Cup': 'Concacaf',
-    'Brasileirão': 'Brasil',
-    'Copa del Rey de Arabia': 'Arabia',
-    'Liga MX': 'Liga MX'
-  };
-  
-  for (const [key, value] of Object.entries(leagues)) {
+  for (const [key, value] of Object.entries(leagueMap)) {
     if (match.includes(key)) return value;
   }
   return 'PARTIDO';
 }
 
-// Extraer nombre del canal desde el link original
 function getChannelFromLink(link) {
   const match = link.match(/channel=([a-zA-Z0-9]+)/);
   return match ? match[1] : null;
 }
 
-// Formatear nombre del canal para mostrar
 function formatChannelName(channel) {
-  const channelNames = {
-    'disney1': 'Disney+ 1',
-    'disney2': 'Disney+ 2',
-    'disney3': 'Disney+ 3',
-    'disney4': 'Disney+ 4',
-    'disney5': 'Disney+ 5',
-    'max1': 'Max 1',
-    'max2': 'Max 2',
-    'max3': 'Max 3',
-    'espn': 'ESPN',
-    'espn2': 'ESPN 2',
-    'espn3': 'ESPN 3',
-    'espn5': 'ESPN 5',
-    'espnmx': 'ESPN MX',
-    'espnpremium': 'ESPN Premium',
-    'tudnus': 'TUDN',
-    'fox1ar': 'Fox Sports 1 AR',
-    'fox2ar': 'Fox Sports 2 AR',
-    'foxone1': 'Fox Sports 1',
-    'foxone2': 'Fox Sports 2',
-    'foxone3': 'Fox Sports 3',
-    'foxone4': 'Fox Sports 4',
-    'foxdeportes': 'Fox Deportes',
-    'paramount1': 'Paramount+ 1',
-    'paramount2': 'Paramount+ 2',
-    'paramount3': 'Paramount+ 3',
-    'paramount4': 'Paramount+ 4',
-    'winplus': 'Win Sports+',
-    'winplus2': 'Win Sports+ 2',
-    'fanatiz1': 'Fanatiz 1',
-    'fanatiz2': 'Fanatiz 2',
-    'fanatiz3': 'Fanatiz 3',
-    'fanatiz4': 'Fanatiz 4',
-    'fanatiz5': 'Fanatiz 5',
-    'fanatiz6': 'Fanatiz 6',
-    'fanatiz7': 'Fanatiz 7',
-    'fanatiz8': 'Fanatiz 8',
-    'fanatiz9': 'Fanatiz 9',
-    'fanatiz10': 'Fanatiz 10',
-    'tntar': 'TNT Sports',
-    'tnt1uk': 'TNT Sports UK',
-    'tycint': 'TyC Sports',
-    'winsports': 'Win Sports',
-    'premiere1': 'Premiere 1',
-    'premiere3': 'Premiere 3',
-    'premiere4': 'Premiere 4',
-    'premiere5': 'Premiere 5',
-    'premiere6': 'Premiere 6',
-    'premiere7': 'Premiere 7',
-    'universo': 'Universo'
-  };
-  return channelNames[channel] || channel.toUpperCase();
+  return channelNameMap[channel] || channel.toUpperCase();
 }
 
-// Agrupar eventos por partido
 function groupEventsByMatch(events) {
   const grouped = {};
   
   events.forEach(ev => {
     const key = `${ev.time}_${ev.match}`;
     if (!grouped[key]) {
-      grouped[key] = {
-        time: ev.time,
-        match: ev.match,
-        channels: []
-      };
+      grouped[key] = { time: ev.time, match: ev.match, channels: [] };
     }
     const channel = getChannelFromLink(ev.link);
     if (channel) {
-      grouped[key].channels.push({
-        name: channel,
-        link: ev.link,
-        displayName: formatChannelName(channel)
-      });
+      grouped[key].channels.push({ name: channel, link: ev.link, displayName: formatChannelName(channel) });
     }
   });
   
-  // Ordenar canales alfabéticamente
   Object.values(grouped).forEach(group => {
     group.channels.sort((a, b) => a.displayName.localeCompare(b.displayName));
   });
@@ -2020,7 +954,6 @@ function groupEventsByMatch(events) {
   return Object.values(grouped);
 }
 
-// convertir hora a fecha real
 function getEventDate(time) {
   const [h, m] = time.split(":").map(Number);
   const d = new Date();
@@ -2028,7 +961,6 @@ function getEventDate(time) {
   return d;
 }
 
-// estado dinámico
 function getStatus(eventTime) {
   const now = new Date();
   const start = getEventDate(eventTime);
@@ -2039,7 +971,19 @@ function getStatus(eventTime) {
   return "FINALIZADO";
 }
 
-// update stats
+function extractTeams(matchText) {
+  const withoutCompetition = matchText.replace(/^[^:]+:\s*/, '');
+  const vsMatch = withoutCompetition.match(/(.+?)\s+vs\s+(.+)/i);
+  if (vsMatch) {
+    return { team1: vsMatch[1].trim(), team2: vsMatch[2].trim() };
+  }
+  return { team1: withoutCompetition, team2: null };
+}
+
+// =====================================================
+// RENDERIZADO
+// =====================================================
+
 function updateStats(list) {
   let live = 0, upcoming = 0;
   list.forEach(ev => {
@@ -2051,19 +995,59 @@ function updateStats(list) {
   document.getElementById("upcoming-count").textContent = `${upcoming} PRÓXIMOS`;
 }
 
-// Generar ID único para cada partido
-function getMatchId(time, match) {
-  return `${time}-${match.replace(/[^a-zA-Z0-9]/g, '-')}`;
+function toggleDropdown(matchId) {
+  const dropdown = document.getElementById(`dropdown-${matchId}`);
+  const chevron = document.getElementById(`chevron-${matchId}`);
+  
+  // Cerrar otros dropdowns
+  openDropdowns.forEach(id => {
+    if (id !== matchId) {
+      const otherDropdown = document.getElementById(`dropdown-${id}`);
+      const otherChevron = document.getElementById(`chevron-${id}`);
+      if (otherDropdown) otherDropdown.classList.add('hidden');
+      if (otherChevron) otherChevron.classList.remove('open');
+    }
+  });
+  openDropdowns.clear();
+  
+  if (dropdown.classList.contains('hidden')) {
+    dropdown.classList.remove('hidden');
+    chevron.classList.add('open');
+    openDropdowns.add(matchId);
+  } else {
+    dropdown.classList.add('hidden');
+    chevron.classList.remove('open');
+  }
 }
 
-// render - solo se llama una vez al inicio o al filtrar
+function selectChannel(matchId, link, name) {
+  const btn = document.getElementById(`channel-btn-${matchId}`);
+  const dropdown = document.getElementById(`dropdown-${matchId}`);
+  const chevron = document.getElementById(`chevron-${matchId}`);
+  
+  // Actualizar texto del botón
+  btn.innerHTML = `<span>${name}</span><span class="chevron" id="chevron-${matchId}">▼</span>`;
+  
+  // Actualizar canal seleccionado
+  const card = document.querySelector(`[data-match-id="${matchId}"]`);
+  card.dataset.selectedChannel = link;
+  
+  // Cerrar dropdown
+  dropdown.classList.add('hidden');
+  openDropdowns.delete(matchId);
+  
+  // Actualizar opciones activas
+  const options = dropdown.querySelectorAll('.channel-option');
+  options.forEach(opt => {
+    opt.classList.toggle('active', opt.dataset.link === link);
+  });
+}
+
 function renderEvents(list = eventsData) {
   const container = document.getElementById("events");
   container.innerHTML = "";
   
-  // Agrupar eventos por partido y guardar en caché
   groupedEventsCache = groupEventsByMatch(list);
-  
   updateStats(list);
 
   if (groupedEventsCache.length === 0) {
@@ -2071,6 +1055,7 @@ function renderEvents(list = eventsData) {
       <div class="empty-state">
         <div class="empty-state-icon">🔍</div>
         <p class="empty-state-text">No se encontraron partidos</p>
+        <p class="empty-state-subtext">Intenta con otra búsqueda</p>
       </div>
     `;
     return;
@@ -2078,73 +1063,118 @@ function renderEvents(list = eventsData) {
 
   groupedEventsCache.sort((a, b) => a.time.localeCompare(b.time));
 
-  groupedEventsCache.forEach(ev => {
+  groupedEventsCache.forEach((ev, index) => {
     const status = getStatus(ev.time);
     const isActive = status === "EN VIVO";
     const isFinished = status === "FINALIZADO";
     const league = getLeague(ev.match);
     const hasMultipleChannels = ev.channels.length > 1;
-    const matchId = getMatchId(ev.time, ev.match);
+    const matchId = `${ev.time}-${ev.match.replace(/[^a-zA-Z0-9]/g, '-')}`;
+    const { team1, team2 } = extractTeams(ev.match);
 
-    const div = document.createElement("div");
-    div.className = `card ${isActive ? 'live' : ''} ${isFinished ? 'finished' : ''}`;
-    div.dataset.matchId = matchId;
-    div.dataset.time = ev.time;
+    const card = document.createElement("div");
+    card.className = `glass-card ${isActive ? 'live' : ''} ${isFinished ? 'finished' : ''}`;
+    card.dataset.matchId = matchId;
+    card.dataset.time = ev.time;
+    card.dataset.selectedChannel = ev.channels[0]?.link || '';
+    card.style.animationDelay = `${index * 0.05}s`;
 
-    // Generar opciones del selector de canales
-    let channelSelectHTML = '';
+    let channelHTML = '';
     if (!isFinished && ev.channels.length > 0) {
       if (hasMultipleChannels) {
-        channelSelectHTML = `
-          <select class="channel-select" data-match-id="${matchId}">
-            ${ev.channels.map((ch, idx) => `<option value="${ch.link}">${ch.displayName}</option>`).join('')}
-          </select>
-          <span class="channels-count">${ev.channels.length} canales disponibles</span>
+        channelHTML = `
+          <div class="channel-selector">
+            <button class="channel-btn" id="channel-btn-${matchId}" onclick="toggleDropdown('${matchId}')">
+              <span>${ev.channels[0].displayName}</span>
+              <span class="chevron" id="chevron-${matchId}">▼</span>
+            </button>
+            <div class="channel-dropdown hidden" id="dropdown-${matchId}">
+              ${ev.channels.map(ch => `
+                <button class="channel-option ${ch.link === ev.channels[0].link ? 'active' : ''}" 
+                        data-link="${ch.link}"
+                        onclick="selectChannel('${matchId}', '${ch.link}', '${ch.displayName}')">
+                  ${ch.displayName}
+                </button>
+              `).join('')}
+            </div>
+          </div>
         `;
       } else {
-        channelSelectHTML = `
-          <select class="channel-select" data-match-id="${matchId}" style="display:none;">
-            <option value="${ev.channels[0].link}">${ev.channels[0].displayName}</option>
-          </select>
-        `;
+        channelHTML = `<span class="single-channel">${ev.channels[0].displayName}</span>`;
       }
     }
 
-    div.innerHTML = `
-      <div class="info">
-        <div class="time-row">
-          <div class="time">${ev.time}</div>
-          <span class="league-badge">${league}</span>
+    card.innerHTML = `
+      <div class="card-content">
+        <div class="card-info">
+          <div class="time-row">
+            <span class="time">${ev.time}</span>
+            <span class="league-badge">${league}</span>
+          </div>
+          <div class="match">
+            <span>${team1}</span>
+            ${team2 ? `<span class="vs-text">VS</span><span>${team2}</span>` : ''}
+          </div>
+          <div class="status-badge ${isActive ? 'status-live' : isFinished ? 'status-finished' : 'status-upcoming'}">
+            ${isActive ? '<span class="pulse-dot"></span>' : isFinished ? '✓' : '⏳'}
+            <span>${status}</span>
+          </div>
         </div>
-        <div class="match">${generateMatchHTML(ev.match)}</div>
-        <div class="status ${isActive ? 'live' : isFinished ? 'finished' : 'upcoming'}" data-status="${status}">
-          <span class="status-dot"></span>
-          <span class="status-text">${status}</span>
+        ${!isFinished ? `
+        <div class="card-actions">
+          ${channelHTML}
+          <button class="btn-watch ${isActive ? 'enabled' : 'disabled'}" 
+                  ${isActive ? `onclick="watchMatch('${matchId}')"` : ''}>
+            <span>${isActive ? '▶' : '⏳'}</span>
+            <span>${isActive ? 'Ver' : 'Próximo'}</span>
+          </button>
         </div>
+        ` : ''}
       </div>
-
-      ${!isFinished ? `
-      <div class="channel-selector">
-        ${channelSelectHTML}
-        <button 
-          class="btn-watch ${isActive ? 'enabled' : 'disabled'}"
-          data-btn-match-id="${matchId}" 
-          ${isActive ? `onclick="watchMatch('${matchId}')"` : ""}
-        >
-          <span class="btn-icon">${isActive ? '▶' : '⏳'}</span>
-          <span class="btn-text">${isActive ? 'Ver' : 'Próximo'}</span>
-        </button>
-      </div>
-      ` : ''}
     `;
 
-    container.appendChild(div);
+    container.appendChild(card);
   });
 }
 
-// Actualizar solo los estados sin recrear el DOM
+// =====================================================
+// INTERACCIÓN
+// =====================================================
+
+function watchMatch(matchId) {
+  const card = document.querySelector(`[data-match-id="${matchId}"]`);
+  if (!card) return;
+  
+  const selectedLink = card.dataset.selectedChannel;
+  const matchText = card.querySelector('.match').textContent;
+  
+  if (selectedLink) {
+    openPlayer(selectedLink, matchText);
+  }
+}
+
+function openPlayer(link, matchTitle) {
+  document.getElementById("player").classList.add("active");
+  document.getElementById("iframe-player").src = link;
+  document.getElementById("player-title-text").textContent = matchTitle;
+  document.body.style.overflow = "hidden";
+}
+
+function closePlayer() {
+  document.getElementById("player").classList.remove("active");
+  document.getElementById("iframe-player").src = "";
+  document.body.style.overflow = "";
+}
+
+function filterEvents(text) {
+  const filtered = eventsData.filter(e =>
+    e.match.toLowerCase().includes(text.toLowerCase())
+  );
+  renderEvents(filtered);
+}
+
 function updateStatuses() {
-  const cards = document.querySelectorAll('.card');
+  const cards = document.querySelectorAll('.glass-card');
   let liveCount = 0;
   let upcomingCount = 0;
   
@@ -2153,23 +1183,22 @@ function updateStatuses() {
     if (!time) return;
     
     const status = getStatus(time);
-    const statusEl = card.querySelector('.status');
+    const statusEl = card.querySelector('.status-badge');
     const btn = card.querySelector('.btn-watch');
     
-    // Contar para stats
     if (status === "EN VIVO") liveCount++;
     else if (status === "PROXIMO") upcomingCount++;
     
     // Solo actualizar si cambió el estado
-    if (statusEl && statusEl.dataset.status !== status) {
-      statusEl.dataset.status = status;
-      
+    const currentStatusText = statusEl.querySelector('span:last-child').textContent;
+    if (currentStatusText !== status) {
       // Actualizar clase de status
-      statusEl.className = `status ${status === 'EN VIVO' ? 'live' : status === 'FINALIZADO' ? 'finished' : 'upcoming'}`;
+      statusEl.className = `status-badge ${status === 'EN VIVO' ? 'status-live' : status === 'FINALIZADO' ? 'status-finished' : 'status-upcoming'}`;
       
-      // Actualizar texto de status
-      const statusText = statusEl.querySelector('.status-text');
-      if (statusText) statusText.textContent = status;
+      // Actualizar contenido de status
+      statusEl.innerHTML = `${
+        status === 'EN VIVO' ? '<span class="pulse-dot"></span>' : status === 'FINALIZADO' ? '✓' : '⏳'
+      }<span>${status}</span>`;
       
       // Actualizar clase de la card
       card.classList.remove('live', 'finished');
@@ -2181,66 +1210,44 @@ function updateStatuses() {
         const isActive = status === "EN VIVO";
         btn.className = `btn-watch ${isActive ? 'enabled' : 'disabled'}`;
         btn.onclick = isActive ? () => watchMatch(card.dataset.matchId) : null;
-        
-        const btnIcon = btn.querySelector('.btn-icon');
-        const btnText = btn.querySelector('.btn-text');
-        if (btnIcon) btnIcon.textContent = isActive ? '▶' : '⏳';
-        if (btnText) btnText.textContent = isActive ? 'Ver' : 'Próximo';
+        btn.innerHTML = `<span>${isActive ? '▶' : '⏳'}</span><span>${isActive ? 'Ver' : 'Próximo'}</span>`;
+      }
+      
+      // Ocultar acciones si finalizó
+      if (status === 'FINALIZADO') {
+        const actions = card.querySelector('.card-actions');
+        if (actions) actions.style.display = 'none';
       }
     }
   });
   
-  // Actualizar contadores
   document.getElementById("live-count").textContent = `${liveCount} EN VIVO`;
   document.getElementById("upcoming-count").textContent = `${upcomingCount} PRÓXIMOS`;
 }
 
-// Ver partido con el canal seleccionado
-function watchMatch(matchId) {
-  const select = document.querySelector(`select[data-match-id="${matchId}"]`);
-  const card = document.querySelector(`.card[data-match-id="${matchId}"]`);
-  
-  if (select && card) {
-    const selectedLink = select.value;
-    const matchTitle = card.querySelector('.match').textContent;
-    openPlayer(selectedLink, matchTitle);
+// Cerrar dropdowns al hacer click fuera
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.channel-selector')) {
+    openDropdowns.forEach(id => {
+      const dropdown = document.getElementById(`dropdown-${id}`);
+      const chevron = document.getElementById(`chevron-${id}`);
+      if (dropdown) dropdown.classList.add('hidden');
+      if (chevron) chevron.classList.remove('open');
+    });
+    openDropdowns.clear();
   }
-}
+});
 
-// player
-function openPlayer(link, matchTitle) {
-  document.getElementById("player").style.display = "block";
-  document.getElementById("iframe-player").src = link;
-  document.querySelector(".player-title").textContent = `📺 ${matchTitle}`;
-  document.body.style.overflow = "hidden";
-}
-
-function closePlayer() {
-  document.getElementById("player").style.display = "none";
-  document.getElementById("iframe-player").src = "";
-  document.body.style.overflow = "";
-}
-
-// filtro
-function filterEvents(text) {
-  const filtered = eventsData.filter(e =>
-    e.match.toLowerCase().includes(text.toLowerCase())
-  );
-  renderEvents(filtered);
-}
-
-// Close player on escape key
+// Cerrar player con Escape
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') closePlayer();
 });
 
-// INIT - render inicial
+// Inicializar
 renderEvents();
 
-// actualizar estados cada segundo sin recrear el DOM
-setInterval(() => {
-  updateStatuses();
-}, 1000);
+// Actualizar estados cada segundo
+setInterval(updateStatuses, 1000);
 </script>
 
 </body>
