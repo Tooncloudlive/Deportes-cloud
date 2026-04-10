@@ -104,7 +104,7 @@ body {
   z-index: 1;
   max-width: 900px;
   margin: 0 auto;
-  padding: 40px 20px;
+  padding: 100px 20px 40px;
 }
 
 /* Header */
@@ -159,6 +159,78 @@ h1 {
   color: rgba(255, 255, 255, 0.3);
   font-size: 0.75rem;
 }
+/* New Header/Nav Styles */
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  width: 100vw;
+  z-index: 100;
+  box-sizing: border-box;
+  gap: 12px;
+  background: linear-gradient(to bottom, rgba(10, 10, 15, 0.98), rgba(10, 10, 15, 0.8));
+  position: fixed;
+  top: 0;
+  left: 0;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.logo-container img { 
+  height: 36px; 
+  filter: drop-shadow(0 0 10px var(--pink-glow)); 
+  cursor: pointer; 
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.logo-container img:hover {
+  transform: scale(1.05);
+  filter: drop-shadow(0 0 20px var(--pink-glow));
+}
+
+.nav-right { 
+  display: flex; 
+  gap: 10px; 
+  align-items: center; 
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.nav-search {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  padding: 10px 16px;
+  border-radius: 25px;
+  color: white;
+  outline: none;
+  backdrop-filter: blur(12px);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  font-family: inherit;
+  font-size: 13px;
+  flex: 1;
+  max-width: 200px;
+  min-width: 120px;
+}
+
+.nav-search:focus { 
+  border-color: var(--pink-primary); 
+  background: rgba(255, 255, 255, 0.08); 
+  box-shadow: 0 0 20px var(--pink-glow);
+  max-width: 250px;
+  transform: scale(1.02);
+}
+
+.nav-search::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Remove old header styles that conflict */
+header {
+  display: none;
+}
+
 
 /* Stats Bar */
 .stats-bar {
@@ -806,15 +878,19 @@ h1 {
   <div class="ambient-orb ambient-orb-2"></div>
 </div>
 
-<div class="container">
-  <header>
-    <div class="logo">
-      <div class="logo-icon"></div>
-      <h1>ToonCloud Deportes</h1>
+<nav>
+    <div class="logo-container"><img src="https://i.imgur.com/XAHG8BW.png" onclick="location.reload()"></div>
+    <div class="nav-right">
+      <input type="text" id="nav-search" class="nav-search" placeholder="Buscar partidos..." oninput="filterEvents(this.value)">
     </div>
+  </nav>
+
+  
+<div class="container">
+  <div style="text-align: center; padding: 20px 16px; margin-bottom: 16px;">
     <p class="subtitle">Este sitio no aloja ni transmite contenido propio. Todo el material proviene de fuentes públicas externas. No tenemos control ni responsabilidad sobre dicho contenido ni sobre los enlaces compartidos.</p>
     <p class="copyright">Larvas S.A ©</p>
-  </header>
+  </div>
 
   <div class="stats-bar">
     <div class="stats-pill">
