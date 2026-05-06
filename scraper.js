@@ -23,8 +23,8 @@ async function scrapeEvents() {
     const page = await context.newPage();
     
     // Navegar a la página
-    console.log('📡 Cargando streamx339.cloud...');
-    await page.goto('https://streamx339.cloud/', { 
+    console.log('📡 Cargando streamtpnew.com...');
+    await page.goto('https://streamtpnew.com', { 
       waitUntil: 'networkidle',
       timeout: 60000 
     });
