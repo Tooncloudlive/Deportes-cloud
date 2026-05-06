@@ -45,7 +45,7 @@ jobs:
       - name: 🎭 Instalar Playwright browsers
         run: |
           echo "Instalando browsers de Playwright..."
-          npx playwright install chromium
+          npx playwright install --with-deps
       
       # 5. Ejecutar el scraper
       - name: 🚀 Ejecutar scraper
