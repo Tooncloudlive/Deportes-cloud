@@ -870,6 +870,7 @@ header {
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="ToonCloud">
 <base target="_blank">
+<base target="_blank">
 </head>
 
 <body>
@@ -890,7 +891,7 @@ header {
 <div class="container">
   <div style="text-align: center; padding: 20px 16px; margin-bottom: 16px;">
     <p class="subtitle">Este sitio no aloja ni transmite contenido propio. Todo el material proviene de fuentes públicas externas. No tenemos control ni responsabilidad sobre dicho contenido ni sobre los enlaces compartidos.</p>
-    <p class="copyright">Larvas S.A ©</p>
+    <p class="copyright">Larvas S.A &copy;</p>
   </div>
 
   <div class="stats-bar">
@@ -900,12 +901,12 @@ header {
     </div>
     <div class="stats-pill">
       <span class="blink-dot"></span>
-      <span id="upcoming-count">0 PRÓXIMOS</span>
+      <span id="upcoming-count">0 PR&Oacute;XIMOS</span>
     </div>
   </div>
 
   <div class="search-container">
-    <span class="search-icon">🔍</span>
+    <span class="search-icon">&#128269;</span>
     <input class="search" placeholder="Buscar partidos, equipos, ligas..." oninput="filterEvents(this.value)">
   </div>
 
@@ -917,7 +918,7 @@ header {
   </div>
 
   <div class="section-header">
-    <span class="section-title">Programación</span>
+    <span class="section-title">Programaci&oacute;n</span>
     <div class="section-line"></div>
   </div>
 
@@ -927,11 +928,11 @@ header {
 <div class="player-overlay" id="player">
   <div class="player-header">
     <div class="player-title">
-      <span class="player-title-icon">📺</span>
+      <span class="player-title-icon">&#128250;</span>
       <span id="player-title-text">Reproductor en Vivo</span>
     </div>
     <button class="btn-close" onclick="closePlayer()">
-      <span>✕</span>
+      <span>&#10005;</span>
       <span>Cerrar</span>
     </button>
   </div>
@@ -942,11 +943,11 @@ header {
 
 <script>
 // =====================================================
-// CONFIGURACIÓN DE ESCUDOS - EDITA AQUÍ TUS PARTIDOS
+// CONFIGURACI&Oacute;N DE ESCUDOS - EDITA AQU&Iacute; TUS PARTIDOS
 // =====================================================
-// Agrega o edita partidos con sus escudos aquí.
+// Agrega o edita partidos con sus escudos aqu&iacute;.
 // El formato es: { match: "Equipo Local vs Equipo Visitante", homeLogo: "URL_ESCUDO_LOCAL", awayLogo: "URL_ESCUDO_VISITANTE" }
-// Si no quieres escudo para un equipo, deja el campo vacío: ""
+// Si no quieres escudo para un equipo, deja el campo vac&iacute;o: ""
 
 // {{LOGOS_DATA}}
 const matchesLogos = [];
@@ -960,8 +961,8 @@ const eventsData = [];
 const leagueMap = {
   'Super Lig': 'Super Lig', 'UEFA Champions League': 'UCL', 'UEFA Europa League': 'UEL',
   'Liga BetPlay': 'BetPlay', 'Copa de Primera': 'Primera', 'Liga Profesional': 'LPF',
-  'CONCACAF Champions Cup': 'Concacaf', 'Brasileirão': 'Brasil', 'Copa del Rey de Arabia': 'Arabia',
-  'Liga MX': 'Liga MX', 'Amistoso Internacional': 'Amistoso', 'Copa Argentina': 'Copa Arg', 'F1 | GP de Japón': 'F1'
+  'CONCACAF Champions Cup': 'Concacaf', 'Brasileir&atilde;o': 'Brasil', 'Copa del Rey de Arabia': 'Arabia',
+  'Liga MX': 'Liga MX', 'Amistoso Internacional': 'Amistoso', 'Copa Argentina': 'Copa Arg', 'F1 | GP de Jap&oacute;n': 'F1'
 };
 
 const channelNameMap = {
@@ -984,7 +985,7 @@ let openDropdowns = new Set();
 // FUNCIONES DE ESCUDOS
 // =====================================================
 
-// Normaliza un texto para comparación (elimina acentos, caracteres especiales, etc.)
+// Normaliza un texto para comparaci&oacute;n (elimina acentos, caracteres especiales, etc.)
 function normalizeText(text) {
   if (!text) return '';
   return text
@@ -1037,7 +1038,7 @@ function extractTeamNames(matchText) {
   return { home: withoutCompetition.trim(), away: null, full: withoutCompetition.trim() };
 }
 
-// Busca los escudos para un partido específico en la configuración
+// Busca los escudos para un partido espec&iacute;fico en la configuraci&oacute;n
 function getLogosForMatch(matchText) {
   const eventTeams = extractTeamNames(matchText);
   let bestMatch = null;
@@ -1063,7 +1064,7 @@ function getLogosForMatch(matchText) {
       bestMatch = item;
     }
     
-    // También buscar coincidencia en el texto completo
+    // Tambi&eacute;n buscar coincidencia en el texto completo
     const fullSimilarity = similarity(eventTeams.full, configTeams.full);
     if (fullSimilarity > 0.8 && fullSimilarity > bestScore) {
       bestScore = fullSimilarity;
@@ -1154,7 +1155,7 @@ function getStatus(eventTime) {
   const now = new Date();
   const start = getEventDate(eventTime);
   const end = new Date(start.getTime() + 2 * 60 * 60 * 1000);
-  if (now < start) return "PROXIMO";
+  if (now < start) return "PR&Oacute;XIMO";
   if (now >= start && now <= end) return "EN VIVO";
   return "FINALIZADO";
 }
@@ -1168,10 +1169,10 @@ function updateStats(list) {
   list.forEach(ev => {
     const status = getStatus(ev.time);
     if (status === "EN VIVO") live++;
-    else if (status === "PROXIMO") upcoming++;
+    else if (status === "PR&Oacute;XIMO") upcoming++;
   });
   document.getElementById("live-count").textContent = `${live} EN VIVO`;
-  document.getElementById("upcoming-count").textContent = `${upcoming} PRÓXIMOS`;
+  document.getElementById("upcoming-count").textContent = `${upcoming} PR&Oacute;XIMOS`;
 }
 
 function toggleDropdown(matchId) {
@@ -1200,7 +1201,7 @@ function selectChannel(matchId, link, name) {
   const card = document.querySelector(`[data-match-id="${matchId}"]`);
   card.dataset.selectedChannel = link;
   const btn = document.getElementById(`channel-btn-${matchId}`);
-  btn.innerHTML = `<span>${name}</span><span class="chevron" id="chevron-${matchId}">▼</span>`;
+  btn.innerHTML = `<span>${name}</span><span class="chevron" id="chevron-${matchId}">&#9660;</span>`;
   document.getElementById(`dropdown-${matchId}`).classList.add('hidden');
   openDropdowns.delete(matchId);
 }
@@ -1214,9 +1215,9 @@ function renderEvents(list = eventsData) {
   if (groupedEventsCache.length === 0) {
     container.innerHTML = `
       <div class="empty-state">
-        <div class="empty-state-icon">🔍</div>
+        <div class="empty-state-icon">&#128269;</div>
         <p class="empty-state-text">No se encontraron partidos</p>
-        <p class="empty-state-subtext">Intenta con otra búsqueda</p>
+        <p class="empty-state-subtext">Intenta con otra b&uacute;squeda</p>
       </div>
     `;
     return;
@@ -1246,7 +1247,7 @@ function renderEvents(list = eventsData) {
           <div class="channel-selector">
             <button class="channel-btn" id="channel-btn-${matchId}" onclick="toggleDropdown('${matchId}')">
               <span>${ev.channels[0].displayName}</span>
-              <span class="chevron" id="chevron-${matchId}">▼</span>
+              <span class="chevron" id="chevron-${matchId}">&#9660;</span>
             </button>
             <div class="channel-dropdown hidden" id="dropdown-${matchId}">
               ${ev.channels.map(ch => `
@@ -1272,7 +1273,7 @@ function renderEvents(list = eventsData) {
           </div>
           <div class="match">${generateMatchHTML(ev.match)}</div>
           <div class="status-badge ${isActive ? 'status-live' : isFinished ? 'status-finished' : 'status-upcoming'}">
-            ${isActive ? '<span class="pulse-dot"></span>' : isFinished ? '✓' : '⏳'}
+            ${isActive ? '<span class="pulse-dot"></span>' : isFinished ? '&#10003;' : '&#8987;'}
             <span>${status}</span>
           </div>
         </div>
@@ -1281,8 +1282,8 @@ function renderEvents(list = eventsData) {
           ${channelHTML}
           <button class="btn-watch ${isActive ? 'enabled' : 'disabled'}" 
                   ${isActive ? `onclick="watchMatch('${matchId}')"` : ''}>
-            <span>${isActive ? '▶' : '⏳'}</span>
-            <span>${isActive ? 'Ver' : 'Próximo'}</span>
+            <span>${isActive ? '&#9654;' : '&#8987;'}</span>
+            <span>${isActive ? 'Ver' : 'Pr&oacute;ximo'}</span>
           </button>
         </div>
         ` : ''}
@@ -1294,7 +1295,7 @@ function renderEvents(list = eventsData) {
 }
 
 // =====================================================
-// INTERACCIÓN
+// INTERACCI&Oacute;N
 // =====================================================
 
 function watchMatch(matchId) {
@@ -1333,11 +1334,11 @@ function updateStatuses() {
     const statusEl = card.querySelector('.status-badge');
     const btn = card.querySelector('.btn-watch');
     if (status === "EN VIVO") liveCount++;
-    else if (status === "PROXIMO") upcomingCount++;
+    else if (status === "PR&Oacute;XIMO") upcomingCount++;
     const currentStatusText = statusEl.querySelector('span:last-child').textContent;
     if (currentStatusText !== status) {
       statusEl.className = `status-badge ${status === 'EN VIVO' ? 'status-live' : status === 'FINALIZADO' ? 'status-finished' : 'status-upcoming'}`;
-      statusEl.innerHTML = `${status === 'EN VIVO' ? '<span class="pulse-dot"></span>' : status === 'FINALIZADO' ? '✓' : '⏳'}<span>${status}</span>`;
+      statusEl.innerHTML = `${status === 'EN VIVO' ? '<span class="pulse-dot"></span>' : status === 'FINALIZADO' ? '&#10003;' : '&#8987;'}<span>${status}</span>`;
       card.classList.remove('live', 'finished');
       if (status === 'EN VIVO') card.classList.add('live');
       if (status === 'FINALIZADO') card.classList.add('finished');
@@ -1345,7 +1346,7 @@ function updateStatuses() {
         const isActive = status === "EN VIVO";
         btn.className = `btn-watch ${isActive ? 'enabled' : 'disabled'}`;
         btn.onclick = isActive ? () => watchMatch(card.dataset.matchId) : null;
-        btn.innerHTML = `<span>${isActive ? '▶' : '⏳'}</span><span>${isActive ? 'Ver' : 'Próximo'}</span>`;
+        btn.innerHTML = `<span>${isActive ? '&#9654;' : '&#8987;'}</span><span>${isActive ? 'Ver' : 'Pr&oacute;ximo'}</span>`;
       }
       if (status === 'FINALIZADO') {
         const actions = card.querySelector('.card-actions');
@@ -1354,7 +1355,7 @@ function updateStatuses() {
     }
   });
   document.getElementById("live-count").textContent = `${liveCount} EN VIVO`;
-  document.getElementById("upcoming-count").textContent = `${upcomingCount} PRÓXIMOS`;
+  document.getElementById("upcoming-count").textContent = `${upcomingCount} PR&Oacute;XIMOS`;
 }
 
 // Event listeners
