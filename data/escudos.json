@@ -1,18 +1,13 @@
 [
   {
-    "match": "Coquimbo Unido vs Universitario",
-    "homeLogo": "https://static.flashscore.com/res/image/data/O40oH8h5-hMng3olL.png",
-    "awayLogo": "https://static.flashscore.com/res/image/data/QNQhOVBr-pzbJPTLS.png"
-  },
-  {
-    "match": "Medellín vs Flamengo",
-    "homeLogo": "https://static.flashscore.com/res/image/data/lMyrsdhl-plopiAtN.png",
-    "awayLogo": "https://static.flashscore.com/res/image/data/ADvIaiZA-2R2JjDQC.png"
-  },
-  {
     "match": "Carabobo vs River Plate",
     "homeLogo": "https://static.flashscore.com/res/image/data/0vOQijWg-CtnfXRKE.png",
     "awayLogo": "https://static.flashscore.com/res/image/data/Ic4xH0Yg-nqhLBCKD.png"
+  },
+  {
+    "match": "Blooming vs RB Bragantino",
+    "homeLogo": "https://static.flashscore.com/res/image/data/Y1JlKGdM-tA3m0WA0.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/llnonZDa-UkMF8Udb.png"
   },
   {
     "match": "Atlético Bucaramanga vs Real Santander",
@@ -26,7 +21,7 @@
   },
   {
     "match": "Junior vs Cerro Porteño",
-    "homeLogo": "https://static.flashscore.com/res/image/data/Ovlb3hBr-0fSZKKz2.png",
-    "awayLogo": "https://static.flashscore.com/res/image/data/Kz2UFMh5-G2820wU0.png"
+    "homeLogo": "https://static.flashscore.com/res/image/data/Kz2UFMh5-G2820wU0.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/Ovlb3hBr-0fSZKKz2.png"
   }
 ]
