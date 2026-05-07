@@ -1,7 +1,15 @@
 /**
- * Scraping de escudos desde Google Images
- * Lee data/partidos.json, busca cada equipo en Google Images,
- * extrae la URL del escudo y guarda en data/escudos.json
+ * Scraping de escudos desde Flashscore
+ * Lee data/partidos.json, busca cada partido en Flashscore via Google,
+ * extrae la URL del escudo desde el participantsData de la pagina del partido
+ * y guarda en data/escudos.json
+ *
+ * Estrategia:
+ * 1. Para cada partido "Equipo A vs Equipo B", buscar "Equipo A vs Equipo B flashscore"
+ * 2. Extraer el primer resultado de Google que apunte a flashscore.com
+ * 3. Navegar a la pagina del partido en Flashscore
+ * 4. Extraer participantsData del script embebido en el HTML
+ * 5. Obtener image_path de home y away
  *
  * Si falla o no hay partidos:
  * - guarda [] en escudos.json
@@ -14,9 +22,7 @@ const path = require('path');
 
 const PARTIDOS_PATH = path.join(__dirname, '..', 'data', 'partidos.json');
 const OUTPUT = path.join(__dirname, '..', 'data', 'escudos.json');
-const GOOGLE_IMAGES_URL = 'https://www.google.com/search?tbm=isch&q=';
-const DUCKDUCKGO_IMAGES_URL = 'https://duckduckgo.com/?iax=images&ia=images&q=';
-const BING_IMAGES_URL = 'https://www.bing.com/images/search?q=';
+const GOOGLE_SEARCH_URL = 'https://www.google.com/search?q=';
 
 function ensureDir(filePath) {
   const dir = path.dirname(filePath);
@@ -40,9 +46,9 @@ function extractTeamNames(matchText) {
   if (!matchText) return [null, null];
 
   // Remover prefijo de competencia (todo antes de ": ")
-  const withoutCompetition = matchText.replace(/^[^:]+:\s*/, '');
+  const withoutCompetition = matchText.replace(/^[^:]+:\ */, '');
 
-  // Separar por "vs" o "vs." (case insensitive)
+  // Separar por " vs " o " vs. " (case insensitive)
   const vsMatch = withoutCompetition.match(/(.+?)\s+vs\s+(.+)/i);
   if (!vsMatch) return [null, null];
 
@@ -53,69 +59,13 @@ function extractTeamNames(matchText) {
 }
 
 /**
- * Limpia el nombre del equipo para buscar el escudo.
- * Remueve acentos, caracteres especiales, etc.
+ * Limpia el nombre del equipo para la busqueda.
+ * Quita el pais entre parentesis para la busqueda, ej: "Mirassol (Bra)" -> "Mirassol"
  */
-function cleanTeamName(name) {
+function cleanTeamNameForSearch(name) {
   if (!name) return '';
-
-  // Mapeo de nombres comunes para mejorar resultados de busqueda
-  const knownTeams = {
-    'LDU Quito': 'LDU Quito escudo',
-    'LDU': 'LDU Quito escudo',
-    'River Plate': 'River Plate escudo',
-    'Boca Juniors': 'Boca Juniors escudo',
-    'Barcelona SC': 'Barcelona SC Ecuador escudo',
-    'Atletico': 'Atletico escudo',
-    'Atletico Nacional': 'Atletico Nacional escudo',
-    'Nacional': 'Nacional Uruguay escudo',
-    'Penarol': 'Penarol escudo',
-    'Flamengo': 'Flamengo escudo',
-    'Palmeiras': 'Palmeiras escudo',
-    'Corinthians': 'Corinthians escudo',
-    'Sao Paulo': 'Sao Paulo escudo',
-    'Santos': 'Santos escudo',
-    'Gremio': 'Gremio escudo',
-    'Internacional': 'Internacional RS escudo',
-    'Cruzeiro': 'Cruzeiro escudo',
-    'Atletico Mineiro': 'Atletico Mineiro escudo',
-    'Botafogo': 'Botafogo escudo',
-    'Vasco': 'Vasco da Gama escudo',
-    'Fluminense': 'Fluminense escudo',
-    'Independiente': 'Independiente escudo',
-    'Racing': 'Racing Club escudo',
-    'San Lorenzo': 'San Lorenzo escudo',
-    'Velez': 'Velez Sarsfield escudo',
-    'Estudiantes': 'Estudiantes de La Plata escudo',
-    'Newells': 'Newells Old Boys escudo',
-    'Rosario Central': 'Rosario Central escudo',
-    'Union': 'Union Santa Fe escudo',
-    'Talleres': 'Talleres Cordoba escudo',
-    'Lanus': 'Lanus escudo',
-    'Colon': 'Colon Santa Fe escudo',
-    'Banfield': 'Banfield escudo',
-    'Gimnasia': 'Gimnasia La Plata escudo',
-    'Argentinos': 'Argentinos Juniors escudo',
-    'Huracan': 'Huracan escudo',
-    'Godoy Cruz': 'Godoy Cruz escudo',
-    'Sarmiento': 'Sarmiento Junin escudo',
-    'Platense': 'Platense escudo',
-    'Central Cordoba': 'Central Cordoba Santiago del Estero escudo',
-    'Instituto': 'Instituto Cordoba escudo',
-    'Belgrano': 'Belgrano Cordoba escudo',
-    'Tigre': 'Tigre escudo',
-    'Barracas Central': 'Barracas Central escudo',
-    'Arsenal': 'Arsenal Sarandi escudo',
-    'Defensa': 'Defensa y Justicia escudo',
-    'Independiente Rivadavia': 'Independiente Rivadavia escudo',
-  };
-
-  // Si conocemos el equipo, usar el termino optimizado
-  if (knownTeams[name]) {
-    return knownTeams[name];
-  }
-
-  return `${name} escudo futbol`;
+  // Quitar (XXX) del final, ej: "Mirassol (Bra)" -> "Mirassol"
+  return name.replace(/\s*\([^)]*\)\s*$/, '').trim();
 }
 
 /**
@@ -140,218 +90,308 @@ async function isGoogleBlocked(page) {
 }
 
 /**
- * Extrae URLs de imagenes de Google Images desde la pagina.
- * Google Images carga thumbnails como data:image pero las URLs reales
- * estan en atributos data o en JSON dentro del HTML.
+ * Busca en Google el partido en Flashscore y devuelve la URL de la pagina del partido.
  */
-async function extractFromGoogle(page) {
-  return page.evaluate(() => {
-    const results = [];
+async function findFlashscoreMatchUrl(page, homeTeam, awayTeam) {
+  const homeClean = cleanTeamNameForSearch(homeTeam);
+  const awayClean = cleanTeamNameForSearch(awayTeam);
 
-    // Estrategia 1: m phased - URLs de imagen reales en los data attributes
-    const tiles = document.querySelectorAll('a[jsname]');
-    for (const tile of tiles) {
-      const href = tile.href || '';
-      // Los href de Google Images contienen la URL real codificada
-      // Ej: /imgres?imgurl=REAL_URL&tbnid=...
-      const urlMatch = href.match(/[?&]imgurl=([^&]+)/);
-      if (urlMatch) {
-        try {
-          const decoded = decodeURIComponent(urlMatch[1]);
-          if (decoded.startsWith('http') && decoded.length > 20) {
-            results.push(decoded);
-          }
-        } catch (e) {
-          // ignorar errores de decode
-        }
-      }
-    }
+  const searchQuery = encodeURIComponent(`${homeClean} vs ${awayClean} flashscore`);
+  const searchUrl = `${GOOGLE_SEARCH_URL}${searchQuery}`;
 
-    // Estrategia 2: Buscar en elementos de imagen
-    const images = document.querySelectorAll('img');
-    for (const img of images) {
-      const src = img.getAttribute('data-src') || img.getAttribute('data-iurl');
-      if (src && src.startsWith('http') && !src.includes('gstatic.com') && src.length > 30) {
-        results.push(src);
-      }
-    }
-
-    // Estrategia 3: Buscar en el HTML por patrones de URL de imagen
-    const bodyHtml = document.body?.innerHTML || '';
-    const urlPattern = /(https?:\/\/[^\s"<>]+\.(?:png|jpg|jpeg|webp))/gi;
-    const matches = bodyHtml.match(urlPattern);
-    if (matches) {
-      for (const match of matches) {
-        if (
-          match.length > 30 &&
-          !match.includes('gstatic.com') &&
-          !match.includes('google.com') &&
-          !match.includes('googleusercontent') &&
-          !match.includes('w3.org')
-        ) {
-          results.push(match);
-        }
-      }
-    }
-
-    return results;
-  });
-}
-
-/**
- * Extrae URLs de imagenes de Bing Images.
- */
-async function extractFromBing(page) {
-  return page.evaluate(() => {
-    const results = [];
-
-    // Bing usa murl para la URL real de la imagen
-    const images = document.querySelectorAll('a[m*="murl"]');
-    for (const a of images) {
-      const murl = a.getAttribute('m');
-      if (murl) {
-        const murlMatch = murl.match(/"murl":"([^"]+)"/);
-        if (murlMatch) {
-          results.push(murlMatch[1]);
-        }
-      }
-    }
-
-    // Fallback: buscar en img tags
-    if (results.length === 0) {
-      const imgs = document.querySelectorAll('.iusc img, .mimg img');
-      for (const img of imgs) {
-        const src = img.src || img.getAttribute('data-src');
-        if (src && src.startsWith('http') && src.length > 30) {
-          results.push(src);
-        }
-      }
-    }
-
-    return results;
-  });
-}
-
-/**
- * Extrae URLs de imagenes de DuckDuckGo Images.
- */
-async function extractFromDuckDuckGo(page) {
-  return page.evaluate(() => {
-    const results = [];
-
-    // DuckDuckGo pone las URLs en data-src o en enlaces
-    const tiles = document.querySelectorAll('.tile--img__img, .tile__media__img');
-    for (const tile of tiles) {
-      const src =
-        tile.getAttribute('data-src') ||
-        tile.getAttribute('src') ||
-        tile.src;
-      if (src && src.startsWith('http') && src.length > 20) {
-        results.push(src);
-      }
-    }
-
-    // Fallback: cualquier imagen grande en resultados
-    if (results.length === 0) {
-      const imgs = document.querySelectorAll('img');
-      for (const img of imgs) {
-        const src = img.src || img.getAttribute('data-src') || '';
-        if (
-          src.startsWith('http') &&
-          !src.includes('duckduckgo.com') &&
-          !src.includes('icons') &&
-          src.length > 30
-        ) {
-          results.push(src);
-        }
-      }
-    }
-
-    return results;
-  });
-}
-
-/**
- * Busca el escudo de un equipo usando multiples fuentes.
- * Orden: Google Images -> Bing Images -> DuckDuckGo Images
- */
-async function searchTeamLogo(page, teamName, matchContext) {
-  if (!teamName) return null;
-
-  const searchTerm = cleanTeamName(teamName);
-  const searchQuery = encodeURIComponent(searchTerm);
-
-  // --- Intento 1: Google Images ---
   try {
-    const searchUrl = `${GOOGLE_IMAGES_URL}${searchQuery}`;
     await page.goto(searchUrl, {
       waitUntil: 'domcontentloaded',
       timeout: 30000,
     });
-    await page.waitForTimeout(3500);
+    await page.waitForTimeout(3000);
 
     // Verificar si nos bloquearon
     const blocked = await isGoogleBlocked(page);
-    if (!blocked) {
-      const results = await extractFromGoogle(page);
-      if (results.length > 0) {
-        const bestResult = results.find(
-          (url) =>
-            !url.includes('wikipedia') || // preferir no-wikipedia pero aceptar
-            url.length > 20
-        ) || results[0];
-        console.log(`  [OK Google] ${teamName}`);
-        return bestResult;
+    if (blocked) {
+      console.log(`  [BLOQUEO] Google detecto bot`);
+      return null;
+    }
+
+    // Extraer el primer resultado que sea de flashscore.com
+    const flashscoreUrl = await page.evaluate(() => {
+      // Buscar todos los enlaces de resultados
+      const links = document.querySelectorAll('a[href*="flashscore"]');
+      for (const link of links) {
+        const href = link.href || '';
+        // Solo enlaces a paginas de partidos (no a paginas de equipo, odds, etc.)
+        if (
+          href.includes('flashscore.com') &&
+          href.includes('/match/') &&
+          !href.includes('/standings/') &&
+          !href.includes('/odds/') &&
+          !href.includes('/h2h/') &&
+          !href.includes('/cuotas/') &&
+          !href.includes('/clasificacion/')
+        ) {
+          return href;
+        }
       }
-    } else {
-      console.log(`  [BLOQUEO] Google detecto bot, probando alternativas...`);
-    }
-  } catch (error) {
-    // Silenciosamente pasar a la siguiente fuente
-  }
 
-  // --- Intento 2: Bing Images ---
-  try {
-    const searchUrl = `${BING_IMAGES_URL}${searchQuery}`;
-    await page.goto(searchUrl, {
-      waitUntil: 'domcontentloaded',
-      timeout: 30000,
+      // Si no encontramos /match/, buscar cualquier enlace de flashscore que parezca un partido
+      const allLinks = document.querySelectorAll('a[href*="flashscore"]');
+      for (const link of allLinks) {
+        const href = link.href || '';
+        if (href.includes('flashscore.com') && !href.includes('/team/')) {
+          return href;
+        }
+      }
+
+      return null;
     });
-    await page.waitForTimeout(3500);
 
-    const results = await extractFromBing(page);
-    if (results.length > 0) {
-      console.log(`  [OK Bing] ${teamName}`);
-      return results[0];
-    }
+    return flashscoreUrl;
   } catch (error) {
-    // Silenciosamente pasar a la siguiente fuente
+    console.log(`  [ERROR] Buscando en Google: ${error.message}`);
+    return null;
+  }
+}
+
+/**
+ * Extrae un objeto JSON balanceado de un string comenzando desde el offset dado.
+ * Cuenta las llaves de apertura y cierre para encontrar el final del objeto.
+ */
+function extractBalancedJson(text, startOffset) {
+  let depth = 0;
+  let inString = false;
+  let escapeNext = false;
+  let startIdx = -1;
+
+  for (let i = startOffset; i < text.length; i++) {
+    const char = text[i];
+
+    if (escapeNext) {
+      escapeNext = false;
+      continue;
+    }
+
+    if (char === '\\\\') {
+      escapeNext = true;
+      continue;
+    }
+
+    if (char === '"' && !inString) {
+      inString = true;
+      continue;
+    }
+
+    if (char === '"' && inString) {
+      inString = false;
+      continue;
+    }
+
+    if (!inString) {
+      if (char === '{') {
+        if (depth === 0) {
+          startIdx = i;
+        }
+        depth++;
+      } else if (char === '}') {
+        depth--;
+        if (depth === 0 && startIdx !== -1) {
+          return text.substring(startIdx, i + 1);
+        }
+      }
+    }
   }
 
-  // --- Intento 3: DuckDuckGo Images ---
-  try {
-    const searchUrl = `${DUCKDUCKGO_IMAGES_URL}${searchQuery}`;
-    await page.goto(searchUrl, {
-      waitUntil: 'domcontentloaded',
-      timeout: 30000,
-    });
-    await page.waitForTimeout(4000);
-
-    const results = await extractFromDuckDuckGo(page);
-    if (results.length > 0) {
-      console.log(`  [OK DuckDuckGo] ${teamName}`);
-      return results[0];
-    }
-  } catch (error) {
-    // Se agotaron las opciones
-  }
-
-  console.log(`  [WARN] No se encontro escudo para: ${teamName}`);
   return null;
 }
 
+/**
+ * Extrae los escudos del participantsData en la pagina del partido de Flashscore.
+ * Los escudos estan en window.__INITIAL_STATE__ o en un script con participantsData.
+ */
+async function extractShieldsFromFlashscore(page) {
+  return page.evaluate(() => {
+    try {
+      // Funcion interna para extraer JSON balanceado
+      function extractBalancedJsonInner(text, startOffset) {
+        let depth = 0;
+        let inString = false;
+        let escapeNext = false;
+        let startIdx = -1;
+
+        for (let i = startOffset; i < text.length; i++) {
+          const char = text[i];
+
+          if (escapeNext) {
+            escapeNext = false;
+            continue;
+          }
+
+          if (char === '\\') {
+            escapeNext = true;
+            continue;
+          }
+
+          if (char === '"' && !inString) {
+            inString = true;
+            continue;
+          }
+
+          if (char === '"' && inString) {
+            inString = false;
+            continue;
+          }
+
+          if (!inString) {
+            if (char === '{') {
+              if (depth === 0) {
+                startIdx = i;
+              }
+              depth++;
+            } else if (char === '}') {
+              depth--;
+              if (depth === 0 && startIdx !== -1) {
+                return text.substring(startIdx, i + 1);
+              }
+            }
+          }
+        }
+
+        return null;
+      }
+
+      // Metodo 1: Buscar en todos los scripts por participantsData
+      const scripts = document.querySelectorAll('script');
+      for (const script of scripts) {
+        if (script.textContent && script.textContent.includes('"participantsData"')) {
+          const idx = script.textContent.indexOf('"participantsData"');
+          // Encontrar el ':' despues de "participantsData"
+          const colonIdx = script.textContent.indexOf(':', idx);
+          if (colonIdx !== -1) {
+            const jsonStr = extractBalancedJsonInner(script.textContent, colonIdx + 1);
+            if (jsonStr) {
+              try {
+                const data = JSON.parse(jsonStr);
+                const home = data.home?.[0];
+                const away = data.away?.[0];
+
+                if (home && away) {
+                  return {
+                    homeLogo: home.image_path || home.small_image_path || null,
+                    awayLogo: away.image_path || away.small_image_path || null,
+                    homeName: home.name || null,
+                    awayName: away.name || null,
+                  };
+                }
+              } catch (e) {
+                // Ignorar error de parseo, intentar siguiente metodo
+              }
+            }
+          }
+        }
+      }
+
+      // Metodo 2: Buscar en window.__INITIAL_STATE__
+      if (window.__INITIAL_STATE__) {
+        const state = window.__INITIAL_STATE__;
+        const participants = state.event?.participantsData || state.participantsData;
+        if (participants) {
+          const home = participants.home?.[0];
+          const away = participants.away?.[0];
+          if (home && away) {
+            return {
+              homeLogo: home.image_path || home.small_image_path || null,
+              awayLogo: away.image_path || away.small_image_path || null,
+              homeName: home.name || null,
+              awayName: away.name || null,
+            };
+          }
+        }
+      }
+
+      // Metodo 3: Buscar en window.environment
+      if (window.environment && window.environment.participantsData) {
+        const participants = window.environment.participantsData;
+        const home = participants.home?.[0];
+        const away = participants.away?.[0];
+        if (home && away) {
+          return {
+            homeLogo: home.image_path || home.small_image_path || null,
+            awayLogo: away.image_path || away.small_image_path || null,
+            homeName: home.name || null,
+            awayName: away.name || null,
+          };
+        }
+      }
+
+      return null;
+    } catch (e) {
+      return null;
+    }
+  });
+}
+
+/**
+ * Extrae el participantsData haciendo fetch a la API interna de Flashscore.
+ * Algunas paginas de Flashscore cargan los datos via una API separada.
+ */
+async function extractShieldsFromFlashscoreApi(page, matchUrl) {
+  // Intentar extraer el ID del partido de la URL
+  // Ej: https://www.flashscore.com/match/football/ldu-quito-xIqORMgg/mirassol-pQ8ryEe7/
+  const midMatch = matchUrl.match(/[?&]mid=([^&]+)/);
+  if (midMatch) {
+    const matchId = midMatch[1];
+    try {
+      // Flashscore tiene una API para detalles del partido
+      const apiUrl = matchUrl.replace(/\?.*/, '').replace('/match/', '/api/match/') + '/summary/';
+      // Esto es especulativo, mejor extraer del HTML
+    } catch (e) {
+      // Ignorar
+    }
+  }
+  return null;
+}
+
+/**
+ * Busca los escudos de ambos equipos buscando el partido en Flashscore.
+ */
+async function searchMatchLogos(page, homeTeam, awayTeam) {
+  console.log(`  Buscando partido: ${homeTeam} vs ${awayTeam}`);
+
+  // Paso 1: Buscar en Google el partido en Flashscore
+  const flashscoreUrl = await findFlashscoreMatchUrl(page, homeTeam, awayTeam);
+
+  if (!flashscoreUrl) {
+    console.log(`  [WARN] No se encontro el partido en Flashscore`);
+    return { homeLogo: null, awayLogo: null };
+  }
+
+  console.log(`  [OK] URL Flashscore encontrada: ${flashscoreUrl}`);
+
+  // Paso 2: Navegar a la pagina del partido en Flashscore
+  try {
+    await page.goto(flashscoreUrl, {
+      waitUntil: 'domcontentloaded',
+      timeout: 30000,
+    });
+    await page.waitForTimeout(3000);
+  } catch (error) {
+    console.log(`  [ERROR] Navegando a Flashscore: ${error.message}`);
+    return { homeLogo: null, awayLogo: null };
+  }
+
+  // Paso 3: Extraer los escudos del participantsData
+  const shields = await extractShieldsFromFlashscore(page);
+
+  if (shields && (shields.homeLogo || shields.awayLogo)) {
+    console.log(`  [OK] Escudos extraidos - Local: ${shields.homeLogo ? 'SI' : 'NO'}, Visitante: ${shields.awayLogo ? 'SI' : 'NO'}`);
+    return shields;
+  }
+
+  console.log(`  [WARN] No se pudieron extraer escudos de la pagina`);
+  return { homeLogo: null, awayLogo: null };
+}
+
 async function scrapeEscudos() {
-  console.log('[Escudos] Iniciando scraping de escudos desde Google Images...');
+  console.log('[Escudos] Iniciando scraping de escudos desde Flashscore...');
 
   // Verificar que existan los partidos
   if (!fs.existsSync(PARTIDOS_PATH)) {
@@ -441,20 +481,29 @@ async function scrapeEscudos() {
       if (seenMatches.has(matchKey)) continue;
       seenMatches.add(matchKey);
 
-      console.log(`[${i + 1}/${partidos.length}] Buscando escudos para: ${matchKey}`);
+      console.log(`\n[${i + 1}/${partidos.length}] Procesando: ${matchKey}`);
 
-      // Buscar escudo local (con cache)
+      // Verificar cache para home
       let homeLogo = logoCache.get(homeTeam);
-      if (homeLogo === undefined) {
-        homeLogo = await searchTeamLogo(page, homeTeam, matchText);
-        logoCache.set(homeTeam, homeLogo);
-      }
-
-      // Buscar escudo visitante (con cache)
+      // Verificar cache para away
       let awayLogo = logoCache.get(awayTeam);
-      if (awayLogo === undefined) {
-        awayLogo = await searchTeamLogo(page, awayTeam, matchText);
-        logoCache.set(awayTeam, awayLogo);
+
+      // Si ambos estan en cache, usar directamente
+      if (homeLogo !== undefined && awayLogo !== undefined) {
+        console.log(`  [CACHE] Usando escudos en cache`);
+      } else {
+        // Buscar el partido en Flashscore
+        const result = await searchMatchLogos(page, homeTeam, awayTeam);
+
+        // Actualizar cache y valores
+        if (homeLogo === undefined) {
+          homeLogo = result.homeLogo;
+          logoCache.set(homeTeam, homeLogo);
+        }
+        if (awayLogo === undefined) {
+          awayLogo = result.awayLogo;
+          logoCache.set(awayTeam, awayLogo);
+        }
       }
 
       // Solo agregar si al menos un escudo fue encontrado
@@ -476,7 +525,7 @@ async function scrapeEscudos() {
     ensureDir(OUTPUT);
     fs.writeFileSync(OUTPUT, JSON.stringify(escudos, null, 2), 'utf-8');
 
-    console.log(`[Escudos] ${escudos.length} escudos guardados en ${OUTPUT}`);
+    console.log(`\n[Escudos] ${escudos.length} escudos guardados en ${OUTPUT}`);
 
     // Resumen
     const totalTeams = new Set();
