@@ -4,9 +4,12 @@
  * extrae la URL del escudo desde el participantsData de la pagina del partido
  * y guarda en data/escudos.json
  *
- * Correcciones aplicadas:
- * - Filtro por fecha: solo acepta partidos del DIA ACTUAL
- * - Asignacion por nombre: compara nombres de equipos para evitar escudos cruzados
+ * Estrategia:
+ * 1. Para cada partido "Equipo A vs Equipo B", buscar "Equipo A vs Equipo B flashscore"
+ * 2. Extraer el primer resultado de Google que apunte a flashscore.com
+ * 3. Navegar a la pagina del partido en Flashscore
+ * 4. Extraer participantsData del script embebido en el HTML
+ * 5. Obtener image_path de home y away
  *
  * Si falla o no hay partidos:
  * - guarda [] en escudos.json
@@ -21,154 +24,6 @@ const PARTIDOS_PATH = path.join(__dirname, '..', 'data', 'partidos.json');
 const OUTPUT = path.join(__dirname, '..', 'data', 'escudos.json');
 const GOOGLE_SEARCH_URL = 'https://www.google.com/search?q=';
 
-// ============================================
-// UTILIDADES DE FECHA
-// ============================================
-
-/**
- * Obtiene la fecha de hoy en formato YYYY-MM-DD para comparaciones
- */
-function getTodayDateString() {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, '0');
-  const day = String(now.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-}
-
-/**
- * Obtiene la fecha de hoy en formato legible para la busqueda
- */
-function getTodayForSearch() {
-  const now = new Date();
-  const day = String(now.getDate()).padStart(2, '0');
-  const month = String(now.getMonth() + 1).padStart(2, '0');
-  const year = now.getFullYear();
-  return `${day}/${month}/${year}`;
-}
-
-/**
- * Compara dos fechas en formato YYYY-MM-DD
- */
-function isSameDate(dateStr1, dateStr2) {
-  if (!dateStr1 || !dateStr2) return false;
-  return dateStr1 === dateStr2;
-}
-
-// ============================================
-// UTILIDADES DE NOMBRE DE EQUIPO
-// ============================================
-
-/**
- * Normaliza un nombre de equipo para comparacion:
- * - minusculas
- * - sin acentos
- * - sin espacios extra
- * - sin parentesis de pais
- */
-function normalizeTeamName(name) {
-  if (!name) return '';
-  return name
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')  // quitar acentos
-    .replace(/\s*\([^)]*\)\s*$/g, '') // quitar (Bra), (Arg), etc.
-    .replace(/[^a-z0-9]/g, '')          // solo letras y numeros
-    .trim();
-}
-
-/**
- * Compara dos nombres de equipo de forma flexible
- */
-function teamNamesMatch(name1, name2) {
-  const n1 = normalizeTeamName(name1);
-  const n2 = normalizeTeamName(name2);
-  if (!n1 || !n2) return false;
-
-  // Coincidencia exacta
-  if (n1 === n2) return true;
-
-  // Uno contiene al otro (ej: "ldu quito" vs "ldu")
-  if (n1.includes(n2) || n2.includes(n1)) return true;
-
-  // Comparar palabras individuales
-  const words1 = n1.split(/\s+/).filter(w => w.length > 2);
-  const words2 = n2.split(/\s+/).filter(w => w.length > 2);
-  if (words1.length > 0 && words2.length > 0) {
-    const common = words1.filter(w => words2.includes(w));
-    if (common.length >= Math.min(words1.length, words2.length) * 0.5) {
-      return true;
-    }
-  }
-
-  return false;
-}
-
-/**
- * Asigna los logos correctamente comparando los nombres de equipos.
- * Flashscore puede tener home/away invertidos respecto a nuestros datos.
- */
-function assignLogosByName(expectedHome, expectedAway, flashscoreData) {
-  if (!flashscoreData) return { homeLogo: null, awayLogo: null, matchedCorrectly: false };
-
-  const fsHomeName = flashscoreData.homeName || '';
-  const fsAwayName = flashscoreData.awayName || '';
-  const fsHomeLogo = flashscoreData.homeLogo || null;
-  const fsAwayLogo = flashscoreData.awayLogo || null;
-
-  // Caso 1: Flashscore coincide con nuestro orden
-  const homeMatchesHome = teamNamesMatch(expectedHome, fsHomeName);
-  const awayMatchesAway = teamNamesMatch(expectedAway, fsAwayName);
-
-  if (homeMatchesHome && awayMatchesAway) {
-    return {
-      homeLogo: fsHomeLogo,
-      awayLogo: fsAwayLogo,
-      matchedCorrectly: true,
-    };
-  }
-
-  // Caso 2: Flashscore tiene los equipos invertidos
-  const homeMatchesAway = teamNamesMatch(expectedHome, fsAwayName);
-  const awayMatchesHome = teamNamesMatch(expectedAway, fsHomeName);
-
-  if (homeMatchesAway && awayMatchesHome) {
-    return {
-      homeLogo: fsAwayLogo,
-      awayLogo: fsHomeLogo,
-      matchedCorrectly: true,
-    };
-  }
-
-  // Caso 3: Coincidencia parcial
-  let homeLogo = null;
-  let awayLogo = null;
-
-  if (homeMatchesHome) homeLogo = fsHomeLogo;
-  else if (homeMatchesAway) homeLogo = fsAwayLogo;
-
-  if (awayMatchesAway) awayLogo = fsAwayLogo;
-  else if (awayMatchesHome) awayLogo = fsHomeLogo;
-
-  if (!homeLogo && !awayLogo) {
-    return {
-      homeLogo: fsHomeLogo,
-      awayLogo: fsAwayLogo,
-      matchedCorrectly: false,
-    };
-  }
-
-  return {
-    homeLogo,
-    awayLogo,
-    matchedCorrectly: homeLogo !== null && awayLogo !== null,
-  };
-}
-
-// ============================================
-// FUNCIONES AUXILIARES
-// ============================================
-
 function ensureDir(filePath) {
   const dir = path.dirname(filePath);
   if (!fs.existsSync(dir)) {
@@ -182,19 +37,40 @@ function saveEmptyJson() {
   console.log('[Escudos] JSON vacio guardado');
 }
 
+/**
+ * Extrae los nombres de los equipos de un string de partido.
+ * Ej: "Copa Libertadores: Mirassol vs LDU Quito" -> ["Mirassol", "LDU Quito"]
+ *     "Mirassol vs LDU Quito" -> ["Mirassol", "LDU Quito"]
+ */
 function extractTeamNames(matchText) {
   if (!matchText) return [null, null];
-  const withoutCompetition = matchText.replace(/^[^:]+:\s*/, '');
+
+  // Remover prefijo de competencia (todo antes de ": ")
+  const withoutCompetition = matchText.replace(/^[^:]+:\ */, '');
+
+  // Separar por " vs " o " vs. " (case insensitive)
   const vsMatch = withoutCompetition.match(/(.+?)\s+vs\s+(.+)/i);
   if (!vsMatch) return [null, null];
-  return [vsMatch[1].trim(), vsMatch[2].trim()];
+
+  const home = vsMatch[1].trim();
+  const away = vsMatch[2].trim();
+
+  return [home, away];
 }
 
+/**
+ * Limpia el nombre del equipo para la busqueda.
+ * Quita el pais entre parentesis para la busqueda, ej: "Mirassol (Bra)" -> "Mirassol"
+ */
 function cleanTeamNameForSearch(name) {
   if (!name) return '';
-  return name.replace(/\s*\([^)]*\)\s*$/g, '').trim();
+  // Quitar (XXX) del final, ej: "Mirassol (Bra)" -> "Mirassol"
+  return name.replace(/\s*\([^)]*\)\s*$/, '').trim();
 }
 
+/**
+ * Detecta si Google esta mostrando un CAPTCHA o bloqueo.
+ */
 async function isGoogleBlocked(page) {
   return page.evaluate(() => {
     const title = document.title.toLowerCase();
@@ -205,7 +81,7 @@ async function isGoogleBlocked(page) {
       body.includes('captcha') ||
       body.includes('unusual traffic') ||
       body.includes('automated requests') ||
-      body.includes("i'm not a robot") ||
+      body.includes('i\'m not a robot') ||
       body.includes('no soy un robot') ||
       !!document.querySelector('form[action*="captcha"]') ||
       !!document.querySelector('#captcha')
@@ -213,86 +89,14 @@ async function isGoogleBlocked(page) {
   });
 }
 
-// ============================================
-// EXTRACCION DE FECHA DE FLASHSCORE
-// ============================================
-
 /**
- * Extrae la fecha del partido de la pagina de Flashscore.
- * Devuelve la fecha en formato YYYY-MM-DD o null.
+ * Busca en Google el partido en Flashscore y devuelve la URL de la pagina del partido.
  */
-async function extractMatchDateFromFlashscore(page) {
-  return page.evaluate(() => {
-    try {
-      // Metodo 1: Meta tag
-      const metaDate = document.querySelector('meta[property="og:article:published_time"]');
-      if (metaDate) {
-        const d = new Date(metaDate.content);
-        if (!isNaN(d)) {
-          return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-        }
-      }
-
-      // Metodo 2: Scripts con startTime o timestamp
-      const scripts = document.querySelectorAll('script');
-      for (const script of scripts) {
-        const text = script.textContent || '';
-
-        const timeMatch = text.match(/["']startTime["']\s*:\s*["'](\d{4}-\d{2}-\d{2})/);
-        if (timeMatch) return timeMatch[1];
-
-        const tsMatch = text.match(/["']startTimestamp["']\s*:\s*(\d{10,})/);
-        if (tsMatch) {
-          const d = new Date(parseInt(tsMatch[1]) * 1000);
-          return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-        }
-
-        const dateMatch = text.match(/(\d{2})[./](\d{2})[./](\d{4})/);
-        if (dateMatch) {
-          return `${dateMatch[3]}-${dateMatch[2]}-${dateMatch[1]}`;
-        }
-      }
-
-      // Metodo 3: Elementos del DOM
-      const selectors = '.duelParticipant__startTime, .match__date, [data-testid="match-date"], .event__time, .matchDate';
-      const dateElements = document.querySelectorAll(selectors);
-      for (const el of dateElements) {
-        const text = el.textContent || '';
-        const match = text.match(/(\d{2})\.(\d{2})\.(\d{4})/);
-        if (match) return `${match[3]}-${match[2]}-${match[1]}`;
-        const match2 = text.match(/(\d{2})\/(\d{2})\/(\d{4})/);
-        if (match2) return `${match2[3]}-${match2[2]}-${match2[1]}`;
-      }
-
-      // Metodo 4: window.__INITIAL_STATE__
-      if (window.__INITIAL_STATE__) {
-        const eventDate = window.__INITIAL_STATE__.event?.startTimestamp;
-        if (eventDate) {
-          const d = new Date(eventDate * 1000);
-          if (!isNaN(d)) {
-            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-          }
-        }
-      }
-
-      return null;
-    } catch (e) {
-      return null;
-    }
-  });
-}
-
-// ============================================
-// BUSQUEDA EN GOOGLE (con fecha)
-// ============================================
-
 async function findFlashscoreMatchUrl(page, homeTeam, awayTeam) {
   const homeClean = cleanTeamNameForSearch(homeTeam);
   const awayClean = cleanTeamNameForSearch(awayTeam);
-  const todayStr = getTodayForSearch();
 
-  // Buscar con fecha incluida para priorizar resultados de hoy
-  const searchQuery = encodeURIComponent(`${homeClean} vs ${awayClean} flashscore ${todayStr}`);
+  const searchQuery = encodeURIComponent(`${homeClean} vs ${awayClean} flashscore`);
   const searchUrl = `${GOOGLE_SEARCH_URL}${searchQuery}`;
 
   try {
@@ -302,18 +106,20 @@ async function findFlashscoreMatchUrl(page, homeTeam, awayTeam) {
     });
     await page.waitForTimeout(3000);
 
+    // Verificar si nos bloquearon
     const blocked = await isGoogleBlocked(page);
     if (blocked) {
       console.log(`  [BLOQUEO] Google detecto bot`);
       return null;
     }
 
-    // Extraer TODOS los enlaces de flashscore que sean de partidos
-    const flashscoreUrls = await page.evaluate(() => {
-      const urls = [];
+    // Extraer el primer resultado que sea de flashscore.com
+    const flashscoreUrl = await page.evaluate(() => {
+      // Buscar todos los enlaces de resultados
       const links = document.querySelectorAll('a[href*="flashscore"]');
       for (const link of links) {
         const href = link.href || '';
+        // Solo enlaces a paginas de partidos (no a paginas de equipo, odds, etc.)
         if (
           href.includes('flashscore.com') &&
           href.includes('/match/') &&
@@ -323,53 +129,122 @@ async function findFlashscoreMatchUrl(page, homeTeam, awayTeam) {
           !href.includes('/cuotas/') &&
           !href.includes('/clasificacion/')
         ) {
-          urls.push(href);
+          return href;
         }
       }
-      if (urls.length === 0) {
-        const allLinks = document.querySelectorAll('a[href*="flashscore"]');
-        for (const link of allLinks) {
-          const href = link.href || '';
-          if (href.includes('flashscore.com') && !href.includes('/team/')) {
-            urls.push(href);
-          }
+
+      // Si no encontramos /match/, buscar cualquier enlace de flashscore que parezca un partido
+      const allLinks = document.querySelectorAll('a[href*="flashscore"]');
+      for (const link of allLinks) {
+        const href = link.href || '';
+        if (href.includes('flashscore.com') && !href.includes('/team/')) {
+          return href;
         }
       }
-      return urls;
+
+      return null;
     });
 
-    return flashscoreUrls.length > 0 ? flashscoreUrls : null;
+    return flashscoreUrl;
   } catch (error) {
     console.log(`  [ERROR] Buscando en Google: ${error.message}`);
     return null;
   }
 }
 
-// ============================================
-// EXTRACCION DE ESCUDOS
-// ============================================
+/**
+ * Extrae un objeto JSON balanceado de un string comenzando desde el offset dado.
+ * Cuenta las llaves de apertura y cierre para encontrar el final del objeto.
+ */
+function extractBalancedJson(text, startOffset) {
+  let depth = 0;
+  let inString = false;
+  let escapeNext = false;
+  let startIdx = -1;
+
+  for (let i = startOffset; i < text.length; i++) {
+    const char = text[i];
+
+    if (escapeNext) {
+      escapeNext = false;
+      continue;
+    }
+
+    if (char === '\\\\') {
+      escapeNext = true;
+      continue;
+    }
+
+    if (char === '"' && !inString) {
+      inString = true;
+      continue;
+    }
+
+    if (char === '"' && inString) {
+      inString = false;
+      continue;
+    }
+
+    if (!inString) {
+      if (char === '{') {
+        if (depth === 0) {
+          startIdx = i;
+        }
+        depth++;
+      } else if (char === '}') {
+        depth--;
+        if (depth === 0 && startIdx !== -1) {
+          return text.substring(startIdx, i + 1);
+        }
+      }
+    }
+  }
+
+  return null;
+}
 
 /**
- * Extrae los escudos Y los nombres de equipo del participantsData.
- * Devuelve {homeLogo, awayLogo, homeName, awayName}
+ * Extrae los escudos del participantsData en la pagina del partido de Flashscore.
+ * Los escudos estan en window.__INITIAL_STATE__ o en un script con participantsData.
  */
 async function extractShieldsFromFlashscore(page) {
   return page.evaluate(() => {
     try {
+      // Funcion interna para extraer JSON balanceado
       function extractBalancedJsonInner(text, startOffset) {
         let depth = 0;
         let inString = false;
         let escapeNext = false;
         let startIdx = -1;
+
         for (let i = startOffset; i < text.length; i++) {
           const char = text[i];
-          if (escapeNext) { escapeNext = false; continue; }
-          if (char === '\\') { escapeNext = true; continue; }
-          if (char === '"' && !inString) { inString = true; continue; }
-          if (char === '"' && inString) { inString = false; continue; }
+
+          if (escapeNext) {
+            escapeNext = false;
+            continue;
+          }
+
+          if (char === '\\') {
+            escapeNext = true;
+            continue;
+          }
+
+          if (char === '"' && !inString) {
+            inString = true;
+            continue;
+          }
+
+          if (char === '"' && inString) {
+            inString = false;
+            continue;
+          }
+
           if (!inString) {
             if (char === '{') {
-              if (depth === 0) startIdx = i;
+              if (depth === 0) {
+                startIdx = i;
+              }
               depth++;
             } else if (char === '}') {
               depth--;
@@ -379,13 +254,16 @@ async function extractShieldsFromFlashscore(page) {
             }
           }
         }
+
         return null;
       }
 
+      // Metodo 1: Buscar en todos los scripts por participantsData
       const scripts = document.querySelectorAll('script');
       for (const script of scripts) {
         if (script.textContent && script.textContent.includes('"participantsData"')) {
           const idx = script.textContent.indexOf('"participantsData"');
+          // Encontrar el ':' despues de "participantsData"
           const colonIdx = script.textContent.indexOf(':', idx);
           if (colonIdx !== -1) {
             const jsonStr = extractBalancedJsonInner(script.textContent, colonIdx + 1);
@@ -394,6 +272,7 @@ async function extractShieldsFromFlashscore(page) {
                 const data = JSON.parse(jsonStr);
                 const home = data.home?.[0];
                 const away = data.away?.[0];
+
                 if (home && away) {
                   return {
                     homeLogo: home.image_path || home.small_image_path || null,
@@ -402,12 +281,15 @@ async function extractShieldsFromFlashscore(page) {
                     awayName: away.name || null,
                   };
                 }
-              } catch (e) { /* ignora */ }
+              } catch (e) {
+                // Ignorar error de parseo, intentar siguiente metodo
+              }
             }
           }
         }
       }
 
+      // Metodo 2: Buscar en window.__INITIAL_STATE__
       if (window.__INITIAL_STATE__) {
         const state = window.__INITIAL_STATE__;
         const participants = state.event?.participantsData || state.participantsData;
@@ -425,6 +307,7 @@ async function extractShieldsFromFlashscore(page) {
         }
       }
 
+      // Metodo 3: Buscar en window.environment
       if (window.environment && window.environment.participantsData) {
         const participants = window.environment.participantsData;
         const home = participants.home?.[0];
@@ -446,87 +329,71 @@ async function extractShieldsFromFlashscore(page) {
   });
 }
 
-// ============================================
-// BUSQUEDA PRINCIPAL CON VALIDACION DE FECHA
-// ============================================
+/**
+ * Extrae el participantsData haciendo fetch a la API interna de Flashscore.
+ * Algunas paginas de Flashscore cargan los datos via una API separada.
+ */
+async function extractShieldsFromFlashscoreApi(page, matchUrl) {
+  // Intentar extraer el ID del partido de la URL
+  // Ej: https://www.flashscore.com/match/football/ldu-quito-xIqORMgg/mirassol-pQ8ryEe7/
+  const midMatch = matchUrl.match(/[?&]mid=([^&]+)/);
+  if (midMatch) {
+    const matchId = midMatch[1];
+    try {
+      // Flashscore tiene una API para detalles del partido
+      const apiUrl = matchUrl.replace(/\?.*/, '').replace('/match/', '/api/match/') + '/summary/';
+      // Esto es especulativo, mejor extraer del HTML
+    } catch (e) {
+      // Ignorar
+    }
+  }
+  return null;
+}
 
+/**
+ * Busca los escudos de ambos equipos buscando el partido en Flashscore.
+ */
 async function searchMatchLogos(page, homeTeam, awayTeam) {
   console.log(`  Buscando partido: ${homeTeam} vs ${awayTeam}`);
 
-  const todayStr = getTodayDateString();
-  console.log(`  [FECHA] Buscando partidos del: ${todayStr}`);
+  // Paso 1: Buscar en Google el partido en Flashscore
+  const flashscoreUrl = await findFlashscoreMatchUrl(page, homeTeam, awayTeam);
 
-  const flashscoreUrls = await findFlashscoreMatchUrl(page, homeTeam, awayTeam);
-
-  if (!flashscoreUrls || flashscoreUrls.length === 0) {
+  if (!flashscoreUrl) {
     console.log(`  [WARN] No se encontro el partido en Flashscore`);
     return { homeLogo: null, awayLogo: null };
   }
 
-  for (let urlIdx = 0; urlIdx < flashscoreUrls.length; urlIdx++) {
-    const flashscoreUrl = flashscoreUrls[urlIdx];
-    console.log(`  [URL ${urlIdx + 1}/${flashscoreUrls.length}] ${flashscoreUrl}`);
+  console.log(`  [OK] URL Flashscore encontrada: ${flashscoreUrl}`);
 
-    try {
-      await page.goto(flashscoreUrl, {
-        waitUntil: 'domcontentloaded',
-        timeout: 30000,
-      });
-      await page.waitForTimeout(3000);
-    } catch (error) {
-      console.log(`  [ERROR] Navegando a Flashscore: ${error.message}`);
-      continue;
-    }
-
-    // VALIDACION DE FECHA
-    const matchDate = await extractMatchDateFromFlashscore(page);
-    console.log(`  [FECHA] Pagina: ${matchDate || 'NO DETECTADA'} | Esperada: ${todayStr}`);
-
-    if (matchDate && !isSameDate(matchDate, todayStr)) {
-      console.log(`  [SKIP] Partido de fecha ${matchDate} no coincide con hoy (${todayStr})`);
-      continue;
-    }
-
-    if (!matchDate) {
-      console.log(`  [WARN] No se pudo detectar fecha, continuando con precaucion`);
-    }
-
-    // Extraer escudos
-    const shields = await extractShieldsFromFlashscore(page);
-
-    if (shields && (shields.homeLogo || shields.awayLogo)) {
-      console.log(`  [OK] Escudos extraidos - Local(FS): ${shields.homeName}, Visitante(FS): ${shields.awayName}`);
-
-      // ASIGNAR POR NOMBRE (no por posicion home/away cruda)
-      const assigned = assignLogosByName(homeTeam, awayTeam, shields);
-
-      if (assigned.matchedCorrectly) {
-        console.log(`  [MATCH] Escudos asignados correctamente por nombre de equipo`);
-      } else {
-        console.log(`  [WARN] Asignacion por nombre no fue precisa, usando mejor coincidencia`);
-      }
-
-      return {
-        homeLogo: assigned.homeLogo,
-        awayLogo: assigned.awayLogo,
-      };
-    }
-
-    console.log(`  [WARN] No se pudieron extraer escudos de esta pagina, probando siguiente...`);
+  // Paso 2: Navegar a la pagina del partido en Flashscore
+  try {
+    await page.goto(flashscoreUrl, {
+      waitUntil: 'domcontentloaded',
+      timeout: 30000,
+    });
+    await page.waitForTimeout(3000);
+  } catch (error) {
+    console.log(`  [ERROR] Navegando a Flashscore: ${error.message}`);
+    return { homeLogo: null, awayLogo: null };
   }
 
-  console.log(`  [WARN] Se agotaron todas las URLs sin encontrar partido de hoy con escudos`);
+  // Paso 3: Extraer los escudos del participantsData
+  const shields = await extractShieldsFromFlashscore(page);
+
+  if (shields && (shields.homeLogo || shields.awayLogo)) {
+    console.log(`  [OK] Escudos extraidos - Local: ${shields.homeLogo ? 'SI' : 'NO'}, Visitante: ${shields.awayLogo ? 'SI' : 'NO'}`);
+    return shields;
+  }
+
+  console.log(`  [WARN] No se pudieron extraer escudos de la pagina`);
   return { homeLogo: null, awayLogo: null };
 }
 
-// ============================================
-// FUNCION PRINCIPAL
-// ============================================
-
 async function scrapeEscudos() {
   console.log('[Escudos] Iniciando scraping de escudos desde Flashscore...');
-  console.log(`[Escudos] Fecha de hoy: ${getTodayDateString()}`);
 
+  // Verificar que existan los partidos
   if (!fs.existsSync(PARTIDOS_PATH)) {
     console.warn('[Escudos] No se encontro partidos.json');
     saveEmptyJson();
@@ -565,6 +432,7 @@ async function scrapeEscudos() {
 
   const page = await context.newPage();
 
+  // Bypass del popup de consentimiento de cookies de Google
   await page.route('**/*', (route) => {
     const url = route.request().url();
     if (url.includes('consent.google.com')) {
@@ -574,6 +442,7 @@ async function scrapeEscudos() {
     }
   });
 
+  // Configurar bypass de cookies para Google
   await context.addCookies([
     {
       name: 'CONSENT',
@@ -589,6 +458,7 @@ async function scrapeEscudos() {
     },
   ]);
 
+  // Cache de escudos para evitar buscar el mismo equipo multiple veces
   const logoCache = new Map();
   const escudos = [];
   const seenMatches = new Set();
@@ -613,14 +483,19 @@ async function scrapeEscudos() {
 
       console.log(`\n[${i + 1}/${partidos.length}] Procesando: ${matchKey}`);
 
+      // Verificar cache para home
       let homeLogo = logoCache.get(homeTeam);
+      // Verificar cache para away
       let awayLogo = logoCache.get(awayTeam);
 
+      // Si ambos estan en cache, usar directamente
       if (homeLogo !== undefined && awayLogo !== undefined) {
         console.log(`  [CACHE] Usando escudos en cache`);
       } else {
+        // Buscar el partido en Flashscore
         const result = await searchMatchLogos(page, homeTeam, awayTeam);
 
+        // Actualizar cache y valores
         if (homeLogo === undefined) {
           homeLogo = result.homeLogo;
           logoCache.set(homeTeam, homeLogo);
@@ -631,6 +506,7 @@ async function scrapeEscudos() {
         }
       }
 
+      // Solo agregar si al menos un escudo fue encontrado
       if (homeLogo || awayLogo) {
         escudos.push({
           match: matchKey,
@@ -639,16 +515,19 @@ async function scrapeEscudos() {
         });
       }
 
+      // Delay entre busquedas para no ser bloqueado
       if (i < partidos.length - 1) {
         await page.waitForTimeout(2000 + Math.random() * 2000);
       }
     }
 
+    // Guardar resultados
     ensureDir(OUTPUT);
     fs.writeFileSync(OUTPUT, JSON.stringify(escudos, null, 2), 'utf-8');
 
     console.log(`\n[Escudos] ${escudos.length} escudos guardados en ${OUTPUT}`);
 
+    // Resumen
     const totalTeams = new Set();
     for (const p of partidos) {
       const [h, a] = extractTeamNames(p.match);
