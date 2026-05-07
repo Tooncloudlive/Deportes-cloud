@@ -2,81 +2,78 @@ const SCRAPE_SCRIPT = () => {
   const clean = (s) =>
     (s || '')
       .replace(/\s+/g, ' ')
+      .replace(/\n/g, ' ')
+      .trim();
+
+  const normalizeTeam = (s) =>
+    clean(s)
+      .replace(/\b(FT|HT|LIVE|TODAY|TOMORROW)\b/gi, '')
+      .replace(/\b\d+\s*[-:]\s*\d+\b/g, '')
+      .replace(/\b\d{1,2}\s+[A-Za-z]{3}\.?\s+\d{4}\b/g, '')
+      .replace(/\bCBS\b/gi, '')
+      .replace(/\bFOX\b/gi, '')
+      .replace(/\bbeIN\b/gi, '')
+      .replace(/\bESPN\b/gi, '')
+      .replace(/\s+/g, ' ')
       .trim();
 
   const isTeamLogo = (src) =>
     /cdn\.resfu\.com\/img_data\/equipos\/\d+\.(png|jpg|jpeg|webp)(\?.*)?$/i.test(src || '');
 
-  const isNoiseText = (text) => {
-    if (!text) return true;
+  const invalidWords = [
+    'news',
+    'login',
+    'register',
+    'transfers',
+    'competitions',
+    'players',
+    'settings',
+    'languages',
+    'password',
+    'google',
+    'facebook',
+    'user',
+    'explore',
+    'favourites',
+    'matches',
+    'televised'
+  ];
 
+  const isBadText = (text) => {
     const t = text.toLowerCase();
 
-    const noise = [
-      'directo',
-      'tv',
-      'live',
-      'stream',
-      'resultado',
-      'clasificación',
-      'explore',
-      'competitions',
-      'teams',
-      'players',
-      'transfers',
-      'settings',
-      'languages',
-      'login',
-      'matches',
-      'news',
-      'favourites',
-      'favorite',
-      'vs user',
-      'password',
-      'register',
-      'continue',
-      'facebook',
-      'google',
-      'onefootball'
-    ];
-
-    return noise.some((k) => t.includes(k));
+    return (
+      !t ||
+      t.length < 5 ||
+      invalidWords.some((w) => t.includes(w))
+    );
   };
-
-  const normalizeTeam = (s) =>
-    clean(s)
-      .replace(/\b(FT|HT|LIVE|TODAY|TOMORROW)\b/gi, '')
-      .replace(/\b\d{1,2}\s+[A-Za-z]{3}\.?\s+\d{4}\b/g, '')
-      .replace(/\b\d{1,2}\s*-\s*\d{1,2}\b/g, '')
-      .replace(/\b\d+\s*:\s*\d+\b/g, '')
-      .replace(/\s+/g, ' ')
-      .trim();
 
   const extractMatch = (text) => {
     const t = clean(text);
 
-    // Caso tipo: "U. Católica 0 - 0 Cruzeiro 07 May. 2026"
+    // Equipo 1 0-0 Equipo 2
     let m = t.match(
-      /^(.{2,80}?)\s+\d+\s*[-:]\s*\d+\s+(.{2,80}?)(?:\s+\d{1,2}\s+[A-Za-z]{3}\.?\s+\d{4}|\s*$)/i
+      /([A-Za-zÀ-ÿ0-9\.\-\'\s]{2,60}?)\s+\d+\s*[-:]\s*\d+\s+([A-Za-zÀ-ÿ0-9\.\-\'\s]{2,60})/i
     );
 
     if (m) {
-      const home = normalizeTeam(m[1]);
-      const away = normalizeTeam(m[2]);
-
-      if (home && away) return { home, away };
+      return {
+        home: normalizeTeam(m[1]),
+        away: normalizeTeam(m[2])
+      };
     }
 
-    // Caso tipo: "Equipo A vs Equipo B"
+    // Equipo 1 vs Equipo 2
     m = t.match(
-      /^(.{2,80}?)\s+vs\s+(.{2,80}?)(?:\s+\d{1,2}\s+[A-Za-z]{3}\.?\s+\d{4}|\s*$)/i
+      /([A-Za-zÀ-ÿ0-9\.\-\'\s]{2,60}?)\s+vs\s+([A-Za-zÀ-ÿ0-9\.\-\'\s]{2,60})/i
     );
 
     if (m) {
-      const home = normalizeTeam(m[1]);
-      const away = normalizeTeam(m[2]);
-
-      if (home && away) return { home, away };
+      return {
+        home: normalizeTeam(m[1]),
+        away: normalizeTeam(m[2])
+      };
     }
 
     return null;
@@ -85,20 +82,20 @@ const SCRAPE_SCRIPT = () => {
   const data = [];
   const seen = new Set();
 
-  const containers = [
-    ...document.querySelectorAll('article'),
-    ...document.querySelectorAll('section'),
-    ...document.querySelectorAll('li'),
-    ...document.querySelectorAll('a'),
-    ...document.querySelectorAll('div')
+  // MUCHO más agresivo:
+  // toma cualquier elemento que tenga al menos 2 logos
+  const allElements = [
+    ...document.querySelectorAll('*')
   ];
 
-  for (const el of containers) {
+  for (const el of allElements) {
     const text = clean(el.innerText || '');
-    if (!text || text.length < 8) continue;
-    if (isNoiseText(text)) continue;
 
-    const logos = [...el.querySelectorAll('img')]
+    if (isBadText(text)) continue;
+
+    const logos = [
+      ...el.querySelectorAll('img')
+    ]
       .map((img) =>
         img.currentSrc ||
         img.src ||
@@ -107,23 +104,60 @@ const SCRAPE_SCRIPT = () => {
       )
       .filter(isTeamLogo);
 
-    // Necesitamos al menos 2 escudos del mismo bloque
     if (logos.length < 2) continue;
 
+    // Limpiar duplicados
+    const uniqueLogos = [...new Set(logos)];
+
+    if (uniqueLogos.length < 2) continue;
+
     const match = extractMatch(text);
+
     if (!match) continue;
 
-    const key = `${match.home} vs ${match.away}`;
+    if (
+      !match.home ||
+      !match.away ||
+      match.home.length < 2 ||
+      match.away.length < 2
+    ) {
+      continue;
+    }
+
+    // Evitar basura
+    if (
+      match.home.toLowerCase() === match.away.toLowerCase()
+    ) {
+      continue;
+    }
+
+    const key =
+      `${match.home} vs ${match.away}`;
+
     if (seen.has(key)) continue;
 
     seen.add(key);
 
     data.push({
       match: key,
-      homeLogo: logos[0],
-      awayLogo: logos[1]
+      homeLogo: uniqueLogos[0],
+      awayLogo: uniqueLogos[1]
     });
+
+    console.log('[SCRAPE]', key);
   }
 
-  return data;
+  // Eliminar posibles partidos basura
+  return data.filter((x) => {
+    const t = x.match.toLowerCase();
+
+    return (
+      !t.includes('login') &&
+      !t.includes('register') &&
+      !t.includes('news') &&
+      !t.includes('password') &&
+      !t.includes('google') &&
+      !t.includes('facebook')
+    );
+  });
 };
