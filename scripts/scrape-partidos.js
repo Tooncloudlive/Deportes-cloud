@@ -13,7 +13,7 @@ const OUTPUT = path.join(__dirname, '..', 'data', 'partidos.json');
 // La web muestra la hora en UTC/GMT+0.
 // Argentina = GMT-3.
 const SOURCE_OFFSET = 0;
-const TARGET_OFFSET = -3;
+const TARGET_OFFSET = 0;
 
 function pad2(n) {
   return String(n).padStart(2, '0');
