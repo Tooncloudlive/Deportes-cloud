@@ -24,6 +24,17 @@ const PARTIDOS_PATH = path.join(__dirname, '..', 'data', 'partidos.json');
 const OUTPUT = path.join(__dirname, '..', 'data', 'escudos.json');
 const GOOGLE_SEARCH_URL = 'https://www.google.com/search?q=';
 
+/**
+ * Obtiene la fecha de hoy en formato DD/MM/YYYY
+ */
+function getTodayDate() {
+    const now = new Date();
+    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const year = now.getFullYear();
+    return `${day}/${month}/${year}`;
+}
+
 function ensureDir(filePath) {
   const dir = path.dirname(filePath);
   if (!fs.existsSync(dir)) {
@@ -89,6 +100,36 @@ async function isGoogleBlocked(page) {
   });
 }
 
+
+/**
+ * Normaliza un nombre de equipo para comparacion (minusculas, sin acentos, sin parentesis)
+ */
+function normalizeTeamName(name) {
+    if (!name) return '';
+    return name
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/\s*\([^)]*\)\s*/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+}
+
+/**
+ * Calcula el score de similitud entre dos strings (0 a 1)
+ */
+function similarityScore(a, b) {
+    const aNorm = normalizeTeamName(a);
+    const bNorm = normalizeTeamName(b);
+    if (aNorm === bNorm) return 1.0;
+    if (aNorm.includes(bNorm) || bNorm.includes(aNorm)) return 0.8;
+    // Contar palabras en comun
+    const aWords = aNorm.split(/\s+/);
+    const bWords = bNorm.split(/\s+/);
+    const common = aWords.filter(w => bWords.includes(w));
+    return common.length / Math.max(aWords.length, bWords.length);
+}
+
 /**
  * Busca en Google el partido en Flashscore y devuelve la URL de la pagina del partido.
  */
@@ -96,7 +137,8 @@ async function findFlashscoreMatchUrl(page, homeTeam, awayTeam) {
   const homeClean = cleanTeamNameForSearch(homeTeam);
   const awayClean = cleanTeamNameForSearch(awayTeam);
 
-  const searchQuery = encodeURIComponent(`${homeClean} vs ${awayClean} flashscore`);
+  const todayDate = getTodayDate();
+  const searchQuery = encodeURIComponent(`${homeClean} vs ${awayClean} LIVE ${todayDate} Football flashscore`);
   const searchUrl = `${GOOGLE_SEARCH_URL}${searchQuery}`;
 
   try {
@@ -379,9 +421,30 @@ async function searchMatchLogos(page, homeTeam, awayTeam) {
   }
 
   // Paso 3: Extraer los escudos del participantsData
-  const shields = await extractShieldsFromFlashscore(page);
+  let shields = await extractShieldsFromFlashscore(page);
 
   if (shields && (shields.homeLogo || shields.awayLogo)) {
+    // Validar que los nombres de equipos coincidan para evitar escudos al reves
+    const homeScoreOriginal = similarityScore(homeTeam, shields.homeName);
+    const homeScoreSwapped = similarityScore(homeTeam, shields.awayName);
+    const awayScoreOriginal = similarityScore(awayTeam, shields.awayName);
+    const awayScoreSwapped = similarityScore(awayTeam, shields.homeName);
+
+    const originalScore = homeScoreOriginal + awayScoreOriginal;
+    const swappedScore = homeScoreSwapped + awayScoreSwapped;
+
+    if (swappedScore > originalScore + 0.1) {
+      console.log(`  [SWAP] Escudos invertidos detectados, corrigiendo orden (${swappedScore.toFixed(2)} > ${originalScore.toFixed(2)})`);
+      shields = {
+        homeLogo: shields.awayLogo,
+        awayLogo: shields.homeLogo,
+        homeName: shields.awayName,
+        awayName: shields.homeName,
+      };
+    } else {
+      console.log(`  [OK] Orden de escudos verificado (${originalScore.toFixed(2)} >= ${swappedScore.toFixed(2)})`);
+    }
+
     console.log(`  [OK] Escudos extraidos - Local: ${shields.homeLogo ? 'SI' : 'NO'}, Visitante: ${shields.awayLogo ? 'SI' : 'NO'}`);
     return shields;
   }
