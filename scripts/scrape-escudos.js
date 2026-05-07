@@ -1,193 +1,68 @@
 const SCRAPE_SCRIPT = () => {
-  const results = [];
+  const clean = (s) => (s || '').replace(/\s+/g, ' ').trim();
+
+  const normalizeLogo = (src) => {
+    if (!src) return '';
+    return src
+      .replace(/&amp;/g, '&')
+      .replace(/\s+/g, '')
+      .trim();
+  };
+
+  const isResfuTeamLogo = (src) =>
+    /^https?:\/\/cdn\.resfu\.com\/img_data\/equipos\/\d+\.(png|jpg|jpeg|webp)(\?.*)?$/i.test(src || '');
+
+  const data = [];
   const seen = new Set();
 
-  // =========================
-  // Helpers
-  // =========================
-
-  const cleanText = (text) => {
-    return (text || "")
-      .replace(/\s+/g, " ")
-      .replace(/\u00A0/g, " ")
-      .trim();
-  };
-
-  const normalizeLogo = (url) => {
-    if (!url) return "";
-
-    return url
-      .replace(/&amp;/g, "&")
-      .replace(/\?.*$/, "")
-      .trim();
-  };
-
-  const buildLogo = (url) => {
-    if (!url) return "";
-
-    const clean = normalizeLogo(url);
-
-    // fuerza formato correcto
-    const match = clean.match(
-      /https?:\/\/cdn\.resfu\.com\/img_data\/equipos\/(\d+)\.(png|jpg|jpeg|webp)/i
-    );
-
-    if (!match) return "";
-
-    const id = match[1];
-    const ext = match[2];
-
-    return `https://cdn.resfu.com/img_data/equipos/${id}.${ext}?size=60x&lossy=1`;
-  };
-
-  const isValidTeamLogo = (url) => {
-    return /^https?:\/\/cdn\.resfu\.com\/img_data\/equipos\/\d+\.(png|jpg|jpeg|webp)/i.test(
-      url || ""
-    );
-  };
-
-  const isValidTeamName = (name) => {
-    if (!name) return false;
-
-    const invalidPatterns = [
-      /today/i,
-      /matches/i,
-      /news/i,
-      /explore/i,
-      /competitions/i,
-      /transfers/i,
-      /favourites/i,
-      /settings/i,
-      /languages/i,
-      /gambling/i,
-      /1-800/i,
-      /ft/i,
-      /vs user/i,
-      /televised/i,
-      /more/i,
-      /find match/i,
-      /most viewed/i,
-      /most searched/i
-    ];
-
-    return !invalidPatterns.some((r) => r.test(name));
-  };
-
-  // =========================
-  // Buscar SOLO partidos reales
-  // =========================
-
+  // Solo partidos reales dentro del contenedor principal
   const rows = [
-    ...document.querySelectorAll(
-      '#tableMatches a.match-link.match-home[data-cy="match"]'
-    )
+    ...document.querySelectorAll('#tableMatches a.match-link.match-home[data-cy="match"]')
   ];
 
   rows.forEach((row) => {
-    try {
-      // =========================
-      // Obtener SOLO bloques team-info
-      // =========================
+    // Cada partido tiene 2 bloques .team-info
+    const teamInfos = [...row.querySelectorAll(':scope .team-info')];
 
-      let teamBlocks = [
-        ...row.querySelectorAll(":scope > .team-info")
-      ];
+    if (teamInfos.length < 2) return;
 
-      // fallback
-      if (teamBlocks.length < 2) {
-        teamBlocks = [...row.querySelectorAll(".team-info")];
-      }
+    const teams = teamInfos.map((teamInfo) => {
+      const nameEl =
+        teamInfo.querySelector('[itemprop="name"]') ||
+        teamInfo.querySelector('.team-name') ||
+        teamInfo.querySelector('.name');
 
-      if (teamBlocks.length < 2) return;
+      const imgEl = teamInfo.querySelector('img.team-shield');
 
-      // Tomar solo los primeros 2 equipos
-      teamBlocks = teamBlocks.slice(0, 2);
+      const name = clean(nameEl?.textContent);
+      const logo = normalizeLogo(
+        imgEl?.currentSrc ||
+        imgEl?.src ||
+        imgEl?.getAttribute('data-src') ||
+        imgEl?.getAttribute('src') ||
+        ''
+      );
 
-      const parsedTeams = teamBlocks.map((block) => {
-        // =========================
-        // Nombre
-        // =========================
+      return { name, logo };
+    });
 
-        const nameEl =
-          block.querySelector('[itemprop="name"]') ||
-          block.querySelector(".team-name") ||
-          block.querySelector(".name") ||
-          block.querySelector("div");
+    const home = teams[0];
+    const away = teams[1];
 
-        const rawName = cleanText(nameEl?.textContent || "");
+    if (!home.name || !away.name) return;
+    if (!home.logo || !away.logo) return;
+    if (!isResfuTeamLogo(home.logo) || !isResfuTeamLogo(away.logo)) return;
 
-        // =========================
-        // Escudo
-        // =========================
+    const key = `${home.name} vs ${away.name}`;
+    if (seen.has(key)) return;
+    seen.add(key);
 
-        const img =
-          block.querySelector("img.team-shield") ||
-          block.querySelector("img");
-
-        const rawLogo =
-          img?.currentSrc ||
-          img?.src ||
-          img?.getAttribute("data-src") ||
-          img?.getAttribute("src") ||
-          "";
-
-        const finalLogo = buildLogo(rawLogo);
-
-        return {
-          name: rawName,
-          logo: finalLogo
-        };
-      });
-
-      const home = parsedTeams[0];
-      const away = parsedTeams[1];
-
-      // =========================
-      // Validaciones ULTRA estrictas
-      // =========================
-
-      if (!home || !away) return;
-
-      if (!home.name || !away.name) return;
-
-      if (!isValidTeamName(home.name)) return;
-      if (!isValidTeamName(away.name)) return;
-
-      if (home.name.length > 60) return;
-      if (away.name.length > 60) return;
-
-      if (home.name === away.name) return;
-
-      if (!home.logo || !away.logo) return;
-
-      if (!isValidTeamLogo(home.logo)) return;
-      if (!isValidTeamLogo(away.logo)) return;
-
-      // evitar basura tipo navegación
-      if (
-        home.name.split(" ").length > 8 ||
-        away.name.split(" ").length > 8
-      ) {
-        return;
-      }
-
-      const match = `${home.name} vs ${away.name}`;
-
-      if (seen.has(match)) return;
-      seen.add(match);
-
-      results.push({
-        match,
-        homeLogo: home.logo,
-        awayLogo: away.logo
-      });
-    } catch (err) {
-      // ignorar filas rotas
-    }
+    data.push({
+      match: key,
+      homeLogo: home.logo,
+      awayLogo: away.logo
+    });
   });
 
-  return results;
+  return data;
 };
-
-// Ejecutar
-SCRAPE_SCRIPT();
