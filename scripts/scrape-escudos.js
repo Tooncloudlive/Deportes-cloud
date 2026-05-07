@@ -1,91 +1,53 @@
 const SCRAPE_SCRIPT = () => {
-
   const clean = (s) =>
-    (s || '')
-      .replace(/\s+/g, ' ')
-      .trim();
+    (s || '').replace(/\s+/g, ' ').trim();
+
+  const isResfuTeamLogo = (src) =>
+    /cdn\.resfu\.com\/img_data\/equipos\/\d+\.(png|jpg|jpeg|webp)(\?.*)?$/i.test(src || '');
 
   const data = [];
   const seen = new Set();
 
-  // SOLO tomar los bloques reales de partidos
-  const matches = [
-    ...document.querySelectorAll('a.match-link')
+  // Solo filas reales de partidos
+  const rows = [
+    ...document.querySelectorAll('#tableMatches a.match-link.match-home[data-cy="match"]')
   ];
 
-  matches.forEach(matchEl => {
+  rows.forEach((row) => {
+    // Toma solo los nombres de equipo del bloque del partido
+    const names = [
+      ...row.querySelectorAll('.team-info [itemprop="name"], .team-info .name')
+    ]
+      .map((el) => clean(el.textContent))
+      .filter(Boolean);
 
-    // EQUIPO LOCAL
-    const homeTeamEl =
-      matchEl.querySelector(
-        '.team-info.ta-r .name'
-      );
+    // Toma solo los escudos del bloque del partido
+    const logos = [
+      ...row.querySelectorAll('img.team-shield')
+    ]
+      .map((img) =>
+        img.currentSrc ||
+        img.src ||
+        img.getAttribute('data-src') ||
+        ''
+      )
+      .filter(isResfuTeamLogo);
 
-    // EQUIPO VISITANTE
-    const awayTeamEl =
-      matchEl.querySelector(
-        '.team-info .name'
-      );
+    if (names.length < 2) return;
+    if (logos.length < 2) return;
 
-    // ESCUDO LOCAL
-    const homeLogoEl =
-      matchEl.querySelector(
-        '.team-info.ta-r img.team-shield'
-      );
+    const homeTeam = names[0];
+    const awayTeam = names[1];
 
-    // ESCUDO VISITANTE
-    const awayLogoEl =
-      matchEl.querySelectorAll(
-        'img.team-shield'
-      )[1];
+    const homeLogo = logos[0];
+    const awayLogo = logos[1];
 
-    if (
-      !homeTeamEl ||
-      !awayTeamEl ||
-      !homeLogoEl ||
-      !awayLogoEl
-    ) {
-      return;
-    }
+    if (!homeTeam || !awayTeam) return;
+    if (!homeLogo || !awayLogo) return;
+    if (homeTeam.toLowerCase() === awayTeam.toLowerCase()) return;
 
-    const homeTeam =
-      clean(homeTeamEl.textContent);
-
-    const awayTeam =
-      clean(awayTeamEl.textContent);
-
-    const homeLogo =
-      homeLogoEl.src ||
-      homeLogoEl.getAttribute('src');
-
-    const awayLogo =
-      awayLogoEl.src ||
-      awayLogoEl.getAttribute('src');
-
-    // Validaciones
-    if (
-      !homeTeam ||
-      !awayTeam ||
-      !homeLogo ||
-      !awayLogo
-    ) {
-      return;
-    }
-
-    // Solo escudos reales
-    if (
-      !homeLogo.includes('/img_data/equipos/') ||
-      !awayLogo.includes('/img_data/equipos/')
-    ) {
-      return;
-    }
-
-    const key =
-      `${homeTeam} vs ${awayTeam}`;
-
-    if (seen.has(key)) {
-      return;
-    }
+    const key = `${homeTeam} vs ${awayTeam}`;
+    if (seen.has(key)) return;
 
     seen.add(key);
 
@@ -94,14 +56,7 @@ const SCRAPE_SCRIPT = () => {
       homeLogo,
       awayLogo
     });
-
-    console.log(
-      '[SCRAPE]',
-      key
-    );
-
   });
 
   return data;
-
 };
