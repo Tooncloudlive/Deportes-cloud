@@ -1,23 +1,22 @@
 /**
- * scrape-escudos.js
+ * Scraping de escudos desde Google Images
+ * Lee data/partidos.json, busca cada equipo en Google Images,
+ * extrae la URL del escudo y guarda en data/escudos.json
  *
- * Lee data/partidos.json, extrae equipos y busca escudos en Google.
- * - No rompe GitHub Actions si Google falla, bloquea o cambia el DOM.
- * - Guarda resultados parciales.
- * - Si no encuentra un escudo, deja homeLogo/awayLogo vacío.
- * - Si todo falla, escribe [] en escudos.json y termina con exitCode 0.
+ * Si falla o no hay partidos:
+ * - guarda [] en escudos.json
+ * - NO rompe GitHub Actions
  */
 
 const { chromium } = require('playwright');
 const fs = require('fs');
 const path = require('path');
 
-const INPUT = path.join(__dirname, '..', 'data', 'partidos.json');
+const PARTIDOS_PATH = path.join(__dirname, '..', 'data', 'partidos.json');
 const OUTPUT = path.join(__dirname, '..', 'data', 'escudos.json');
-
-const GOOGLE_TIMEOUT = 45000;
-const PER_TEAM_DELAY_MS = 1200;
-const MAX_RETRIES = 2;
+const GOOGLE_IMAGES_URL = 'https://www.google.com/search?tbm=isch&q=';
+const DUCKDUCKGO_IMAGES_URL = 'https://duckduckgo.com/?iax=images&ia=images&q=';
+const BING_IMAGES_URL = 'https://www.bing.com/images/search?q=';
 
 function ensureDir(filePath) {
   const dir = path.dirname(filePath);
@@ -26,241 +25,350 @@ function ensureDir(filePath) {
   }
 }
 
-function saveJson(filePath, data) {
-  ensureDir(filePath);
-  fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
+function saveEmptyJson() {
+  ensureDir(OUTPUT);
+  fs.writeFileSync(OUTPUT, JSON.stringify([], null, 2), 'utf-8');
+  console.log('[Escudos] JSON vacio guardado');
 }
 
-function loadJson(filePath, fallback = []) {
-  try {
-    if (!fs.existsSync(filePath)) return fallback;
-    const raw = fs.readFileSync(filePath, 'utf-8');
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : fallback;
-  } catch {
-    return fallback;
+/**
+ * Extrae los nombres de los equipos de un string de partido.
+ * Ej: "Copa Libertadores: Mirassol vs LDU Quito" -> ["Mirassol", "LDU Quito"]
+ *     "Mirassol vs LDU Quito" -> ["Mirassol", "LDU Quito"]
+ */
+function extractTeamNames(matchText) {
+  if (!matchText) return [null, null];
+
+  // Remover prefijo de competencia (todo antes de ": ")
+  const withoutCompetition = matchText.replace(/^[^:]+:\s*/, '');
+
+  // Separar por "vs" o "vs." (case insensitive)
+  const vsMatch = withoutCompetition.match(/(.+?)\s+vs\s+(.+)/i);
+  if (!vsMatch) return [null, null];
+
+  const home = vsMatch[1].trim();
+  const away = vsMatch[2].trim();
+
+  return [home, away];
+}
+
+/**
+ * Limpia el nombre del equipo para buscar el escudo.
+ * Remueve acentos, caracteres especiales, etc.
+ */
+function cleanTeamName(name) {
+  if (!name) return '';
+
+  // Mapeo de nombres comunes para mejorar resultados de busqueda
+  const knownTeams = {
+    'LDU Quito': 'LDU Quito escudo',
+    'LDU': 'LDU Quito escudo',
+    'River Plate': 'River Plate escudo',
+    'Boca Juniors': 'Boca Juniors escudo',
+    'Barcelona SC': 'Barcelona SC Ecuador escudo',
+    'Atletico': 'Atletico escudo',
+    'Atletico Nacional': 'Atletico Nacional escudo',
+    'Nacional': 'Nacional Uruguay escudo',
+    'Penarol': 'Penarol escudo',
+    'Flamengo': 'Flamengo escudo',
+    'Palmeiras': 'Palmeiras escudo',
+    'Corinthians': 'Corinthians escudo',
+    'Sao Paulo': 'Sao Paulo escudo',
+    'Santos': 'Santos escudo',
+    'Gremio': 'Gremio escudo',
+    'Internacional': 'Internacional RS escudo',
+    'Cruzeiro': 'Cruzeiro escudo',
+    'Atletico Mineiro': 'Atletico Mineiro escudo',
+    'Botafogo': 'Botafogo escudo',
+    'Vasco': 'Vasco da Gama escudo',
+    'Fluminense': 'Fluminense escudo',
+    'Independiente': 'Independiente escudo',
+    'Racing': 'Racing Club escudo',
+    'San Lorenzo': 'San Lorenzo escudo',
+    'Velez': 'Velez Sarsfield escudo',
+    'Estudiantes': 'Estudiantes de La Plata escudo',
+    'Newells': 'Newells Old Boys escudo',
+    'Rosario Central': 'Rosario Central escudo',
+    'Union': 'Union Santa Fe escudo',
+    'Talleres': 'Talleres Cordoba escudo',
+    'Lanus': 'Lanus escudo',
+    'Colon': 'Colon Santa Fe escudo',
+    'Banfield': 'Banfield escudo',
+    'Gimnasia': 'Gimnasia La Plata escudo',
+    'Argentinos': 'Argentinos Juniors escudo',
+    'Huracan': 'Huracan escudo',
+    'Godoy Cruz': 'Godoy Cruz escudo',
+    'Sarmiento': 'Sarmiento Junin escudo',
+    'Platense': 'Platense escudo',
+    'Central Cordoba': 'Central Cordoba Santiago del Estero escudo',
+    'Instituto': 'Instituto Cordoba escudo',
+    'Belgrano': 'Belgrano Cordoba escudo',
+    'Tigre': 'Tigre escudo',
+    'Barracas Central': 'Barracas Central escudo',
+    'Arsenal': 'Arsenal Sarandi escudo',
+    'Defensa': 'Defensa y Justicia escudo',
+    'Independiente Rivadavia': 'Independiente Rivadavia escudo',
+  };
+
+  // Si conocemos el equipo, usar el termino optimizado
+  if (knownTeams[name]) {
+    return knownTeams[name];
   }
+
+  return `${name} escudo futbol`;
 }
 
-function normalizeText(value) {
-  return String(value || '')
-    .trim()
-    .replace(/\s+/g, ' ');
+/**
+ * Detecta si Google esta mostrando un CAPTCHA o bloqueo.
+ */
+async function isGoogleBlocked(page) {
+  return page.evaluate(() => {
+    const title = document.title.toLowerCase();
+    const body = document.body?.innerText?.toLowerCase() || '';
+    return (
+      title.includes('captcha') ||
+      title.includes('unusual traffic') ||
+      body.includes('captcha') ||
+      body.includes('unusual traffic') ||
+      body.includes('automated requests') ||
+      body.includes('i\'m not a robot') ||
+      body.includes('no soy un robot') ||
+      !!document.querySelector('form[action*="captcha"]') ||
+      !!document.querySelector('#captcha')
+    );
+  });
 }
 
-function normalizeTeamKey(team) {
-  return normalizeText(team)
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^\p{L}\p{N}\s]/gu, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-}
+/**
+ * Extrae URLs de imagenes de Google Images desde la pagina.
+ * Google Images carga thumbnails como data:image pero las URLs reales
+ * estan en atributos data o en JSON dentro del HTML.
+ */
+async function extractFromGoogle(page) {
+  return page.evaluate(() => {
+    const results = [];
 
-function normalizeMatch(match) {
-  const text = normalizeText(match);
-
-  // Quita prefijo de competencia si existe: "Copa Libertadores: Mirassol vs LDU Quito"
-  const colonIndex = text.indexOf(':');
-  if (colonIndex > 0 && colonIndex < 60) {
-    return text.slice(colonIndex + 1).trim();
-  }
-
-  return text;
-}
-
-function parseTeams(match) {
-  const clean = normalizeMatch(match);
-
-  const separators = [
-    /\s+vs\.?\s+/i,
-    /\s+v\s+/i,
-    /\s+x\s+/i,
-    /\s+-\s+/i,
-  ];
-
-  for (const sep of separators) {
-    const parts = clean.split(sep).map(s => s.trim()).filter(Boolean);
-    if (parts.length >= 2) {
-      return {
-        homeTeam: parts[0],
-        awayTeam: parts.slice(1).join(' vs ').trim(),
-      };
+    // Estrategia 1: m phased - URLs de imagen reales en los data attributes
+    const tiles = document.querySelectorAll('a[jsname]');
+    for (const tile of tiles) {
+      const href = tile.href || '';
+      // Los href de Google Images contienen la URL real codificada
+      // Ej: /imgres?imgurl=REAL_URL&tbnid=...
+      const urlMatch = href.match(/[?&]imgurl=([^&]+)/);
+      if (urlMatch) {
+        try {
+          const decoded = decodeURIComponent(urlMatch[1]);
+          if (decoded.startsWith('http') && decoded.length > 20) {
+            results.push(decoded);
+          }
+        } catch (e) {
+          // ignorar errores de decode
+        }
+      }
     }
+
+    // Estrategia 2: Buscar en elementos de imagen
+    const images = document.querySelectorAll('img');
+    for (const img of images) {
+      const src = img.getAttribute('data-src') || img.getAttribute('data-iurl');
+      if (src && src.startsWith('http') && !src.includes('gstatic.com') && src.length > 30) {
+        results.push(src);
+      }
+    }
+
+    // Estrategia 3: Buscar en el HTML por patrones de URL de imagen
+    const bodyHtml = document.body?.innerHTML || '';
+    const urlPattern = /(https?:\/\/[^\s"<>]+\.(?:png|jpg|jpeg|webp))/gi;
+    const matches = bodyHtml.match(urlPattern);
+    if (matches) {
+      for (const match of matches) {
+        if (
+          match.length > 30 &&
+          !match.includes('gstatic.com') &&
+          !match.includes('google.com') &&
+          !match.includes('googleusercontent') &&
+          !match.includes('w3.org')
+        ) {
+          results.push(match);
+        }
+      }
+    }
+
+    return results;
+  });
+}
+
+/**
+ * Extrae URLs de imagenes de Bing Images.
+ */
+async function extractFromBing(page) {
+  return page.evaluate(() => {
+    const results = [];
+
+    // Bing usa murl para la URL real de la imagen
+    const images = document.querySelectorAll('a[m*="murl"]');
+    for (const a of images) {
+      const murl = a.getAttribute('m');
+      if (murl) {
+        const murlMatch = murl.match(/"murl":"([^"]+)"/);
+        if (murlMatch) {
+          results.push(murlMatch[1]);
+        }
+      }
+    }
+
+    // Fallback: buscar en img tags
+    if (results.length === 0) {
+      const imgs = document.querySelectorAll('.iusc img, .mimg img');
+      for (const img of imgs) {
+        const src = img.src || img.getAttribute('data-src');
+        if (src && src.startsWith('http') && src.length > 30) {
+          results.push(src);
+        }
+      }
+    }
+
+    return results;
+  });
+}
+
+/**
+ * Extrae URLs de imagenes de DuckDuckGo Images.
+ */
+async function extractFromDuckDuckGo(page) {
+  return page.evaluate(() => {
+    const results = [];
+
+    // DuckDuckGo pone las URLs en data-src o en enlaces
+    const tiles = document.querySelectorAll('.tile--img__img, .tile__media__img');
+    for (const tile of tiles) {
+      const src =
+        tile.getAttribute('data-src') ||
+        tile.getAttribute('src') ||
+        tile.src;
+      if (src && src.startsWith('http') && src.length > 20) {
+        results.push(src);
+      }
+    }
+
+    // Fallback: cualquier imagen grande en resultados
+    if (results.length === 0) {
+      const imgs = document.querySelectorAll('img');
+      for (const img of imgs) {
+        const src = img.src || img.getAttribute('data-src') || '';
+        if (
+          src.startsWith('http') &&
+          !src.includes('duckduckgo.com') &&
+          !src.includes('icons') &&
+          src.length > 30
+        ) {
+          results.push(src);
+        }
+      }
+    }
+
+    return results;
+  });
+}
+
+/**
+ * Busca el escudo de un equipo usando multiples fuentes.
+ * Orden: Google Images -> Bing Images -> DuckDuckGo Images
+ */
+async function searchTeamLogo(page, teamName, matchContext) {
+  if (!teamName) return null;
+
+  const searchTerm = cleanTeamName(teamName);
+  const searchQuery = encodeURIComponent(searchTerm);
+
+  // --- Intento 1: Google Images ---
+  try {
+    const searchUrl = `${GOOGLE_IMAGES_URL}${searchQuery}`;
+    await page.goto(searchUrl, {
+      waitUntil: 'domcontentloaded',
+      timeout: 30000,
+    });
+    await page.waitForTimeout(3500);
+
+    // Verificar si nos bloquearon
+    const blocked = await isGoogleBlocked(page);
+    if (!blocked) {
+      const results = await extractFromGoogle(page);
+      if (results.length > 0) {
+        const bestResult = results.find(
+          (url) =>
+            !url.includes('wikipedia') || // preferir no-wikipedia pero aceptar
+            url.length > 20
+        ) || results[0];
+        console.log(`  [OK Google] ${teamName}`);
+        return bestResult;
+      }
+    } else {
+      console.log(`  [BLOQUEO] Google detecto bot, probando alternativas...`);
+    }
+  } catch (error) {
+    // Silenciosamente pasar a la siguiente fuente
   }
 
+  // --- Intento 2: Bing Images ---
+  try {
+    const searchUrl = `${BING_IMAGES_URL}${searchQuery}`;
+    await page.goto(searchUrl, {
+      waitUntil: 'domcontentloaded',
+      timeout: 30000,
+    });
+    await page.waitForTimeout(3500);
+
+    const results = await extractFromBing(page);
+    if (results.length > 0) {
+      console.log(`  [OK Bing] ${teamName}`);
+      return results[0];
+    }
+  } catch (error) {
+    // Silenciosamente pasar a la siguiente fuente
+  }
+
+  // --- Intento 3: DuckDuckGo Images ---
+  try {
+    const searchUrl = `${DUCKDUCKGO_IMAGES_URL}${searchQuery}`;
+    await page.goto(searchUrl, {
+      waitUntil: 'domcontentloaded',
+      timeout: 30000,
+    });
+    await page.waitForTimeout(4000);
+
+    const results = await extractFromDuckDuckGo(page);
+    if (results.length > 0) {
+      console.log(`  [OK DuckDuckGo] ${teamName}`);
+      return results[0];
+    }
+  } catch (error) {
+    // Se agotaron las opciones
+  }
+
+  console.log(`  [WARN] No se encontro escudo para: ${teamName}`);
   return null;
 }
 
-function pickBestUrl(candidates, teamName) {
-  const teamKey = normalizeTeamKey(teamName);
-  const teamTokens = teamKey.split(' ').filter(Boolean);
+async function scrapeEscudos() {
+  console.log('[Escudos] Iniciando scraping de escudos desde Google Images...');
 
-  let best = '';
-  let bestScore = -Infinity;
-
-  for (const item of candidates) {
-    const url = item.url || '';
-    const alt = normalizeText(item.alt || '');
-    const w = Number(item.width || 0);
-    const h = Number(item.height || 0);
-
-    if (!/^https?:\/\//i.test(url)) continue;
-    if (url.startsWith('data:')) continue;
-
-    // Evita assets obvios de Google que no suelen ser el escudo
-    if (
-      /googlelogo|gstatic\.com\/images|favicon|sprite|icon/i.test(url) &&
-      !/tbn0\.gstatic\.com/i.test(url)
-    ) {
-      continue;
-    }
-
-    let score = 0;
-
-    // Preferir imágenes con tamaño razonable
-    if (w >= 32 && h >= 32) score += 3;
-    if (w >= 64 && h >= 64) score += 2;
-
-    // Preferir urls proxy de imagenes de Google si vienen del result image
-    if (/encrypted-tbn0\.gstatic\.com/i.test(url)) score += 2;
-
-    // Preferir si alt contiene el nombre del equipo
-    if (alt) {
-      const altKey = normalizeTeamKey(alt);
-      if (altKey.includes(teamKey)) score += 4;
-
-      // Puntuar por tokens del equipo
-      let tokenHits = 0;
-      for (const token of teamTokens.slice(0, 4)) {
-        if (token && altKey.includes(token)) tokenHits += 1;
-      }
-      score += tokenHits;
-    }
-
-    // URLs más cortas suelen ser menos sospechosas, pero no es decisivo
-    if (url.length < 120) score += 1;
-
-    if (score > bestScore) {
-      bestScore = score;
-      best = url;
-    }
-  }
-
-  return best || '';
-}
-
-async function dismissGoogleConsent(page) {
-  const selectors = [
-    'button:has-text("Acepto")',
-    'button:has-text("ACEPTO")',
-    'button:has-text("I agree")',
-    'button:has-text("Accept all")',
-    'button:has-text("Aceptar todo")',
-    'button:has-text("Agree")',
-  ];
-
-  for (const selector of selectors) {
-    try {
-      const btn = await page.$(selector);
-      if (btn) {
-        await btn.click({ timeout: 3000 });
-        await page.waitForTimeout(1000);
-        return true;
-      }
-    } catch {
-      // ignorar
-    }
-  }
-
-  return false;
-}
-
-async function safeGoto(page, url, timeout = GOOGLE_TIMEOUT) {
-  try {
-    await page.goto(url, {
-      waitUntil: 'domcontentloaded',
-      timeout,
-    });
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-async function scrapeGoogleImageLogo(page, teamName) {
-  const queries = [
-    `${teamName} escudo`,
-    `${teamName} logo`,
-    `${teamName} badge`,
-  ];
-
-  for (const query of queries) {
-    const searchUrl = `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(query)}`;
-
-    const ok = await safeGoto(page, searchUrl);
-    if (!ok) continue;
-
-    await dismissGoogleConsent(page);
-    await page.waitForTimeout(1800);
-
-    try {
-      const candidates = await page.evaluate(() => {
-        const imgs = Array.from(document.querySelectorAll('img'));
-
-        return imgs.map((img) => {
-          const rect = img.getBoundingClientRect();
-          return {
-            url:
-              img.currentSrc ||
-              img.src ||
-              img.getAttribute('data-src') ||
-              img.getAttribute('data-iurl') ||
-              '',
-            alt: img.alt || img.getAttribute('aria-label') || '',
-            width: rect.width || img.width || 0,
-            height: rect.height || img.height || 0,
-          };
-        });
-      });
-
-      const best = pickBestUrl(candidates, teamName);
-      if (best) return best;
-    } catch {
-      // seguir con siguiente query
-    }
-
-    await page.waitForTimeout(700);
-  }
-
-  return '';
-}
-
-async function withRetry(fn, retries = MAX_RETRIES) {
-  let lastError = null;
-
-  for (let attempt = 0; attempt <= retries; attempt++) {
-    try {
-      return await fn(attempt);
-    } catch (error) {
-      lastError = error;
-      await new Promise(r => setTimeout(r, 700 * (attempt + 1)));
-    }
-  }
-
-  throw lastError;
-}
-
-async function scrapeEscudosGoogle() {
-  console.log('[Escudos] Leyendo partidos desde', INPUT);
-
-  const partidos = loadJson(INPUT, []);
-  if (!partidos.length) {
-    saveJson(OUTPUT, []);
-    console.log('[Escudos] No hay partidos, se guardó escudos.json vacío');
+  // Verificar que existan los partidos
+  if (!fs.existsSync(PARTIDOS_PATH)) {
+    console.warn('[Escudos] No se encontro partidos.json');
+    saveEmptyJson();
     return;
   }
+
+  const partidos = JSON.parse(fs.readFileSync(PARTIDOS_PATH, 'utf-8'));
+
+  if (!partidos || partidos.length === 0) {
+    console.log('[Escudos] No hay partidos para buscar escudos');
+    saveEmptyJson();
+    return;
+  }
+
+  console.log(`[Escudos] ${partidos.length} partidos encontrados`);
 
   const browser = await chromium.launch({
     headless: true,
@@ -268,115 +376,129 @@ async function scrapeEscudosGoogle() {
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-dev-shm-usage',
+      '--disable-blink-features=AutomationControlled',
     ],
   });
 
   const context = await browser.newContext({
+    locale: 'es-ES',
     userAgent:
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-    locale: 'es-ES',
-    timezoneId: 'America/Argentina/Buenos_Aires',
+    viewport: { width: 1920, height: 1080 },
+    deviceScaleFactor: 1,
+    hasTouch: false,
+    javaScriptEnabled: true,
   });
 
   const page = await context.newPage();
 
-  const teamLogoCache = new Map();
-  const results = [];
+  // Bypass del popup de consentimiento de cookies de Google
+  await page.route('**/*', (route) => {
+    const url = route.request().url();
+    if (url.includes('consent.google.com')) {
+      route.abort();
+    } else {
+      route.continue();
+    }
+  });
+
+  // Configurar bypass de cookies para Google
+  await context.addCookies([
+    {
+      name: 'CONSENT',
+      value: 'YES+ES.es+V14+BX',
+      domain: '.google.com',
+      path: '/',
+    },
+    {
+      name: 'CONSENT',
+      value: 'YES+ES.es+V14+BX',
+      domain: '.google.es',
+      path: '/',
+    },
+  ]);
+
+  // Cache de escudos para evitar buscar el mismo equipo multiple veces
+  const logoCache = new Map();
+  const escudos = [];
+  const seenMatches = new Set();
 
   try {
-    for (const item of partidos) {
-      const parsed = parseTeams(item.match);
-      if (!parsed) {
-        results.push({
-          match: normalizeText(item.match),
-          homeLogo: '',
-          awayLogo: '',
-        });
+    for (let i = 0; i < partidos.length; i++) {
+      const partido = partidos[i];
+      const matchText = partido.match;
+
+      if (!matchText) continue;
+
+      const [homeTeam, awayTeam] = extractTeamNames(matchText);
+
+      if (!homeTeam || !awayTeam) {
+        console.log(`[${i + 1}/${partidos.length}] Saltando: no se pudieron extraer equipos de "${matchText}"`);
         continue;
       }
 
-      const { homeTeam, awayTeam } = parsed;
       const matchKey = `${homeTeam} vs ${awayTeam}`;
+      if (seenMatches.has(matchKey)) continue;
+      seenMatches.add(matchKey);
 
-      const homeKey = normalizeTeamKey(homeTeam);
-      const awayKey = normalizeTeamKey(awayTeam);
+      console.log(`[${i + 1}/${partidos.length}] Buscando escudos para: ${matchKey}`);
 
-      let homeLogo = teamLogoCache.get(homeKey);
-      let awayLogo = teamLogoCache.get(awayKey);
-
+      // Buscar escudo local (con cache)
+      let homeLogo = logoCache.get(homeTeam);
       if (homeLogo === undefined) {
-        homeLogo = '';
-        try {
-          homeLogo = await withRetry(() => scrapeGoogleImageLogo(page, homeTeam));
-        } catch (error) {
-          console.warn(`[Escudos] Error buscando ${homeTeam}: ${error.message}`);
-          homeLogo = '';
-        }
-        teamLogoCache.set(homeKey, homeLogo);
-        await page.waitForTimeout(PER_TEAM_DELAY_MS);
+        homeLogo = await searchTeamLogo(page, homeTeam, matchText);
+        logoCache.set(homeTeam, homeLogo);
       }
 
+      // Buscar escudo visitante (con cache)
+      let awayLogo = logoCache.get(awayTeam);
       if (awayLogo === undefined) {
-        awayLogo = '';
-        try {
-          awayLogo = await withRetry(() => scrapeGoogleImageLogo(page, awayTeam));
-        } catch (error) {
-          console.warn(`[Escudos] Error buscando ${awayTeam}: ${error.message}`);
-          awayLogo = '';
-        }
-        teamLogoCache.set(awayKey, awayLogo);
-        await page.waitForTimeout(PER_TEAM_DELAY_MS);
+        awayLogo = await searchTeamLogo(page, awayTeam, matchText);
+        logoCache.set(awayTeam, awayLogo);
       }
 
-      results.push({
-        match: matchKey,
-        homeLogo: homeLogo || '',
-        awayLogo: awayLogo || '',
-      });
+      // Solo agregar si al menos un escudo fue encontrado
+      if (homeLogo || awayLogo) {
+        escudos.push({
+          match: matchKey,
+          homeLogo: homeLogo || '',
+          awayLogo: awayLogo || '',
+        });
+      }
 
-      console.log(
-        `[Escudos] ${matchKey} | local: ${homeLogo ? 'OK' : 'NO'} | visitante: ${awayLogo ? 'OK' : 'NO'}`
-      );
-    }
-
-    // Quitar duplicados por partido
-    const unique = new Map();
-    for (const row of results) {
-      if (!unique.has(row.match)) {
-        unique.set(row.match, row);
+      // Delay entre busquedas para no ser bloqueado
+      if (i < partidos.length - 1) {
+        await page.waitForTimeout(2000 + Math.random() * 2000);
       }
     }
 
-    const finalData = [...unique.values()];
-    saveJson(OUTPUT, finalData);
+    // Guardar resultados
+    ensureDir(OUTPUT);
+    fs.writeFileSync(OUTPUT, JSON.stringify(escudos, null, 2), 'utf-8');
 
-    console.log(`[Escudos] Guardados ${finalData.length} registros en ${OUTPUT}`);
+    console.log(`[Escudos] ${escudos.length} escudos guardados en ${OUTPUT}`);
+
+    // Resumen
+    const totalTeams = new Set();
+    for (const p of partidos) {
+      const [h, a] = extractTeamNames(p.match);
+      if (h) totalTeams.add(h);
+      if (a) totalTeams.add(a);
+    }
+    const foundTeams = [...logoCache.values()].filter(Boolean).length;
+    console.log(`[Escudos] Equipos unicos: ${totalTeams.size}, Escudos encontrados: ${foundTeams}`);
+
   } catch (error) {
-    console.warn('[Escudos] Error general durante el scraping:', error.message);
-
-    // Guardar lo que se haya podido rescatar
-    try {
-      const unique = new Map();
-      for (const row of results) {
-        if (!unique.has(row.match)) unique.set(row.match, row);
-      }
-      saveJson(OUTPUT, [...unique.values()]);
-    } catch {
-      saveJson(OUTPUT, []);
-    }
+    console.warn('[Escudos] Error durante scraping:', error.message);
+    saveEmptyJson();
+    process.exitCode = 0;
   } finally {
-    await browser.close().catch(() => {});
+    await browser.close();
   }
 }
 
-scrapeEscudosGoogle()
-  .catch(error => {
-    console.warn('[Escudos] Error inesperado final:', error.message);
-    try {
-      saveJson(OUTPUT, []);
-    } catch {}
-  })
-  .finally(() => {
-    // Nunca romper GitHub Actions
-    process.exitCode = 0;
-  });
+scrapeEscudos().catch((error) => {
+  console.warn('[Escudos] Error inesperado:', error.message);
+  saveEmptyJson();
+  process.exitCode = 0;
+});
