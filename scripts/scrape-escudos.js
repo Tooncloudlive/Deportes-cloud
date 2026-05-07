@@ -5,8 +5,8 @@
  * y guarda en data/escudos.json
  *
  * Estrategia:
- * 1. Para cada partido "Equipo A vs Equipo B", buscar "Equipo A vs Equipo B flashscore live"
- * 2. Evaluar TODOS los resultados de Google y seleccionar el mejor (priorizando "LIVE")
+ * 1. Para cada partido "Equipo A vs Equipo B", buscar "Equipo A vs Equipo B flashscore"
+ * 2. Extraer el primer resultado de Google que apunte a flashscore.com
  * 3. Navegar a la pagina del partido en Flashscore
  * 4. Extraer participantsData del script embebido en el HTML
  * 5. Obtener image_path de home y away
@@ -46,7 +46,7 @@ function extractTeamNames(matchText) {
   if (!matchText) return [null, null];
 
   // Remover prefijo de competencia (todo antes de ": ")
-  const withoutCompetition = matchText.replace(/^[^:]+:\s*/, '');
+  const withoutCompetition = matchText.replace(/^[^:]+:\ */, '');
 
   // Separar por " vs " o " vs. " (case insensitive)
   const vsMatch = withoutCompetition.match(/(.+?)\s+vs\s+(.+)/i);
@@ -90,80 +90,13 @@ async function isGoogleBlocked(page) {
 }
 
 /**
- * Normaliza un nombre de equipo para comparacion: quita parentesis, acentos, pasa a minusculas.
- */
-function normalizeTeamName(name) {
-  if (!name) return '';
-  return name
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/\s*\([^)]*\)\s*/g, '')
-    .replace(/[^a-z0-9]/g, '')
-    .trim();
-}
-
-/**
- * Calcula un puntaje de coincidencia entre los equipos buscados y el texto del resultado.
- * Retorna un numero: mayor = mejor coincidencia.
- */
-function scoreMatchResult(linkText, homeTeam, awayTeam) {
-  if (!linkText) return 0;
-
-  const text = linkText.toLowerCase();
-  const homeNorm = normalizeTeamName(homeTeam);
-  const awayNorm = normalizeTeamName(awayTeam);
-
-  // Extraer nombres del texto del enlace, quitando cosas como "LIVE", fechas, etc.
-  const cleanText = text
-    .replace(/\b(live|vs\.?|v\.|v|football|hoy|en vivo|resultados|partido|marcadores)\b/g, ' ')
-    .replace(/\d{1,2}[\/\.]\d{1,2}[\/\.]\d{2,4}/g, ' ') // fechas
-    .replace(/\s+/g, ' ')
-    .trim();
-
-  const textNorm = cleanText.replace(/[^a-z0-9]/g, '');
-
-  let score = 0;
-
-  // +100 si contiene "LIVE" (resultado en vivo/reciente)
-  if (text.includes('live')) score += 100;
-
-  // +50 si el enlace es de /match/
-  if (text.includes('/match/')) score += 50;
-
-  // +30 por cada equipo que aparezca en el texto (comparacion normalizada)
-  if (textNorm.includes(homeNorm)) score += 30;
-  if (textNorm.includes(awayNorm)) score += 30;
-
-  // +20 por coincidencia parcial (para nombres con espacios)
-  const homePartial = homeTeam.toLowerCase().replace(/\s*\([^)]*\)\s*/g, '').trim();
-  const awayPartial = awayTeam.toLowerCase().replace(/\s*\([^)]*\)\s*/g, '').trim();
-  if (text.includes(homePartial)) score += 20;
-  if (text.includes(awayPartial)) score += 20;
-
-  // -50 si es pagina de equipo (/team/)
-  if (text.includes('/team/')) score -= 50;
-
-  // -30 si es pagina de standings, odds, h2h
-  if (text.includes('/standings/') || text.includes('/odds/') || text.includes('/h2h/') ||
-      text.includes('/cuotas/') || text.includes('/clasificacion/')) score -= 30;
-
-  return score;
-}
-
-/**
  * Busca en Google el partido en Flashscore y devuelve la URL de la pagina del partido.
- * Estrategia:
- *  1. Agrega "live" a la busqueda para encontrar partidos recientes
- *  2. Evalua TODOS los resultados y selecciona el de mayor puntaje
- *  3. Prioriza resultados marcados como "LIVE" y que coincidan con los equipos
  */
 async function findFlashscoreMatchUrl(page, homeTeam, awayTeam) {
   const homeClean = cleanTeamNameForSearch(homeTeam);
   const awayClean = cleanTeamNameForSearch(awayTeam);
 
-  // Busqueda con "live" para encontrar partidos recientes/en vivo
-  const searchQuery = encodeURIComponent(`${homeClean} vs ${awayClean} flashscore live`);
+  const searchQuery = encodeURIComponent(`${homeClean} vs ${awayClean} flashscore`);
   const searchUrl = `${GOOGLE_SEARCH_URL}${searchQuery}`;
 
   try {
@@ -180,108 +113,39 @@ async function findFlashscoreMatchUrl(page, homeTeam, awayTeam) {
       return null;
     }
 
-    // Extraer TODOS los resultados de flashscore con su URL y texto visible
-    const candidates = await page.evaluate(() => {
-      const results = [];
-
-      // Google muestra los resultados en bloques <a> o dentro de divs con enlaces
-      // Buscamos todos los elementos que contengan flashscore
-      const allElements = document.querySelectorAll('a, div, span, h3');
-
-      for (const el of allElements) {
-        const text = el.textContent || '';
-        const href = el.href || '';
-
-        // Solo elementos relacionados con flashscore
-        if (!text.toLowerCase().includes('flashscore') && !href.includes('flashscore')) continue;
-
-        // Si es un enlace directo
-        if (href && href.includes('flashscore.com')) {
-          results.push({
-            href: href,
-            text: text.trim(),
-          });
-        }
-
-        // Tambien buscar enlaces dentro del elemento padre (para resultados de Google)
-        const links = el.querySelectorAll('a[href*="flashscore"]');
-        for (const link of links) {
-          const linkHref = link.href || '';
-          const linkText = link.textContent || el.textContent || '';
-          if (linkHref.includes('flashscore.com')) {
-            results.push({
-              href: linkHref,
-              text: linkText.trim(),
-            });
-          }
+    // Extraer el primer resultado que sea de flashscore.com
+    const flashscoreUrl = await page.evaluate(() => {
+      // Buscar todos los enlaces de resultados
+      const links = document.querySelectorAll('a[href*="flashscore"]');
+      for (const link of links) {
+        const href = link.href || '';
+        // Solo enlaces a paginas de partidos (no a paginas de equipo, odds, etc.)
+        if (
+          href.includes('flashscore.com') &&
+          href.includes('/match/') &&
+          !href.includes('/standings/') &&
+          !href.includes('/odds/') &&
+          !href.includes('/h2h/') &&
+          !href.includes('/cuotas/') &&
+          !href.includes('/clasificacion/')
+        ) {
+          return href;
         }
       }
 
-      // Tambien buscar todos los <a> directamente (fallback)
-      const directLinks = document.querySelectorAll('a[href*="flashscore.com"]');
-      for (const link of directLinks) {
-        const linkHref = link.href || '';
-        const linkText = link.textContent || '';
-        // Evitar duplicados
-        if (!results.some(r => r.href === linkHref)) {
-          results.push({
-            href: linkHref,
-            text: linkText.trim(),
-          });
+      // Si no encontramos /match/, buscar cualquier enlace de flashscore que parezca un partido
+      const allLinks = document.querySelectorAll('a[href*="flashscore"]');
+      for (const link of allLinks) {
+        const href = link.href || '';
+        if (href.includes('flashscore.com') && !href.includes('/team/')) {
+          return href;
         }
       }
 
-      return results;
+      return null;
     });
 
-    if (!candidates || candidates.length === 0) {
-      console.log(`  [WARN] No se encontraron resultados de Flashscore`);
-      return null;
-    }
-
-    // Puntuar cada candidato y seleccionar el mejor
-    let bestCandidate = null;
-    let bestScore = -Infinity;
-
-    for (const candidate of candidates) {
-      const score = scoreMatchResult(
-        candidate.text + ' ' + candidate.href,
-        homeTeam,
-        awayTeam
-      );
-
-      // Log de debug para ver los candidatos
-      console.log(`    [CANDIDATO] Score=${score} | ${candidate.text.substring(0, 80)}... | ${candidate.href.substring(0, 60)}`);
-
-      if (score > bestScore) {
-        bestScore = score;
-        bestCandidate = candidate;
-      }
-    }
-
-    // Solo aceptar si tiene un puntaje minimo razonable
-    if (bestCandidate && bestScore > 0) {
-      console.log(`  [OK] Mejor resultado (score=${bestScore}): ${bestCandidate.text.substring(0, 80)}`);
-      return bestCandidate.href;
-    }
-
-    // Fallback: si no hay buen candidato, tomar el primer /match/ que encuentre
-    const fallbackMatch = candidates.find(c => c.href.includes('/match/'));
-    if (fallbackMatch) {
-      console.log(`  [FALLBACK] Usando primer /match/ encontrado: ${fallbackMatch.text.substring(0, 80)}`);
-      return fallbackMatch.href;
-    }
-
-    // Ultimo fallback: cualquier enlace de flashscore que no sea /team/
-    const fallbackAny = candidates.find(c => !c.href.includes('/team/'));
-    if (fallbackAny) {
-      console.log(`  [FALLBACK] Usando resultado generico: ${fallbackAny.text.substring(0, 80)}`);
-      return fallbackAny.href;
-    }
-
-    console.log(`  [WARN] Ningun resultado fue suficientemente bueno (mejor score: ${bestScore})`);
-    return null;
-
+    return flashscoreUrl;
   } catch (error) {
     console.log(`  [ERROR] Buscando en Google: ${error.message}`);
     return null;
@@ -306,7 +170,7 @@ function extractBalancedJson(text, startOffset) {
       continue;
     }
 
-    if (char === '\\') {
+    if (char === '\\\\') {
       escapeNext = true;
       continue;
     }
