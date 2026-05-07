@@ -1,0 +1,1431 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ToonCloud Deportes</title>
+<!-- Build: 2026-05-07 00:00 -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --pink-primary: #f767d8;
+  --purple-primary: #7c3aed;
+  --pink-glow: rgba(247, 103, 216, 0.5);
+  --purple-glow: rgba(124, 58, 237, 0.4);
+  --bg-dark: #0a0a0f;
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --glass-bg: rgba(255, 255, 255, 0.03);
+  --glass-bg-hover: rgba(255, 255, 255, 0.06);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-border-hover: rgba(247, 103, 216, 0.25);
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+  background: var(--bg-dark);
+  color: #ffffff;
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Ambient Background */
+.ambient-bg {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.ambient-bg::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: 
+    radial-gradient(ellipse at 20% 20%, rgba(247, 103, 216, 0.12) 0%, transparent 40%),
+    radial-gradient(ellipse at 80% 80%, rgba(124, 58, 237, 0.08) 0%, transparent 40%),
+    radial-gradient(ellipse at 50% 50%, rgba(247, 103, 216, 0.05) 0%, transparent 60%);
+  animation: ambient-float 20s ease-in-out infinite;
+}
+
+.ambient-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  pointer-events: none;
+}
+
+.ambient-orb-1 {
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(247, 103, 216, 0.3) 0%, transparent 70%);
+  top: 10%;
+  left: -10%;
+  animation: float 8s ease-in-out infinite;
+}
+
+.ambient-orb-2 {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(124, 58, 237, 0.3) 0%, transparent 70%);
+  bottom: 10%;
+  right: -5%;
+  animation: float 10s ease-in-out infinite reverse;
+}
+
+@keyframes ambient-float {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  33% { transform: translate(2%, 2%) rotate(1deg); }
+  66% { transform: translate(-1%, 1%) rotate(-1deg); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+
+.container {
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 100px 20px 40px;
+}
+
+/* Header */
+header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.logo-icon {
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, var(--pink-primary), var(--purple-primary));
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  animation: logo-pulse 2s ease-in-out infinite;
+}
+
+@keyframes logo-pulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(247, 103, 216, 0.4); }
+  50% { box-shadow: 0 0 40px rgba(247, 103, 216, 0.7), 0 0 60px rgba(124, 58, 237, 0.4); }
+}
+
+h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #fff 0%, var(--pink-primary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.5px;
+}
+
+.subtitle {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.875rem;
+  max-width: 600px;
+  margin: 0 auto 8px;
+  line-height: 1.6;
+}
+
+.copyright {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 0.75rem;
+}
+/* New Header/Nav Styles */
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  width: 100vw;
+  z-index: 100;
+  box-sizing: border-box;
+  gap: 12px;
+  background: linear-gradient(to bottom, rgba(10, 10, 15, 0.98), rgba(10, 10, 15, 0.8));
+  position: fixed;
+  top: 0;
+  left: 0;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.logo-container img { 
+  height: 36px; 
+  filter: drop-shadow(0 0 10px var(--pink-glow)); 
+  cursor: pointer; 
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.logo-container img:hover {
+  transform: scale(1.05);
+  filter: drop-shadow(0 0 20px var(--pink-glow));
+}
+
+.nav-right { 
+  display: flex; 
+  gap: 10px; 
+  align-items: center; 
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.nav-search {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  padding: 10px 16px;
+  border-radius: 25px;
+  color: white;
+  outline: none;
+  backdrop-filter: blur(12px);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  font-family: inherit;
+  font-size: 13px;
+  flex: 1;
+  max-width: 200px;
+  min-width: 120px;
+}
+
+.nav-search:focus { 
+  border-color: var(--pink-primary); 
+  background: rgba(255, 255, 255, 0.08); 
+  box-shadow: 0 0 20px var(--pink-glow);
+  max-width: 250px;
+  transform: scale(1.02);
+}
+
+.nav-search::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Remove old header styles that conflict */
+header {
+  display: none;
+}
+
+
+/* Stats Bar */
+.stats-bar {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.stats-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--success);
+  animation: pulse-dot 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.7; }
+}
+
+.blink-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--warning);
+  animation: blink 1.5s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* Search */
+.search-container {
+  position: relative;
+  margin-bottom: 24px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 1.1rem;
+}
+
+.search {
+  width: 100%;
+  padding: 16px 20px 16px 56px;
+  border-radius: 16px;
+  border: 1px solid var(--glass-border);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  color: #ffffff;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.search::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.search:focus {
+  outline: none;
+  border-color: var(--pink-primary);
+  box-shadow: 0 0 0 3px rgba(247, 103, 216, 0.2);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%);
+}
+
+/* Banner */
+.banner-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.banner-container a {
+  display: block;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.banner-container a:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(247, 103, 216, 0.3);
+}
+
+.banner-img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 12px;
+}
+
+/* Section Header */
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding: 0 4px;
+}
+
+.section-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.section-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+}
+
+/* Glass Cards */
+.glass-card {
+  position: relative;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 20px 24px;
+  margin-bottom: 12px;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+  animation: slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+
+.glass-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%, rgba(255, 255, 255, 0.03) 100%);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.glass-card:hover {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%);
+  border-color: var(--glass-border-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 30px rgba(247, 103, 216, 0.15);
+}
+
+.glass-card.live {
+  border-color: rgba(34, 197, 94, 0.3);
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+}
+
+.glass-card.live::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 3px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--success), #16a34a);
+  border-radius: 20px 0 0 20px;
+}
+
+.glass-card.finished {
+  opacity: 0.5;
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Card Content */
+.card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: relative;
+  z-index: 1;
+}
+
+@media (min-width: 640px) {
+  .card-content {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.card-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.time-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.time {
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: #ffffff;
+}
+
+.league-badge {
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 4px 10px;
+  background: rgba(247, 103, 216, 0.15);
+  color: var(--pink-primary);
+  border-radius: 9999px;
+}
+
+/* Match with team logos */
+.match {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: #ffffff;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.team-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.team-logo {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.team-logo-placeholder {
+  width: 24px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.vs-text {
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 600;
+  font-size: 0.75rem;
+  margin: 0 4px;
+}
+
+/* Status Badge */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: 9999px;
+}
+
+.status-live {
+  background: rgba(34, 197, 94, 0.15);
+  color: var(--success);
+}
+
+.status-upcoming {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--warning);
+}
+
+.status-finished {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Card Actions */
+.card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+@media (min-width: 640px) {
+  .card-actions {
+    align-items: flex-end;
+  }
+}
+
+/* Channel Selector */
+.channel-selector {
+  position: relative;
+}
+
+.channel-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  font-size: 0.875rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 140px;
+  justify-content: space-between;
+}
+
+.channel-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.channel-dropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  min-width: 180px;
+  background: linear-gradient(135deg, rgba(30, 30, 40, 0.95) 0%, rgba(20, 20, 30, 0.95) 100%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 8px;
+  z-index: 10;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.channel-option {
+  display: block;
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 0.875rem;
+  text-align: left;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.channel-option:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.channel-option.active {
+  background: rgba(247, 103, 216, 0.2);
+  color: var(--pink-primary);
+}
+
+.single-channel {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Watch Button */
+.btn-watch {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-family: inherit;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-watch.enabled {
+  background: linear-gradient(135deg, var(--pink-primary), var(--purple-primary));
+  color: white;
+  box-shadow: 0 4px 20px rgba(247, 103, 216, 0.3);
+}
+
+.btn-watch.enabled:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(247, 103, 216, 0.5);
+}
+
+.btn-watch.enabled:active {
+  transform: translateY(0);
+}
+
+.btn-watch.disabled {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.4);
+  cursor: not-allowed;
+}
+
+/* Player Overlay */
+.player-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  z-index: 1000;
+  padding: 20px;
+  animation: fade-in 0.3s ease;
+}
+
+.player-overlay.active {
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.player-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.player-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.player-title-icon {
+  color: var(--pink-primary);
+}
+
+.btn-close {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-family: inherit;
+  background: rgba(239, 68, 68, 0.2);
+  color: var(--danger);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-close:hover {
+  background: rgba(239, 68, 68, 0.3);
+}
+
+.player-wrapper {
+  flex: 1;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+#iframe-player {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: #000;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  animation: scale-in 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.empty-state-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  opacity: 0.3;
+}
+
+.empty-state-text {
+  font-size: 1.125rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.empty-state-subtext {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.3);
+  margin-top: 8px;
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .container {
+    padding: 24px 16px;
+  }
+  
+  h1 {
+    font-size: 1.5rem;
+  }
+  
+  .logo-icon {
+    width: 48px;
+    height: 48px;
+    font-size: 24px;
+  }
+  
+  .glass-card {
+    padding: 16px 20px;
+  }
+  
+  .time {
+    font-size: 1.125rem;
+  }
+  
+  .match {
+    font-size: 0.875rem;
+  }
+  
+  .team-logo, .team-logo-placeholder {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .btn-watch {
+    width: 100%;
+  }
+  
+  .channel-btn {
+    width: 100%;
+  }
+  
+  .player-header {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  
+  .btn-close {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .player-title {
+    font-size: 0.875rem;
+  }
+}
+
+/* Chevron icon */
+.chevron {
+  transition: transform 0.2s ease;
+}
+
+.chevron.open {
+  transform: rotate(180deg);
+}
+
+.hidden {
+  display: none !important;
+}
+</style>
+<base target="_blank">
+<base target="_blank">
+  <link rel="icon" type="image/png" href="https://i.imgur.com/XAHG8BW.png">
+  <link rel="apple-touch-icon" href="https://i.imgur.com/XAHG8BW.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="ToonCloud">
+<base target="_blank">
+<base target="_blank">
+</head>
+
+<body>
+
+<div class="ambient-bg">
+  <div class="ambient-orb ambient-orb-1"></div>
+  <div class="ambient-orb ambient-orb-2"></div>
+</div>
+
+<nav>
+    <div class="logo-container"><img src="https://i.imgur.com/XAHG8BW.png" onclick="location.reload()"></div>
+    <div class="nav-right">
+      <input type="text" id="nav-search" class="nav-search" placeholder="Buscar partidos..." oninput="filterEvents(this.value)">
+    </div>
+  </nav>
+
+  
+<div class="container">
+  <div style="text-align: center; padding: 20px 16px; margin-bottom: 16px;">
+    <p class="subtitle">Este sitio no aloja ni transmite contenido propio. Todo el material proviene de fuentes públicas externas. No tenemos control ni responsabilidad sobre dicho contenido ni sobre los enlaces compartidos.</p>
+    <p class="copyright">Larvas S.A &copy;</p>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stats-pill">
+      <span class="pulse-dot"></span>
+      <span id="live-count">0 EN VIVO</span>
+    </div>
+    <div class="stats-pill">
+      <span class="blink-dot"></span>
+      <span id="upcoming-count">0 PR&Oacute;XIMOS</span>
+    </div>
+  </div>
+
+  <div class="search-container">
+    <span class="search-icon">&#128269;</span>
+    <input class="search" placeholder="Buscar partidos, equipos, ligas..." oninput="filterEvents(this.value)">
+  </div>
+
+  <!-- Banner Publicitario -->
+  <div class="banner-container">
+    <a href="https://1xlite-87822.bar/es?tag=d_5378140m_99260c_" target="_blank" rel="noopener noreferrer">
+      <img src="Media99260__WEEKEND-BOOSTER_970x90.gif" alt="1xBet Weekend Booster" class="banner-img">
+    </a>
+  </div>
+
+  <div class="section-header">
+    <span class="section-title">Programaci&oacute;n</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div id="events"></div>
+</div>
+
+<div class="player-overlay" id="player">
+  <div class="player-header">
+    <div class="player-title">
+      <span class="player-title-icon">&#128250;</span>
+      <span id="player-title-text">Reproductor en Vivo</span>
+    </div>
+    <button class="btn-close" onclick="closePlayer()">
+      <span>&#10005;</span>
+      <span>Cerrar</span>
+    </button>
+  </div>
+  <div class="player-wrapper">
+    <iframe id="iframe-player" allowfullscreen></iframe>
+  </div>
+</div>
+
+<script>
+// =====================================================
+// CONFIGURACI&Oacute;N DE ESCUDOS - EDITA AQU&Iacute; TUS PARTIDOS
+// =====================================================
+// Agrega o edita partidos con sus escudos aqu&iacute;.
+// El formato es: { match: "Equipo Local vs Equipo Visitante", homeLogo: "URL_ESCUDO_LOCAL", awayLogo: "URL_ESCUDO_VISITANTE" }
+// Si no quieres escudo para un equipo, deja el campo vac&iacute;o: ""
+
+const matchesLogos = [];
+
+// =====================================================
+// DATOS DE EVENTOS
+// =====================================================
+const eventsData = [
+  { time: "22:00", match: "Copa Libertadores: Cusco vs Estudiantes LP", link: "https://streamx550.com/global2.php?channel=disney2" },
+  { time: "22:00", match: "Copa Libertadores: Cusco vs Estudiantes LP", link: "https://streamx550.com/global2.php?channel=fanatiz1" },
+  { time: "22:00", match: "Copa Libertadores: Cusco vs Estudiantes LP", link: "https://streamx550.com/global2.php?channel=fox1ar" },
+  { time: "22:00", match: "Copa Libertadores: Cusco vs Estudiantes LP", link: "https://streamx550.com/global2.php?channel=espn" },
+  { time: "22:00", match: "Copa Libertadores: Cusco vs Estudiantes LP", link: "https://streamx550.com/global2.php?channel=espn2mx" },
+  { time: "22:00", match: "Copa Libertadores: Deportivo La Guaira vs Bolívar", link: "https://streamx550.com/global2.php?channel=disney3" },
+  { time: "22:00", match: "Copa Libertadores: Deportivo La Guaira vs Bolívar", link: "https://streamx550.com/global2.php?channel=fanatiz2" },
+  { time: "22:00", match: "Copa Libertadores: Deportivo La Guaira vs Bolívar", link: "https://streamx550.com/global2.php?channel=espn5" },
+  { time: "22:00", match: "Copa Libertadores: Deportivo La Guaira vs Bolívar", link: "https://streamx550.com/global2.php?channel=fox3ar" },
+  { time: "22:00", match: "Copa Sudamericana: Audax Italiano vs Vasco da Gama", link: "https://streamx550.com/global2.php?channel=fanatiz3" },
+  { time: "22:00", match: "Copa Sudamericana: Torque vs Palestino", link: "https://streamx550.com/global2.php?channel=disney4" },
+  { time: "22:00", match: "Copa Sudamericana: Torque vs Palestino", link: "https://streamx550.com/global2.php?channel=fanatiz4" },
+  { time: "22:00", match: "Copa Sudamericana: Torque vs Palestino", link: "https://streamx550.com/global2.php?channel=espn2" },
+  { time: "23:00", match: "NBA: 76ers vs Knicks", link: "https://streamx550.com/global2.php?channel=espn4" },
+  { time: "23:00", match: "NBA: 76ers vs Knicks", link: "https://streamx550.com/global2.php?channel=espnmx" },
+  { time: "23:00", match: "NBA: 76ers vs Knicks", link: "https://streamx550.com/global2.php?channel=espndeportes" },
+  { time: "00:00", match: "Copa Sudamericana: Barracas Central vs Olimpia", link: "https://streamx550.com/global2.php?channel=disney5" },
+  { time: "00:00", match: "Copa Sudamericana: Barracas Central vs Olimpia", link: "https://streamx550.com/global2.php?channel=fanatiz5" },
+  { time: "00:00", match: "Copa Sudamericana: Barracas Central vs Olimpia", link: "https://streamx550.com/global2.php?channel=espn5" },
+  { time: "00:00", match: "Copa Sudamericana: Macará vs Tigre", link: "https://streamx550.com/global2.php?channel=fanatiz6" },
+  { time: "00:00", match: "Copa Sudamericana: Macará vs Tigre", link: "https://streamx550.com/global2.php?channel=dsports" },
+  { time: "00:30", match: "Copa Sudamericana: Botafogo vs Racing Club", link: "https://streamx550.com/global2.php?channel=disney6" },
+  { time: "00:30", match: "Copa Sudamericana: Botafogo vs Racing Club", link: "https://streamx550.com/global2.php?channel=fanatiz7" },
+  { time: "00:30", match: "Copa Sudamericana: Botafogo vs Racing Club", link: "https://streamx550.com/global2.php?channel=espn3" },
+  { time: "00:30", match: "Copa Libertadores: Santa Fe vs Corinthians", link: "https://streamx550.com/global2.php?channel=disney7" },
+  { time: "00:30", match: "Copa Libertadores: Santa Fe vs Corinthians", link: "https://streamx550.com/global2.php?channel=fanatiz8" },
+  { time: "00:30", match: "Copa Libertadores: Santa Fe vs Corinthians", link: "https://streamx550.com/global2.php?channel=espn" },
+  { time: "00:30", match: "Copa Libertadores: Santa Fe vs Corinthians", link: "https://streamx550.com/global2.php?channel=espn2mx" },
+  { time: "00:30", match: "Copa Libertadores: Santa Fe vs Corinthians", link: "https://streamx550.com/global2.php?channel=fox2ar" },
+  { time: "00:30", match: "Copa Libertadores: Independiente Rivadavia vs Fluminense", link: "https://streamx550.com/global2.php?channel=disney8" },
+  { time: "00:30", match: "Copa Libertadores: Independiente Rivadavia vs Fluminense", link: "https://streamx550.com/global2.php?channel=fanatiz9" },
+  { time: "00:30", match: "Copa Libertadores: Independiente Rivadavia vs Fluminense", link: "https://streamx550.com/global2.php?channel=fox1ar" },
+  { time: "00:30", match: "Copa Libertadores: Independiente Rivadavia vs Fluminense", link: "https://streamx550.com/global2.php?channel=espn6" },
+  { time: "01:30", match: "Copa de Campeones de la Concacaf: Toluca vs Los Angeles FC", link: "https://streamx550.com/global2.php?channel=disney9" },
+  { time: "01:30", match: "Copa de Campeones de la Concacaf: Toluca vs Los Angeles FC", link: "https://streamx550.com/global2.php?channel=foxone1" },
+  { time: "01:30", match: "Copa de Campeones de la Concacaf: Toluca vs Los Angeles FC", link: "https://streamx550.com/global2.php?channel=tudnus" },
+  { time: "01:30", match: "NBA: Timberwolves vs Spurs", link: "https://streamx550.com/global2.php?channel=espn4" },
+  { time: "01:30", match: "NBA: Timberwolves vs Spurs", link: "https://streamx550.com/global2.php?channel=espnmx" },
+  { time: "01:30", match: "NBA: Timberwolves vs Spurs", link: "https://streamx550.com/global2.php?channel=espndeportes" },
+  { time: "02:00", match: "Copa Libertadores: Universidad Católica vs Cruzeiro", link: "https://streamx550.com/global2.php?channel=disney10" },
+  { time: "02:00", match: "Copa Libertadores: Universidad Católica vs Cruzeiro", link: "https://streamx550.com/global2.php?channel=fanatiz10" },
+  { time: "02:00", match: "Copa Libertadores: Universidad Católica vs Cruzeiro", link: "https://streamx550.com/global2.php?channel=espn5" },
+  { time: "02:00", match: "Copa Libertadores: Universidad Católica vs Cruzeiro", link: "https://streamx550.com/global2.php?channel=fox3ar" },
+  { time: "02:00", match: "Copa Libertadores: Deportes Tolima vs Nacional", link: "https://streamx550.com/global2.php?channel=disney1" },
+  { time: "02:00", match: "Copa Libertadores: Deportes Tolima vs Nacional", link: "https://streamx550.com/global2.php?channel=fanatiz1" },
+  { time: "02:00", match: "Copa Libertadores: Deportes Tolima vs Nacional", link: "https://streamx550.com/global2.php?channel=espn2" },
+  { time: "02:00", match: "Copa Sudamericana: Alianza Atlético vs América de Cali", link: "https://streamx550.com/global2.php?channel=fanatiz2" },
+  { time: "02:00", match: "Copa Sudamericana: Alianza Atlético vs América de Cali", link: "https://streamx550.com/global2.php?channel=dsports" }
+];
+
+const leagueMap = {
+  'Super Lig': 'Super Lig', 'UEFA Champions League': 'UCL', 'UEFA Europa League': 'UEL',
+  'Liga BetPlay': 'BetPlay', 'Copa de Primera': 'Primera', 'Liga Profesional': 'LPF',
+  'CONCACAF Champions Cup': 'Concacaf', 'Brasileir&atilde;o': 'Brasil', 'Copa del Rey de Arabia': 'Arabia',
+  'Liga MX': 'Liga MX', 'Amistoso Internacional': 'Amistoso', 'Copa Argentina': 'Copa Arg', 'F1 | GP de Jap&oacute;n': 'F1'
+};
+
+const channelNameMap = {
+  'disney1': 'Disney+ 1', 'disney2': 'Disney+ 2', 'disney3': 'Disney+ 3', 'disney4': 'Disney+ 4',
+  'disney5': 'Disney+ 5', 'disney6': 'Disney+ 6', 'disney7': 'Disney+ 7', 'disney8': 'Disney+ 8',
+  'max1': 'Max 1', 'max2': 'Max 2', 'max3': 'Max 3', 'espn': 'ESPN', 'espn2': 'ESPN 2', 'espn3': 'ESPN 3',
+  'espn5': 'ESPN 5', 'espnmx': 'ESPN MX', 'espnpremium': 'ESPN Premium', 'tudnus': 'TUDN',
+  'fox1ar': 'Fox Sports 1 AR', 'fox2ar': 'Fox Sports 2 AR', 'foxdeportes': 'Fox Deportes',
+  'paramount1': 'Paramount+ 1', 'paramount2': 'Paramount+ 2', 'winplus': 'Win Sports+',
+  'winplus2': 'Win Sports+ 2', 'fanatiz1': 'Fanatiz 1', 'fanatiz2': 'Fanatiz 2', 'fanatiz3': 'Fanatiz 3',
+  'tyc': 'TyC Sports', 'tycint': 'TyC Sports Int', 'clarosports': 'Claro Sports',
+  'telefe': 'Telefe', 'daznf1': 'DAZN F1', 'sportv1': 'Sportv 1', 'sportv3': 'Sportv 3'
+};
+
+// Estado global
+let groupedEventsCache = [];
+let openDropdowns = new Set();
+
+// =====================================================
+// FUNCIONES DE ESCUDOS
+// =====================================================
+
+// Normaliza un texto para comparaci&oacute;n (elimina acentos, caracteres especiales, etc.)
+function normalizeText(text) {
+  if (!text) return '';
+  return text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+// Calcula la similitud entre dos strings (0 a 1)
+function similarity(str1, str2) {
+  const s1 = normalizeText(str1);
+  const s2 = normalizeText(str2);
+  
+  if (s1 === s2) return 1;
+  if (s1.includes(s2) || s2.includes(s1)) return 0.9;
+  
+  // Comparar palabras individuales
+  const words1 = s1.split(' ').filter(w => w.length > 2);
+  const words2 = s2.split(' ').filter(w => w.length > 2);
+  
+  if (words1.length === 0 || words2.length === 0) return 0;
+  
+  let matches = 0;
+  for (const w1 of words1) {
+    for (const w2 of words2) {
+      if (w1 === w2 || w1.includes(w2) || w2.includes(w1)) {
+        matches++;
+        break;
+      }
+    }
+  }
+  
+  return matches / Math.max(words1.length, words2.length);
+}
+
+// Extrae los nombres de los equipos de un texto de partido
+function extractTeamNames(matchText) {
+  const withoutCompetition = matchText.replace(/^[^:]+:\s*/, '');
+  const vsMatch = withoutCompetition.match(/(.+?)\s+vs\s+(.+)/i);
+  if (vsMatch) {
+    return { 
+      home: vsMatch[1].trim(), 
+      away: vsMatch[2].trim(),
+      full: withoutCompetition.trim()
+    };
+  }
+  return { home: withoutCompetition.trim(), away: null, full: withoutCompetition.trim() };
+}
+
+// Busca los escudos para un partido espec&iacute;fico en la configuraci&oacute;n
+function getLogosForMatch(matchText) {
+  const eventTeams = extractTeamNames(matchText);
+  let bestMatch = null;
+  let bestScore = 0;
+  
+  for (const item of matchesLogos) {
+    const configTeams = extractTeamNames(item.match);
+    
+    // Calcular similitud para equipo local
+    const homeScore = similarity(eventTeams.home, configTeams.home);
+    
+    // Calcular similitud para equipo visitante
+    const awayScore = eventTeams.away && configTeams.away 
+      ? similarity(eventTeams.away, configTeams.away)
+      : 0.5; // Si no hay visitante, dar puntaje medio
+    
+    // Calcular similitud total del partido
+    const totalScore = (homeScore + awayScore) / 2;
+    
+    // Si ambos equipos tienen buena similitud, es una coincidencia
+    if (homeScore > 0.6 && awayScore > 0.6 && totalScore > bestScore) {
+      bestScore = totalScore;
+      bestMatch = item;
+    }
+    
+    // Tambi&eacute;n buscar coincidencia en el texto completo
+    const fullSimilarity = similarity(eventTeams.full, configTeams.full);
+    if (fullSimilarity > 0.8 && fullSimilarity > bestScore) {
+      bestScore = fullSimilarity;
+      bestMatch = item;
+    }
+  }
+  
+  if (bestMatch) {
+    return { homeLogo: bestMatch.homeLogo, awayLogo: bestMatch.awayLogo };
+  }
+  
+  return { homeLogo: null, awayLogo: null };
+}
+
+function extractTeamsFromMatch(matchText) {
+  const withoutCompetition = matchText.replace(/^[^:]+:\s*/, '');
+  const vsMatch = withoutCompetition.match(/(.+?)\s+vs\s+(.+)/i);
+  if (vsMatch) {
+    return { team1: vsMatch[1].trim(), team2: vsMatch[2].trim() };
+  }
+  return { team1: withoutCompetition, team2: null };
+}
+
+function generateMatchHTML(matchText) {
+  const { team1, team2 } = extractTeamsFromMatch(matchText);
+  const { homeLogo, awayLogo } = getLogosForMatch(matchText);
+  
+  const logo1HTML = homeLogo 
+    ? `<img src="${homeLogo}" alt="${team1}" class="team-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><div class="team-logo-placeholder" style="display:none;"></div>`
+    : `<div class="team-logo-placeholder"></div>`;
+    
+  const logo2HTML = awayLogo 
+    ? `<img src="${awayLogo}" alt="${team2}" class="team-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><div class="team-logo-placeholder" style="display:none;"></div>`
+    : `<div class="team-logo-placeholder"></div>`;
+  
+  return `
+    <div class="team-section">${logo1HTML}<span>${team1}</span></div>
+    ${team2 ? `<span class="vs-text">VS</span><div class="team-section">${logo2HTML}<span>${team2}</span></div>` : ''}
+  `;
+}
+
+// =====================================================
+// FUNCIONES UTILITARIAS
+// =====================================================
+
+function getLeague(match) {
+  for (const [key, value] of Object.entries(leagueMap)) {
+    if (match.includes(key)) return value;
+  }
+  return 'PARTIDO';
+}
+
+function getChannelFromLink(link) {
+  const match = link.match(/channel=([a-zA-Z0-9]+)/);
+  return match ? match[1] : null;
+}
+
+function formatChannelName(channel) {
+  return channelNameMap[channel] || channel.toUpperCase();
+}
+
+function groupEventsByMatch(events) {
+  const grouped = {};
+  events.forEach(ev => {
+    const key = `${ev.time}_${ev.match}`;
+    if (!grouped[key]) {
+      grouped[key] = { time: ev.time, match: ev.match, channels: [] };
+    }
+    const channel = getChannelFromLink(ev.link);
+    if (channel) {
+      grouped[key].channels.push({ name: channel, link: ev.link, displayName: formatChannelName(channel) });
+    }
+  });
+  Object.values(grouped).forEach(group => {
+    group.channels.sort((a, b) => a.displayName.localeCompare(b.displayName));
+  });
+  return Object.values(grouped);
+}
+
+function getEventDate(time) {
+  const [h, m] = time.split(":").map(Number);
+  const d = new Date();
+  d.setHours(h, m, 0, 0);
+  return d;
+}
+
+function getStatus(eventTime) {
+  const now = new Date();
+  const start = getEventDate(eventTime);
+  const end = new Date(start.getTime() + 2 * 60 * 60 * 1000);
+  if (now < start) return "PR&Oacute;XIMO";
+  if (now >= start && now <= end) return "EN VIVO";
+  return "FINALIZADO";
+}
+
+// =====================================================
+// RENDERIZADO
+// =====================================================
+
+function updateStats(list) {
+  let live = 0, upcoming = 0;
+  list.forEach(ev => {
+    const status = getStatus(ev.time);
+    if (status === "EN VIVO") live++;
+    else if (status === "PR&Oacute;XIMO") upcoming++;
+  });
+  document.getElementById("live-count").textContent = `${live} EN VIVO`;
+  document.getElementById("upcoming-count").textContent = `${upcoming} PR&Oacute;XIMOS`;
+}
+
+function toggleDropdown(matchId) {
+  const dropdown = document.getElementById(`dropdown-${matchId}`);
+  const chevron = document.getElementById(`chevron-${matchId}`);
+  openDropdowns.forEach(id => {
+    if (id !== matchId) {
+      const otherDropdown = document.getElementById(`dropdown-${id}`);
+      const otherChevron = document.getElementById(`chevron-${id}`);
+      if (otherDropdown) otherDropdown.classList.add('hidden');
+      if (otherChevron) otherChevron.classList.remove('open');
+    }
+  });
+  openDropdowns.clear();
+  if (dropdown.classList.contains('hidden')) {
+    dropdown.classList.remove('hidden');
+    chevron.classList.add('open');
+    openDropdowns.add(matchId);
+  } else {
+    dropdown.classList.add('hidden');
+    chevron.classList.remove('open');
+  }
+}
+
+function selectChannel(matchId, link, name) {
+  const card = document.querySelector(`[data-match-id="${matchId}"]`);
+  card.dataset.selectedChannel = link;
+  const btn = document.getElementById(`channel-btn-${matchId}`);
+  btn.innerHTML = `<span>${name}</span><span class="chevron" id="chevron-${matchId}">&#9660;</span>`;
+  document.getElementById(`dropdown-${matchId}`).classList.add('hidden');
+  openDropdowns.delete(matchId);
+}
+
+function renderEvents(list = eventsData) {
+  const container = document.getElementById("events");
+  container.innerHTML = "";
+  groupedEventsCache = groupEventsByMatch(list);
+  updateStats(list);
+
+  if (groupedEventsCache.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">&#128269;</div>
+        <p class="empty-state-text">No se encontraron partidos</p>
+        <p class="empty-state-subtext">Intenta con otra b&uacute;squeda</p>
+      </div>
+    `;
+    return;
+  }
+
+  groupedEventsCache.sort((a, b) => a.time.localeCompare(b.time));
+
+  groupedEventsCache.forEach((ev, index) => {
+    const status = getStatus(ev.time);
+    const isActive = status === "EN VIVO";
+    const isFinished = status === "FINALIZADO";
+    const league = getLeague(ev.match);
+    const hasMultipleChannels = ev.channels.length > 1;
+    const matchId = `${ev.time}-${ev.match.replace(/[^a-zA-Z0-9]/g, '-')}`;
+
+    const card = document.createElement("div");
+    card.className = `glass-card ${isActive ? 'live' : ''} ${isFinished ? 'finished' : ''}`;
+    card.dataset.matchId = matchId;
+    card.dataset.time = ev.time;
+    card.dataset.selectedChannel = ev.channels[0]?.link || '';
+    card.style.animationDelay = `${index * 0.05}s`;
+
+    let channelHTML = '';
+    if (!isFinished && ev.channels.length > 0) {
+      if (hasMultipleChannels) {
+        channelHTML = `
+          <div class="channel-selector">
+            <button class="channel-btn" id="channel-btn-${matchId}" onclick="toggleDropdown('${matchId}')">
+              <span>${ev.channels[0].displayName}</span>
+              <span class="chevron" id="chevron-${matchId}">&#9660;</span>
+            </button>
+            <div class="channel-dropdown hidden" id="dropdown-${matchId}">
+              ${ev.channels.map(ch => `
+                <button class="channel-option ${ch.link === ev.channels[0].link ? 'active' : ''}" 
+                        onclick="selectChannel('${matchId}', '${ch.link}', '${ch.displayName}')">
+                  ${ch.displayName}
+                </button>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      } else {
+        channelHTML = `<span class="single-channel">${ev.channels[0].displayName}</span>`;
+      }
+    }
+
+    card.innerHTML = `
+      <div class="card-content">
+        <div class="card-info">
+          <div class="time-row">
+            <span class="time">${ev.time}</span>
+            <span class="league-badge">${league}</span>
+          </div>
+          <div class="match">${generateMatchHTML(ev.match)}</div>
+          <div class="status-badge ${isActive ? 'status-live' : isFinished ? 'status-finished' : 'status-upcoming'}">
+            ${isActive ? '<span class="pulse-dot"></span>' : isFinished ? '&#10003;' : '&#8987;'}
+            <span>${status}</span>
+          </div>
+        </div>
+        ${!isFinished ? `
+        <div class="card-actions">
+          ${channelHTML}
+          <button class="btn-watch ${isActive ? 'enabled' : 'disabled'}" 
+                  ${isActive ? `onclick="watchMatch('${matchId}')"` : ''}>
+            <span>${isActive ? '&#9654;' : '&#8987;'}</span>
+            <span>${isActive ? 'Ver' : 'Pr&oacute;ximo'}</span>
+          </button>
+        </div>
+        ` : ''}
+      </div>
+    `;
+
+    container.appendChild(card);
+  });
+}
+
+// =====================================================
+// INTERACCI&Oacute;N
+// =====================================================
+
+function watchMatch(matchId) {
+  const card = document.querySelector(`[data-match-id="${matchId}"]`);
+  if (!card) return;
+  const selectedLink = card.dataset.selectedChannel;
+  const matchText = card.querySelector('.match').textContent;
+  if (selectedLink) openPlayer(selectedLink, matchText);
+}
+
+function openPlayer(link, matchTitle) {
+  document.getElementById("player").classList.add("active");
+  document.getElementById("iframe-player").src = link;
+  document.getElementById("player-title-text").textContent = matchTitle;
+  document.body.style.overflow = "hidden";
+}
+
+function closePlayer() {
+  document.getElementById("player").classList.remove("active");
+  document.getElementById("iframe-player").src = "";
+  document.body.style.overflow = "";
+}
+
+function filterEvents(text) {
+  const filtered = eventsData.filter(e => e.match.toLowerCase().includes(text.toLowerCase()));
+  renderEvents(filtered);
+}
+
+function updateStatuses() {
+  const cards = document.querySelectorAll('.glass-card');
+  let liveCount = 0, upcomingCount = 0;
+  cards.forEach(card => {
+    const time = card.dataset.time;
+    if (!time) return;
+    const status = getStatus(time);
+    const statusEl = card.querySelector('.status-badge');
+    const btn = card.querySelector('.btn-watch');
+    if (status === "EN VIVO") liveCount++;
+    else if (status === "PR&Oacute;XIMO") upcomingCount++;
+    const currentStatusText = statusEl.querySelector('span:last-child').textContent;
+    if (currentStatusText !== status) {
+      statusEl.className = `status-badge ${status === 'EN VIVO' ? 'status-live' : status === 'FINALIZADO' ? 'status-finished' : 'status-upcoming'}`;
+      statusEl.innerHTML = `${status === 'EN VIVO' ? '<span class="pulse-dot"></span>' : status === 'FINALIZADO' ? '&#10003;' : '&#8987;'}<span>${status}</span>`;
+      card.classList.remove('live', 'finished');
+      if (status === 'EN VIVO') card.classList.add('live');
+      if (status === 'FINALIZADO') card.classList.add('finished');
+      if (btn) {
+        const isActive = status === "EN VIVO";
+        btn.className = `btn-watch ${isActive ? 'enabled' : 'disabled'}`;
+        btn.onclick = isActive ? () => watchMatch(card.dataset.matchId) : null;
+        btn.innerHTML = `<span>${isActive ? '&#9654;' : '&#8987;'}</span><span>${isActive ? 'Ver' : 'Pr&oacute;ximo'}</span>`;
+      }
+      if (status === 'FINALIZADO') {
+        const actions = card.querySelector('.card-actions');
+        if (actions) actions.style.display = 'none';
+      }
+    }
+  });
+  document.getElementById("live-count").textContent = `${liveCount} EN VIVO`;
+  document.getElementById("upcoming-count").textContent = `${upcomingCount} PR&Oacute;XIMOS`;
+}
+
+// Event listeners
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.channel-selector')) {
+    openDropdowns.forEach(id => {
+      const dropdown = document.getElementById(`dropdown-${id}`);
+      const chevron = document.getElementById(`chevron-${id}`);
+      if (dropdown) dropdown.classList.add('hidden');
+      if (chevron) chevron.classList.remove('open');
+    });
+    openDropdowns.clear();
+  }
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closePlayer();
+});
+
+// Inicializar
+renderEvents();
+setInterval(updateStatuses, 1000);
+</script>
+
+</body>
+</html>
