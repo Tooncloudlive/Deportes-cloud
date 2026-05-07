@@ -1,93 +1,85 @@
-/**
- * Scraping de escudos desde BeSoccer MOBILE
- * Optimizado para GitHub Actions
- * - Scroll infinito
- * - Anti bloqueo básico
- * - Fallback seguro
- * - Nunca rompe el workflow
- */
-
-const { chromium } = require('playwright');
-const fs = require('fs');
-const path = require('path');
-
-const URL = 'https://m.besoccer.com/livescore/televisados';
-
-const OUTPUT = path.join(
-  __dirname,
-  '..',
-  'data',
-  'escudos.json'
-);
-
-function ensureDir(filePath) {
-
-  const dir = path.dirname(filePath);
-
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
-  }
-
-}
-
-function saveEmptyJson() {
-
-  ensureDir(OUTPUT);
-
-  fs.writeFileSync(
-    OUTPUT,
-    JSON.stringify([], null, 2),
-    'utf-8'
-  );
-
-  console.log('[Escudos] JSON vacío guardado');
-
-}
-
-async function scrollToBottom(page) {
-
-  console.log('[Escudos] Iniciando scroll');
-
-  for (let i = 0; i < 30; i++) {
-
-    await page.evaluate(() => {
-      window.scrollBy(0, window.innerHeight * 2);
-    });
-
-    console.log(`[Escudos] Scroll ${i + 1}`);
-
-    await page.waitForTimeout(1200);
-
-  }
-
-}
-
 const SCRAPE_SCRIPT = () => {
-
   const clean = (s) =>
     (s || '')
       .replace(/\s+/g, ' ')
       .trim();
 
-  const isValidText = (text) => {
+  const isTeamLogo = (src) =>
+    /cdn\.resfu\.com\/img_data\/equipos\/\d+\.(png|jpg|jpeg|webp)(\?.*)?$/i.test(src || '');
 
-    if (!text) return false;
+  const isNoiseText = (text) => {
+    if (!text) return true;
 
-    if (text.length < 2) return false;
+    const t = text.toLowerCase();
 
-    const invalid = [
+    const noise = [
       'directo',
       'tv',
       'live',
       'stream',
       'resultado',
       'clasificación',
-      'vs'
+      'explore',
+      'competitions',
+      'teams',
+      'players',
+      'transfers',
+      'settings',
+      'languages',
+      'login',
+      'matches',
+      'news',
+      'favourites',
+      'favorite',
+      'vs user',
+      'password',
+      'register',
+      'continue',
+      'facebook',
+      'google',
+      'onefootball'
     ];
 
-    return !invalid.includes(
-      text.toLowerCase()
+    return noise.some((k) => t.includes(k));
+  };
+
+  const normalizeTeam = (s) =>
+    clean(s)
+      .replace(/\b(FT|HT|LIVE|TODAY|TOMORROW)\b/gi, '')
+      .replace(/\b\d{1,2}\s+[A-Za-z]{3}\.?\s+\d{4}\b/g, '')
+      .replace(/\b\d{1,2}\s*-\s*\d{1,2}\b/g, '')
+      .replace(/\b\d+\s*:\s*\d+\b/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+  const extractMatch = (text) => {
+    const t = clean(text);
+
+    // Caso tipo: "U. Católica 0 - 0 Cruzeiro 07 May. 2026"
+    let m = t.match(
+      /^(.{2,80}?)\s+\d+\s*[-:]\s*\d+\s+(.{2,80}?)(?:\s+\d{1,2}\s+[A-Za-z]{3}\.?\s+\d{4}|\s*$)/i
     );
+
+    if (m) {
+      const home = normalizeTeam(m[1]);
+      const away = normalizeTeam(m[2]);
+
+      if (home && away) return { home, away };
+    }
+
+    // Caso tipo: "Equipo A vs Equipo B"
+    m = t.match(
+      /^(.{2,80}?)\s+vs\s+(.{2,80}?)(?:\s+\d{1,2}\s+[A-Za-z]{3}\.?\s+\d{4}|\s*$)/i
+    );
+
+    if (m) {
+      const home = normalizeTeam(m[1]);
+      const away = normalizeTeam(m[2]);
+
+      if (home && away) return { home, away };
+    }
+
+    return null;
   };
 
   const data = [];
@@ -96,241 +88,42 @@ const SCRAPE_SCRIPT = () => {
   const containers = [
     ...document.querySelectorAll('article'),
     ...document.querySelectorAll('section'),
-    ...document.querySelectorAll('div'),
+    ...document.querySelectorAll('li'),
     ...document.querySelectorAll('a'),
-    ...document.querySelectorAll('li')
+    ...document.querySelectorAll('div')
   ];
 
-  containers.forEach(el => {
+  for (const el of containers) {
+    const text = clean(el.innerText || '');
+    if (!text || text.length < 8) continue;
+    if (isNoiseText(text)) continue;
 
-    const imgs = [
-      ...el.querySelectorAll('img')
-    ]
-      .map(img =>
+    const logos = [...el.querySelectorAll('img')]
+      .map((img) =>
+        img.currentSrc ||
         img.src ||
         img.getAttribute('data-src') ||
-        img.getAttribute('srcset') ||
         ''
       )
-      .filter(src =>
-        src &&
-        (
-          src.includes('resfu') ||
-          src.includes('shield') ||
-          src.includes('team') ||
-          src.includes('logo')
-        )
-      );
+      .filter(isTeamLogo);
 
-    // Necesitamos mínimo 2 escudos
-    if (imgs.length < 2) return;
+    // Necesitamos al menos 2 escudos del mismo bloque
+    if (logos.length < 2) continue;
 
-    const texts = [
-      ...el.querySelectorAll('*')
-    ]
-      .map(x => clean(x.innerText))
-      .filter(isValidText);
+    const match = extractMatch(text);
+    if (!match) continue;
 
-    const uniqueTexts = [...new Set(texts)];
-
-    if (uniqueTexts.length < 2) return;
-
-    const homeTeam = uniqueTexts[0];
-    const awayTeam = uniqueTexts[1];
-
-    const key =
-      `${homeTeam} vs ${awayTeam}`;
-
-    if (seen.has(key)) return;
+    const key = `${match.home} vs ${match.away}`;
+    if (seen.has(key)) continue;
 
     seen.add(key);
 
     data.push({
       match: key,
-      homeLogo: imgs[0],
-      awayLogo: imgs[1]
+      homeLogo: logos[0],
+      awayLogo: logos[1]
     });
-
-    console.log(
-      '[SCRAPE]',
-      key
-    );
-
-  });
+  }
 
   return data;
 };
-
-async function scrapeEscudos() {
-
-  console.log(
-    '[Escudos] Iniciando scraping de',
-    URL
-  );
-
-  const browser = await chromium.launch({
-    headless: true,
-
-    args: [
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      '--disable-dev-shm-usage',
-      '--disable-blink-features=AutomationControlled'
-    ]
-  });
-
-  const context =
-    await browser.newContext({
-
-      viewport: {
-        width: 390,
-        height: 844
-      },
-
-      isMobile: true,
-
-      hasTouch: true,
-
-      locale: 'es-ES',
-
-      timezoneId: 'Europe/Madrid',
-
-      userAgent:
-        'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1'
-    });
-
-  const page = await context.newPage();
-
-  try {
-
-    // Anti webdriver
-    await page.addInitScript(() => {
-
-      Object.defineProperty(
-        navigator,
-        'webdriver',
-        {
-          get: () => false
-        }
-      );
-
-    });
-
-    await page.goto(URL, {
-      waitUntil: 'domcontentloaded',
-      timeout: 60000
-    });
-
-    await page.waitForTimeout(5000);
-
-    // DEBUG
-    const html =
-      await page.content();
-
-    console.log(
-      '[Escudos] HTML length:',
-      html.length
-    );
-
-    // Screenshot para GitHub Actions
-    await page.screenshot({
-      path: 'besoccer-debug.png',
-      fullPage: true
-    });
-
-    console.log(
-      '[Escudos] Screenshot guardado'
-    );
-
-    // Si sigue vacío
-    if (html.length < 1000) {
-
-      console.log(
-        '[Escudos] Página vacía detectada'
-      );
-
-      saveEmptyJson();
-
-      return;
-    }
-
-    // Scroll infinito
-    await scrollToBottom(page);
-
-    // Scraping
-    let data = [];
-
-    try {
-
-      data =
-        await page.evaluate(
-          SCRAPE_SCRIPT
-        );
-
-    } catch (e) {
-
-      console.warn(
-        '[Escudos] Error evaluando:',
-        e.message
-      );
-
-    }
-
-    if (
-      !data ||
-      data.length === 0
-    ) {
-
-      console.log(
-        '[Escudos] No se encontraron partidos'
-      );
-
-      saveEmptyJson();
-
-      return;
-    }
-
-    ensureDir(OUTPUT);
-
-    fs.writeFileSync(
-      OUTPUT,
-      JSON.stringify(data, null, 2),
-      'utf-8'
-    );
-
-    console.log(
-      `[Escudos] ${data.length} partidos guardados`
-    );
-
-  } catch (error) {
-
-    console.warn(
-      '[Escudos] Error:',
-      error.message
-    );
-
-    saveEmptyJson();
-
-    // NO romper GitHub Actions
-    process.exitCode = 0;
-
-  } finally {
-
-    await browser.close();
-
-  }
-
-}
-
-scrapeEscudos().catch(error => {
-
-  console.warn(
-    '[Escudos] Error fatal:',
-    error.message
-  );
-
-  saveEmptyJson();
-
-  process.exitCode = 0;
-
-});
