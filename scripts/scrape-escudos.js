@@ -1,24 +1,37 @@
 /**
- * Scraping de escudos desde BeSoccer
- * Compatible con GitHub Actions
+ * Scraping de escudos desde BeSoccer MOBILE
+ * Optimizado para GitHub Actions
+ * - Scroll infinito
+ * - Anti bloqueo básico
+ * - Fallback seguro
+ * - Nunca rompe el workflow
  */
 
 const { chromium } = require('playwright');
 const fs = require('fs');
 const path = require('path');
 
-const URL = 'https://es.besoccer.com/livescore/televisados';
-const OUTPUT = path.join(__dirname, '..', 'data', 'escudos.json');
+const URL = 'https://m.besoccer.com/livescore/televisados';
+
+const OUTPUT = path.join(
+  __dirname,
+  '..',
+  'data',
+  'escudos.json'
+);
 
 function ensureDir(filePath) {
+
   const dir = path.dirname(filePath);
 
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
   }
+
 }
 
 function saveEmptyJson() {
+
   ensureDir(OUTPUT);
 
   fs.writeFileSync(
@@ -28,78 +41,67 @@ function saveEmptyJson() {
   );
 
   console.log('[Escudos] JSON vacío guardado');
+
 }
 
 async function scrollToBottom(page) {
 
-  let previousHeight = 0;
-  let stableRounds = 0;
+  console.log('[Escudos] Iniciando scroll');
 
-  for (let i = 0; i < 60; i++) {
-
-    const currentHeight = await page.evaluate(() => {
-      return document.body.scrollHeight;
-    });
-
-    console.log(
-      `[Escudos] Scroll ${i + 1} | Height ${currentHeight}`
-    );
-
-    if (currentHeight === previousHeight) {
-      stableRounds++;
-    } else {
-      stableRounds = 0;
-    }
-
-    if (stableRounds >= 4) {
-      console.log('[Escudos] Final detectado');
-      break;
-    }
-
-    previousHeight = currentHeight;
+  for (let i = 0; i < 30; i++) {
 
     await page.evaluate(() => {
-      window.scrollTo(0, document.body.scrollHeight);
+      window.scrollBy(0, window.innerHeight * 2);
     });
 
-    await page.waitForTimeout(1500);
+    console.log(`[Escudos] Scroll ${i + 1}`);
+
+    await page.waitForTimeout(1200);
+
   }
+
 }
 
 const SCRAPE_SCRIPT = () => {
 
   const clean = (s) =>
-    (s || '').replace(/\s+/g, ' ').trim();
+    (s || '')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+  const isValidText = (text) => {
+
+    if (!text) return false;
+
+    if (text.length < 2) return false;
+
+    const invalid = [
+      'directo',
+      'tv',
+      'live',
+      'stream',
+      'resultado',
+      'clasificación',
+      'vs'
+    ];
+
+    return !invalid.includes(
+      text.toLowerCase()
+    );
+  };
 
   const data = [];
   const seen = new Set();
 
-  const selectors = [
-    '.match-link',
-    '.match',
-    '.match-item',
-    '.game-item',
-    '[data-testid*="match"]',
-    'a[href*="/match/"]'
+  const containers = [
+    ...document.querySelectorAll('article'),
+    ...document.querySelectorAll('section'),
+    ...document.querySelectorAll('div'),
+    ...document.querySelectorAll('a'),
+    ...document.querySelectorAll('li')
   ];
 
-  const elements = [];
-
-  selectors.forEach(sel => {
-    document.querySelectorAll(sel).forEach(el => {
-      elements.push(el);
-    });
-  });
-
-  const uniqueElements = [...new Set(elements)];
-
-  uniqueElements.forEach(el => {
-
-    const texts = [
-      ...el.querySelectorAll('*')
-    ]
-      .map(x => clean(x.innerText))
-      .filter(Boolean);
+  containers.forEach(el => {
 
     const imgs = [
       ...el.querySelectorAll('img')
@@ -107,17 +109,37 @@ const SCRAPE_SCRIPT = () => {
       .map(img =>
         img.src ||
         img.getAttribute('data-src') ||
+        img.getAttribute('srcset') ||
         ''
       )
-      .filter(Boolean);
+      .filter(src =>
+        src &&
+        (
+          src.includes('resfu') ||
+          src.includes('shield') ||
+          src.includes('team') ||
+          src.includes('logo')
+        )
+      );
 
-    if (texts.length < 2) return;
+    // Necesitamos mínimo 2 escudos
     if (imgs.length < 2) return;
 
-    const homeTeam = texts[0];
-    const awayTeam = texts[1];
+    const texts = [
+      ...el.querySelectorAll('*')
+    ]
+      .map(x => clean(x.innerText))
+      .filter(isValidText);
 
-    const key = `${homeTeam} vs ${awayTeam}`;
+    const uniqueTexts = [...new Set(texts)];
+
+    if (uniqueTexts.length < 2) return;
+
+    const homeTeam = uniqueTexts[0];
+    const awayTeam = uniqueTexts[1];
+
+    const key =
+      `${homeTeam} vs ${awayTeam}`;
 
     if (seen.has(key)) return;
 
@@ -129,6 +151,11 @@ const SCRAPE_SCRIPT = () => {
       awayLogo: imgs[1]
     });
 
+    console.log(
+      '[SCRAPE]',
+      key
+    );
+
   });
 
   return data;
@@ -136,39 +163,47 @@ const SCRAPE_SCRIPT = () => {
 
 async function scrapeEscudos() {
 
-  console.log('[Escudos] Iniciando scraping');
+  console.log(
+    '[Escudos] Iniciando scraping de',
+    URL
+  );
 
   const browser = await chromium.launch({
     headless: true,
+
     args: [
-      '--disable-blink-features=AutomationControlled',
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-dev-shm-usage',
-      '--disable-web-security',
-      '--disable-features=IsolateOrigins,site-per-process'
+      '--disable-blink-features=AutomationControlled'
     ]
   });
 
-  const context = await browser.newContext({
-    viewport: {
-      width: 1366,
-      height: 768
-    },
+  const context =
+    await browser.newContext({
 
-    locale: 'es-ES',
+      viewport: {
+        width: 390,
+        height: 844
+      },
 
-    timezoneId: 'Europe/Madrid',
+      isMobile: true,
 
-    userAgent:
-      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
-  });
+      hasTouch: true,
+
+      locale: 'es-ES',
+
+      timezoneId: 'Europe/Madrid',
+
+      userAgent:
+        'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1'
+    });
 
   const page = await context.newPage();
 
   try {
 
-    // Anti detection
+    // Anti webdriver
     await page.addInitScript(() => {
 
       Object.defineProperty(
@@ -188,33 +223,49 @@ async function scrapeEscudos() {
 
     await page.waitForTimeout(5000);
 
-    // IMPORTANTE:
-    // NO esperar body visible
-    // porque Besoccer devuelve body hidden
-    // en GitHub Actions
+    // DEBUG
+    const html =
+      await page.content();
 
-    const html = await page.content();
+    console.log(
+      '[Escudos] HTML length:',
+      html.length
+    );
 
-    if (
-      !html ||
-      html.length < 1000
-    ) {
+    // Screenshot para GitHub Actions
+    await page.screenshot({
+      path: 'besoccer-debug.png',
+      fullPage: true
+    });
+
+    console.log(
+      '[Escudos] Screenshot guardado'
+    );
+
+    // Si sigue vacío
+    if (html.length < 1000) {
 
       console.log(
         '[Escudos] Página vacía detectada'
       );
 
       saveEmptyJson();
+
       return;
     }
 
+    // Scroll infinito
     await scrollToBottom(page);
 
+    // Scraping
     let data = [];
 
     try {
 
-      data = await page.evaluate(SCRAPE_SCRIPT);
+      data =
+        await page.evaluate(
+          SCRAPE_SCRIPT
+        );
 
     } catch (e) {
 
@@ -225,13 +276,17 @@ async function scrapeEscudos() {
 
     }
 
-    if (!data || data.length === 0) {
+    if (
+      !data ||
+      data.length === 0
+    ) {
 
       console.log(
         '[Escudos] No se encontraron partidos'
       );
 
       saveEmptyJson();
+
       return;
     }
 
@@ -256,6 +311,7 @@ async function scrapeEscudos() {
 
     saveEmptyJson();
 
+    // NO romper GitHub Actions
     process.exitCode = 0;
 
   } finally {
@@ -263,6 +319,7 @@ async function scrapeEscudos() {
     await browser.close();
 
   }
+
 }
 
 scrapeEscudos().catch(error => {
