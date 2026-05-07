@@ -1,116 +1,110 @@
-// scrape-escudos.mjs
+// scripts/scrape-escudos.mjs
 import { chromium } from "playwright";
 import fs from "node:fs/promises";
 
 const URL = "https://es.besoccer.com/";
-const MAX_SCROLLS = 12;
+const OUTPUT = "escudos.json";
 const MAX_WAIT_MS = 60000;
+const MAX_SCROLLS = 12;
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function dismissCookies(page) {
+async function tryDismissCookies(page) {
   const selectors = [
     "#onetrust-accept-btn-handler",
     'button:has-text("Aceptar")',
     'button:has-text("Aceptar todo")',
     'button:has-text("Accept")',
     'button:has-text("Agree")',
-    'button:has-text("Entendido")',
   ];
 
-  for (const selector of selectors) {
-    const btn = page.locator(selector).first();
-    const count = await btn.count().catch(() => 0);
-    if (count > 0) {
+  for (const sel of selectors) {
+    const btn = page.locator(sel).first();
+    if (await btn.count().catch(() => 0)) {
       await btn.click({ timeout: 3000 }).catch(() => {});
       return;
     }
   }
 }
 
-async function waitForMatches(page) {
+async function waitForAnyMatch(page, timeoutMs = MAX_WAIT_MS) {
+  const selectors = [
+    ".match-link",
+    "a.match-link",
+    '[data-testid="match-link"]',
+  ];
+
   const started = Date.now();
+  while (Date.now() - started < timeoutMs) {
+    for (const selector of selectors) {
+      const count = await page.locator(selector).count().catch(() => 0);
+      if (count > 0) return selector;
+    }
 
-  while (Date.now() - started < MAX_WAIT_MS) {
-    const count = await page.locator(".match-link").count().catch(() => 0);
-    if (count > 0) return;
-
+    await page.mouse.wheel(0, 1800).catch(() => {});
     await page.evaluate(() => window.scrollBy(0, window.innerHeight * 2)).catch(() => {});
     await sleep(1200);
   }
 
-  throw new Error("No aparecieron elementos .match-link dentro del tiempo esperado");
+  throw new Error(`No apareció ningún partido con estos selectores: ${selectors.join(", ")}`);
 }
 
-async function loadMore(page) {
-  for (let i = 0; i < MAX_SCROLLS; i++) {
-    await page.evaluate(() => window.scrollBy(0, document.body.scrollHeight)).catch(() => {});
-    await sleep(1000);
-  }
-}
-
-async function extractMatches(page) {
+async function extractData(page) {
   return page.evaluate(() => {
     const clean = (s) => (s || "").replace(/\s+/g, " ").trim();
 
-    const getImgSrc = (img) => {
-      if (!img) return "";
-      return (
-        img.getAttribute("src") ||
-        img.getAttribute("data-src") ||
-        img.getAttribute("data-lazy") ||
-        img.getAttribute("data-original") ||
-        (img.getAttribute("srcset") || "").split(",")[0]?.trim().split(" ")[0] ||
-        ""
-      );
+    const getUrlFromMedia = (el) => {
+      if (!el) return "";
+
+      const img = el.querySelector("img");
+      if (img) {
+        return (
+          img.getAttribute("src") ||
+          img.getAttribute("data-src") ||
+          img.getAttribute("data-lazy") ||
+          (img.getAttribute("srcset") || "").split(",")[0]?.trim().split(" ")[0] ||
+          ""
+        );
+      }
+
+      return "";
     };
 
     const cards = Array.from(document.querySelectorAll(".match-link"));
-    const result = [];
 
-    for (const card of cards) {
-      const teams = Array.from(card.querySelectorAll(".team-name"))
+    const rows = cards.map((card) => {
+      const names = Array.from(card.querySelectorAll(".team-name"))
         .map((el) => clean(el.textContent))
         .filter(Boolean);
 
-      const shields = Array.from(card.querySelectorAll(".team-shield img, .team-shield, img"));
+      const logos = Array.from(card.querySelectorAll(".team-shield, figure, picture, img"));
 
-      if (teams.length >= 2) {
-        const homeLogo = getImgSrc(shields[0]);
-        const awayLogo = getImgSrc(shields[1]);
+      const homeLogo = getUrlFromMedia(logos[0]);
+      const awayLogo = getUrlFromMedia(logos[1]);
 
-        if (homeLogo || awayLogo) {
-          result.push({
-            match: `${teams[0]} vs ${teams[1]}`,
-            homeLogo,
-            awayLogo,
-          });
-        }
-      }
-    }
+      const match =
+        names.length >= 2
+          ? `${names[0]} vs ${names[1]}`
+          : clean(card.textContent).slice(0, 120);
 
-    // quitar duplicados
+      return {
+        match,
+        homeLogo,
+        awayLogo,
+      };
+    });
+
+    // Elimina duplicados vacíos
     const seen = new Set();
-    return result.filter((item) => {
-      const key = `${item.match}|${item.homeLogo}|${item.awayLogo}`;
+    return rows.filter((row) => {
+      const key = `${row.match}|${row.homeLogo}|${row.awayLogo}`;
       if (seen.has(key)) return false;
       seen.add(key);
-      return true;
+      return row.homeLogo || row.awayLogo;
     });
   });
-}
-
-function buildOutput(logosData) {
-  let output = "let logosData = [\n";
-
-  logosData.forEach((e) => {
-    output += `  { match: ${JSON.stringify(e.match)}, homeLogo: ${JSON.stringify(e.homeLogo)}, awayLogo: ${JSON.stringify(e.awayLogo)} },\n`;
-  });
-
-  output += "];";
-  return output;
 }
 
 async function main() {
@@ -132,18 +126,20 @@ async function main() {
     await page.waitForLoadState("networkidle").catch(() => {});
     await sleep(2500);
 
-    await dismissCookies(page);
-    await waitForMatches(page);
-    await loadMore(page);
+    await tryDismissCookies(page);
 
-    const logosData = await extractMatches(page);
-    const output = buildOutput(logosData);
+    const selector = await waitForAnyMatch(page, MAX_WAIT_MS);
+    await page.waitForSelector(selector, { state: "attached", timeout: 45000 });
 
-    await fs.writeFile("logosData.js", output, "utf8");
-    await fs.writeFile("logosData.json", JSON.stringify(logosData, null, 2), "utf8");
+    for (let i = 0; i < MAX_SCROLLS; i++) {
+      await page.evaluate(() => window.scrollBy(0, document.body.scrollHeight)).catch(() => {});
+      await sleep(900);
+    }
 
-    console.log(output);
-    console.log(`\nOK: ${logosData.length} registros guardados en logosData.js y logosData.json`);
+    const data = await extractData(page);
+
+    await fs.writeFile(OUTPUT, JSON.stringify(data, null, 2), "utf8");
+    console.log(`OK: ${data.length} registros guardados en ${OUTPUT}`);
   } catch (err) {
     await page.screenshot({ path: "error.png", fullPage: true }).catch(() => {});
     console.error("SCRAPE_ERROR:", err);
