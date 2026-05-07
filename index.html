@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ToonCloud Deportes</title>
-<!-- Build: 2026-05-07 03:38 -->
+<!-- Build: 2026-05-07 03:54 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -871,6 +871,7 @@ header {
   <meta name="apple-mobile-web-app-title" content="ToonCloud">
 <base target="_blank">
 <base target="_blank">
+<base target="_blank">
 </head>
 
 <body>
@@ -901,7 +902,7 @@ header {
     </div>
     <div class="stats-pill">
       <span class="blink-dot"></span>
-      <span id="upcoming-count">0 PR&Oacute;XIMOS</span>
+      <span id="upcoming-count">0 PROXIMOS</span>
     </div>
   </div>
 
@@ -1154,8 +1155,26 @@ function groupEventsByMatch(events) {
 
 function getEventDate(time) {
   const [h, m] = time.split(":").map(Number);
+  const now = new Date();
   const d = new Date();
   d.setHours(h, m, 0, 0);
+
+  const diffHours = (d - now) / (1000 * 60 * 60);
+
+  // Si son madrugada (< 6 AM) y el evento parece estar lejos en el futuro (> 12h)
+  // y la hora del evento es por la noche (>= 18:00), probablemente fue "anoche" (ayer)
+  if (diffHours > 12 && now.getHours() < 6 && h >= 18) {
+    d.setDate(d.getDate() - 1);
+    return d;
+  }
+
+  // Si es tarde/noche (>= 18:00) y el evento parece haber pasado hace mucho (> 12h)
+  // y la hora del evento es por la maniana (< 12), probablemente es "maniana"
+  if (diffHours < -12 && now.getHours() >= 18 && h < 12) {
+    d.setDate(d.getDate() + 1);
+    return d;
+  }
+
   return d;
 }
 
