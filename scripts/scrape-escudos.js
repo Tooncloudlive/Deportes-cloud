@@ -1,121 +1,156 @@
-/**
- * Scraping de escudos desde es.besoccer.com
- * Extrae: nombre del partido, escudo local, escudo visitante
- */
+// scrape-escudos.mjs
+import { chromium } from "playwright";
+import fs from "node:fs/promises";
 
-const { chromium } = require('playwright');
-const fs = require('fs');
-const path = require('path');
+const URL = "https://es.besoccer.com/";
+const MAX_SCROLLS = 12;
+const MAX_WAIT_MS = 60000;
 
-const URL = 'https://es.besoccer.com/';
-const OUTPUT = path.join(__dirname, '..', 'data', 'escudos.json');
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
-// Script que se ejecuta en el navegador
-const SCRAPE_SCRIPT = () => {
-  const logosData = [];
-  const seen = new Set();
+async function dismissCookies(page) {
+  const selectors = [
+    "#onetrust-accept-btn-handler",
+    'button:has-text("Aceptar")',
+    'button:has-text("Aceptar todo")',
+    'button:has-text("Accept")',
+    'button:has-text("Agree")',
+    'button:has-text("Entendido")',
+  ];
 
-  // Intentar múltiples selectores porque Besoccer cambia estructura seguido
-  const matchSelectors = ['.match-link', '.match', '[data-testid="match"]', '.match-item', '.game-item'];
-  let matches = [];
+  for (const selector of selectors) {
+    const btn = page.locator(selector).first();
+    const count = await btn.count().catch(() => 0);
+    if (count > 0) {
+      await btn.click({ timeout: 3000 }).catch(() => {});
+      return;
+    }
+  }
+}
 
-  for (const sel of matchSelectors) {
-    matches = document.querySelectorAll(sel);
-    if (matches.length > 0) break;
+async function waitForMatches(page) {
+  const started = Date.now();
+
+  while (Date.now() - started < MAX_WAIT_MS) {
+    const count = await page.locator(".match-link").count().catch(() => 0);
+    if (count > 0) return;
+
+    await page.evaluate(() => window.scrollBy(0, window.innerHeight * 2)).catch(() => {});
+    await sleep(1200);
   }
 
-  matches.forEach(matchEl => {
-    const teamEls = matchEl.querySelectorAll('.team-name, .team, [class*="team"], [class*="local"], [class*="visitor"]');
-    const imgEls = matchEl.querySelectorAll('img');
+  throw new Error("No aparecieron elementos .match-link dentro del tiempo esperado");
+}
 
-    if (teamEls.length >= 2) {
-      const homeTeam = teamEls[0].innerText.trim();
-      const awayTeam = teamEls[1].innerText.trim();
-      let homeLogo = '';
-      let awayLogo = '';
+async function loadMore(page) {
+  for (let i = 0; i < MAX_SCROLLS; i++) {
+    await page.evaluate(() => window.scrollBy(0, document.body.scrollHeight)).catch(() => {});
+    await sleep(1000);
+  }
+}
 
-      imgEls.forEach(img => {
-        const src = img.src || img.getAttribute('data-src') || '';
-        if (src.includes('resfu.com') || src.includes('shield') || src.includes('escudo') || src.includes('logo')) {
-          let cleanSrc = src;
-          if (cleanSrc.includes('?')) {
-            cleanSrc = cleanSrc.replace(/\?.*$/, '?size=60x&lossy=1');
-          } else {
-            cleanSrc += '?size=60x&lossy=1';
-          }
+async function extractMatches(page) {
+  return page.evaluate(() => {
+    const clean = (s) => (s || "").replace(/\s+/g, " ").trim();
 
-          if (!homeLogo) {
-            homeLogo = cleanSrc;
-          } else if (!awayLogo) {
-            awayLogo = cleanSrc;
-          }
+    const getImgSrc = (img) => {
+      if (!img) return "";
+      return (
+        img.getAttribute("src") ||
+        img.getAttribute("data-src") ||
+        img.getAttribute("data-lazy") ||
+        img.getAttribute("data-original") ||
+        (img.getAttribute("srcset") || "").split(",")[0]?.trim().split(" ")[0] ||
+        ""
+      );
+    };
+
+    const cards = Array.from(document.querySelectorAll(".match-link"));
+    const result = [];
+
+    for (const card of cards) {
+      const teams = Array.from(card.querySelectorAll(".team-name"))
+        .map((el) => clean(el.textContent))
+        .filter(Boolean);
+
+      const shields = Array.from(card.querySelectorAll(".team-shield img, .team-shield, img"));
+
+      if (teams.length >= 2) {
+        const homeLogo = getImgSrc(shields[0]);
+        const awayLogo = getImgSrc(shields[1]);
+
+        if (homeLogo || awayLogo) {
+          result.push({
+            match: `${teams[0]} vs ${teams[1]}`,
+            homeLogo,
+            awayLogo,
+          });
         }
-      });
-
-      const matchKey = `${homeTeam} vs ${awayTeam}`;
-      if (!seen.has(matchKey)) {
-        seen.add(matchKey);
-        logosData.push({ match: matchKey, homeLogo, awayLogo });
       }
     }
+
+    // quitar duplicados
+    const seen = new Set();
+    return result.filter((item) => {
+      const key = `${item.match}|${item.homeLogo}|${item.awayLogo}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  });
+}
+
+function buildOutput(logosData) {
+  let output = "let logosData = [\n";
+
+  logosData.forEach((e) => {
+    output += `  { match: ${JSON.stringify(e.match)}, homeLogo: ${JSON.stringify(e.homeLogo)}, awayLogo: ${JSON.stringify(e.awayLogo)} },\n`;
   });
 
-  return logosData;
-};
+  output += "];";
+  return output;
+}
 
-async function scrapeEscudos() {
-  console.log('[Escudos] Iniciando scraping de', URL);
-
-  const browser = await chromium.launch({ headless: true });
-  const context = await browser.newContext({
-    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+async function main() {
+  const browser = await chromium.launch({
+    headless: process.env.CI ? "new" : false,
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
-  const page = await context.newPage();
+
+  const page = await browser.newPage({
+    viewport: { width: 1440, height: 2200 },
+    userAgent:
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+  });
+
+  page.setDefaultTimeout(45000);
 
   try {
-    await page.goto(URL, { waitUntil: 'networkidle', timeout: 60000 });
+    await page.goto(URL, { waitUntil: "domcontentloaded", timeout: 60000 });
+    await page.waitForLoadState("networkidle").catch(() => {});
+    await sleep(2500);
 
-    // Aceptar cookies
-    try {
-      const acceptBtn = await page.$('button:has-text("ACEPTO"), button:has-text("Acepto"), button:has-text("ACCEPT")');
-      if (acceptBtn) {
-        await acceptBtn.click();
-        await page.waitForTimeout(1000);
-        console.log('[Escudos] Cookies aceptadas');
-      }
-    } catch (e) {}
+    await dismissCookies(page);
+    await waitForMatches(page);
+    await loadMore(page);
 
-    // Esperar a que cargue CUALQUIER cosa del body (no un selector específico que puede cambiar)
-    await page.waitForSelector('body', { timeout: 30000 });
-    await page.waitForTimeout(3000); // dar tiempo a que JS renderice
+    const logosData = await extractMatches(page);
+    const output = buildOutput(logosData);
 
-    const logosData = await page.evaluate(SCRAPE_SCRIPT);
+    await fs.writeFile("logosData.js", output, "utf8");
+    await fs.writeFile("logosData.json", JSON.stringify(logosData, null, 2), "utf8");
 
-    console.log(`[Escudos] Encontrados ${logosData.length} partidos con escudos`);
-
-    const dataDir = path.dirname(OUTPUT);
-    if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
-
-    fs.writeFileSync(OUTPUT, JSON.stringify(logosData, null, 2), 'utf-8');
-    console.log('[Escudos] Datos guardados en', OUTPUT);
-
-    if (logosData.length > 0) {
-      logosData.slice(0, 3).forEach(e => {
-        console.log(`  - ${e.match} | Local: ${e.homeLogo ? 'OK' : 'NO'} | Visitante: ${e.awayLogo ? 'OK' : 'NO'}`);
-      });
-    }
-
-  } catch (error) {
-    console.warn('[Escudos] Error durante scraping (se continua sin escudos):', error.message);
-    
-    // Escribir archivo vacío para que el build no falle
-    const dataDir = path.dirname(OUTPUT);
-    if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
-    fs.writeFileSync(OUTPUT, JSON.stringify([], null, 2), 'utf-8');
-    console.log('[Escudos] Se guardo escudos.json vacio como fallback');
+    console.log(output);
+    console.log(`\nOK: ${logosData.length} registros guardados en logosData.js y logosData.json`);
+  } catch (err) {
+    await page.screenshot({ path: "error.png", fullPage: true }).catch(() => {});
+    console.error("SCRAPE_ERROR:", err);
+    process.exitCode = 1;
   } finally {
     await browser.close();
   }
 }
 
-scrapeEscudos();
+main();
