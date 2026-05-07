@@ -1,163 +1,107 @@
 const SCRAPE_SCRIPT = () => {
+
   const clean = (s) =>
     (s || '')
       .replace(/\s+/g, ' ')
-      .replace(/\n/g, ' ')
       .trim();
-
-  const normalizeTeam = (s) =>
-    clean(s)
-      .replace(/\b(FT|HT|LIVE|TODAY|TOMORROW)\b/gi, '')
-      .replace(/\b\d+\s*[-:]\s*\d+\b/g, '')
-      .replace(/\b\d{1,2}\s+[A-Za-z]{3}\.?\s+\d{4}\b/g, '')
-      .replace(/\bCBS\b/gi, '')
-      .replace(/\bFOX\b/gi, '')
-      .replace(/\bbeIN\b/gi, '')
-      .replace(/\bESPN\b/gi, '')
-      .replace(/\s+/g, ' ')
-      .trim();
-
-  const isTeamLogo = (src) =>
-    /cdn\.resfu\.com\/img_data\/equipos\/\d+\.(png|jpg|jpeg|webp)(\?.*)?$/i.test(src || '');
-
-  const invalidWords = [
-    'news',
-    'login',
-    'register',
-    'transfers',
-    'competitions',
-    'players',
-    'settings',
-    'languages',
-    'password',
-    'google',
-    'facebook',
-    'user',
-    'explore',
-    'favourites',
-    'matches',
-    'televised'
-  ];
-
-  const isBadText = (text) => {
-    const t = text.toLowerCase();
-
-    return (
-      !t ||
-      t.length < 5 ||
-      invalidWords.some((w) => t.includes(w))
-    );
-  };
-
-  const extractMatch = (text) => {
-    const t = clean(text);
-
-    // Equipo 1 0-0 Equipo 2
-    let m = t.match(
-      /([A-Za-zÀ-ÿ0-9\.\-\'\s]{2,60}?)\s+\d+\s*[-:]\s*\d+\s+([A-Za-zÀ-ÿ0-9\.\-\'\s]{2,60})/i
-    );
-
-    if (m) {
-      return {
-        home: normalizeTeam(m[1]),
-        away: normalizeTeam(m[2])
-      };
-    }
-
-    // Equipo 1 vs Equipo 2
-    m = t.match(
-      /([A-Za-zÀ-ÿ0-9\.\-\'\s]{2,60}?)\s+vs\s+([A-Za-zÀ-ÿ0-9\.\-\'\s]{2,60})/i
-    );
-
-    if (m) {
-      return {
-        home: normalizeTeam(m[1]),
-        away: normalizeTeam(m[2])
-      };
-    }
-
-    return null;
-  };
 
   const data = [];
   const seen = new Set();
 
-  // MUCHO más agresivo:
-  // toma cualquier elemento que tenga al menos 2 logos
-  const allElements = [
-    ...document.querySelectorAll('*')
+  // SOLO tomar los bloques reales de partidos
+  const matches = [
+    ...document.querySelectorAll('a.match-link')
   ];
 
-  for (const el of allElements) {
-    const text = clean(el.innerText || '');
+  matches.forEach(matchEl => {
 
-    if (isBadText(text)) continue;
+    // EQUIPO LOCAL
+    const homeTeamEl =
+      matchEl.querySelector(
+        '.team-info.ta-r .name'
+      );
 
-    const logos = [
-      ...el.querySelectorAll('img')
-    ]
-      .map((img) =>
-        img.currentSrc ||
-        img.src ||
-        img.getAttribute('data-src') ||
-        ''
-      )
-      .filter(isTeamLogo);
+    // EQUIPO VISITANTE
+    const awayTeamEl =
+      matchEl.querySelector(
+        '.team-info .name'
+      );
 
-    if (logos.length < 2) continue;
+    // ESCUDO LOCAL
+    const homeLogoEl =
+      matchEl.querySelector(
+        '.team-info.ta-r img.team-shield'
+      );
 
-    // Limpiar duplicados
-    const uniqueLogos = [...new Set(logos)];
-
-    if (uniqueLogos.length < 2) continue;
-
-    const match = extractMatch(text);
-
-    if (!match) continue;
+    // ESCUDO VISITANTE
+    const awayLogoEl =
+      matchEl.querySelectorAll(
+        'img.team-shield'
+      )[1];
 
     if (
-      !match.home ||
-      !match.away ||
-      match.home.length < 2 ||
-      match.away.length < 2
+      !homeTeamEl ||
+      !awayTeamEl ||
+      !homeLogoEl ||
+      !awayLogoEl
     ) {
-      continue;
+      return;
     }
 
-    // Evitar basura
+    const homeTeam =
+      clean(homeTeamEl.textContent);
+
+    const awayTeam =
+      clean(awayTeamEl.textContent);
+
+    const homeLogo =
+      homeLogoEl.src ||
+      homeLogoEl.getAttribute('src');
+
+    const awayLogo =
+      awayLogoEl.src ||
+      awayLogoEl.getAttribute('src');
+
+    // Validaciones
     if (
-      match.home.toLowerCase() === match.away.toLowerCase()
+      !homeTeam ||
+      !awayTeam ||
+      !homeLogo ||
+      !awayLogo
     ) {
-      continue;
+      return;
+    }
+
+    // Solo escudos reales
+    if (
+      !homeLogo.includes('/img_data/equipos/') ||
+      !awayLogo.includes('/img_data/equipos/')
+    ) {
+      return;
     }
 
     const key =
-      `${match.home} vs ${match.away}`;
+      `${homeTeam} vs ${awayTeam}`;
 
-    if (seen.has(key)) continue;
+    if (seen.has(key)) {
+      return;
+    }
 
     seen.add(key);
 
     data.push({
       match: key,
-      homeLogo: uniqueLogos[0],
-      awayLogo: uniqueLogos[1]
+      homeLogo,
+      awayLogo
     });
 
-    console.log('[SCRAPE]', key);
-  }
-
-  // Eliminar posibles partidos basura
-  return data.filter((x) => {
-    const t = x.match.toLowerCase();
-
-    return (
-      !t.includes('login') &&
-      !t.includes('register') &&
-      !t.includes('news') &&
-      !t.includes('password') &&
-      !t.includes('google') &&
-      !t.includes('facebook')
+    console.log(
+      '[SCRAPE]',
+      key
     );
+
   });
+
+  return data;
+
 };
