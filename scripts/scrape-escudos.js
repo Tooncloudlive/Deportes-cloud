@@ -116,7 +116,7 @@ async function findFlashscoreMatchUrl(page, homeTeam, awayTeam) {
     // Extraer el primer resultado que sea de flashscore.com
     const flashscoreUrl = await page.evaluate(() => {
       // Buscar todos los enlaces de resultados
-      const links = document.querySelectorAll('a[href*="flashscore"]');
+      const links = document.querySelectorAll('a[href*="flashscore live"]');
       for (const link of links) {
         const href = link.href || '';
         // Solo enlaces a paginas de partidos (no a paginas de equipo, odds, etc.)
