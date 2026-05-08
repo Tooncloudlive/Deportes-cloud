@@ -1,15 +1,5 @@
 [
   {
-    "match": "Levante vs Osasuna",
-    "homeLogo": "https://static.flashscore.com/res/image/data/25Tx45il-QqzX7amJ.png",
-    "awayLogo": "https://static.flashscore.com/res/image/data/84LOczeM-Yu8w588N.png"
-  },
-  {
-    "match": "Hull City vs Millwall",
-    "homeLogo": "https://static.flashscore.com/res/image/data/jL2Nk4Fa-bJFnYpTt.png",
-    "awayLogo": "https://static.flashscore.com/res/image/data/C8aMqcXg-4UX5t7jk.png"
-  },
-  {
     "match": "UTC Cajamarca vs FC Cajamarca",
     "homeLogo": "https://static.flashscore.com/res/image/data/txvKJLh5-vJhlopip.png",
     "awayLogo": "https://static.flashscore.com/res/image/data/bLzfZKZA-fFhdpXur.png"
@@ -21,8 +11,8 @@
   },
   {
     "match": "Wanderers vs Liverpool",
-    "homeLogo": "https://static.flashscore.com/res/image/data/pG3ecDhl-ziBT4qwJ.png",
-    "awayLogo": "https://static.flashscore.com/res/image/data/WCc1ByCa-zFwegNb8.png"
+    "homeLogo": "https://static.flashscore.com/res/image/data/WCc1ByCa-zFwegNb8.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/pG3ecDhl-ziBT4qwJ.png"
   },
   {
     "match": "Knicks vs 76ers",
