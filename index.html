@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ToonCloud Deportes</title>
-<!-- Build: 2026-05-08 19:55 -->
+<!-- Build: 2026-05-08 20:56 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -419,13 +419,19 @@ header {
   border-radius: 20px 0 0 20px;
 }
 
-.glass-card.finished {
-  opacity: 0.5;
+/* Animacion para eliminar cards finalizadas */
+.glass-card.removing {
+  animation: slide-out 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @keyframes slide-up {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-out {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(-20px); height: 0; padding: 0; margin: 0; overflow: hidden; }
 }
 
 /* Card Content */
@@ -535,11 +541,6 @@ header {
 .status-upcoming {
   background: rgba(245, 158, 11, 0.15);
   color: var(--warning);
-}
-
-.status-finished {
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.5);
 }
 
 /* Card Actions */
@@ -872,6 +873,7 @@ header {
 <base target="_blank">
 <base target="_blank">
 <base target="_blank">
+<base target="_blank">
 </head>
 
 <body>
@@ -891,7 +893,7 @@ header {
   
 <div class="container">
   <div style="text-align: center; padding: 20px 16px; margin-bottom: 16px;">
-    <p class="subtitle">Este sitio no aloja ni transmite contenido propio. Todo el material proviene de fuentes públicas externas. No tenemos control ni responsabilidad sobre dicho contenido ni sobre los enlaces compartidos.</p>
+    <p class="subtitle">Este sitio no aloja ni transmite contenido propio. Todo el material proviene de fuentes p&uacute;blicas externas. No tenemos control ni responsabilidad sobre dicho contenido ni sobre los enlaces compartidos.</p>
     <p class="copyright">Larvas S.A &copy;</p>
   </div>
 
@@ -951,14 +953,12 @@ header {
 // Si no quieres escudo para un equipo, deja el campo vac&iacute;o: ""
 
 const matchesLogos = [
-  { match: "Lens vs Nantes", homeLogo: "https://static.flashscore.com/res/image/data/8rvdCLwS-YRnNdAyj.png", awayLogo: "https://static.flashscore.com/res/image/data/GUG6w9Yg-rTEFAmVL.png" },
-  { match: "Torino vs Sassuolo", homeLogo: "https://static.flashscore.com/res/image/data/OQWGjGcM-0lwy4Ij1.png", awayLogo: "https://static.flashscore.com/res/image/data/IFKEHRGG-6ZDR6zEL.png" },
   { match: "Levante vs Osasuna", homeLogo: "https://static.flashscore.com/res/image/data/25Tx45il-QqzX7amJ.png", awayLogo: "https://static.flashscore.com/res/image/data/84LOczeM-Yu8w588N.png" },
-  { match: "Hull City vs Millwall", homeLogo: "https://static.flashscore.com/res/image/data/zgM6LvBr-bJFnYpTt.png", awayLogo: "https://static.flashscore.com/res/image/data/GbTywlhl-d25dyg8r.png" },
-  { match: "UTC Cajamarca vs FC Cajamarca", homeLogo: "https://static.flashscore.com/res/image/data/txvKJLh5-vJhlopip.png", awayLogo: "https://static.flashscore.com/res/image/data/Q91LTSg5-v9LWknvd.png" },
+  { match: "Hull City vs Millwall", homeLogo: "https://static.flashscore.com/res/image/data/jL2Nk4Fa-bJFnYpTt.png", awayLogo: "https://static.flashscore.com/res/image/data/C8aMqcXg-4UX5t7jk.png" },
+  { match: "UTC Cajamarca vs FC Cajamarca", homeLogo: "https://static.flashscore.com/res/image/data/txvKJLh5-vJhlopip.png", awayLogo: "https://static.flashscore.com/res/image/data/bLzfZKZA-fFhdpXur.png" },
   { match: "Boca Juniors de Cali vs Alianza", homeLogo: "https://static.flashscore.com/res/image/data/KtChAhe5-YkXz5hTm.png", awayLogo: "https://static.flashscore.com/res/image/data/hlFxY4e5-jqTIQW5H.png" },
-  { match: "Wanderers vs Liverpool", homeLogo: "https://static.flashscore.com/res/image/data/WCc1ByCa-zFwegNb8.png", awayLogo: "https://static.flashscore.com/res/image/data/pG3ecDhl-ziBT4qwJ.png" },
-  { match: "Knicks vs 76ers", homeLogo: "https://static.flashscore.com/res/image/data/UBTxFpcM-I30Q0K9l.png", awayLogo: "https://static.flashscore.com/res/image/data/rNU4bqCr-4bqaxRtQ.png" },
+  { match: "Wanderers vs Liverpool", homeLogo: "https://static.flashscore.com/res/image/data/pG3ecDhl-ziBT4qwJ.png", awayLogo: "https://static.flashscore.com/res/image/data/WCc1ByCa-zFwegNb8.png" },
+  { match: "Knicks vs 76ers", homeLogo: "https://static.flashscore.com/res/image/data/rNU4bqCr-4bqaxRtQ.png", awayLogo: "https://static.flashscore.com/res/image/data/UBTxFpcM-I30Q0K9l.png" },
   { match: "Banfield vs San Martín Tucumán", homeLogo: "https://static.flashscore.com/res/image/data/UBFrXuDa-zPA7Mpsn.png", awayLogo: "https://static.flashscore.com/res/image/data/0hFCl2f5-QitRwNMT.png" },
   { match: "Spurs vs Timberwolves", homeLogo: "https://static.flashscore.com/res/image/data/8f2WVCFG-SrHHDGUm.png", awayLogo: "https://static.flashscore.com/res/image/data/hv2nHleM-KbXk58wB.png" }
 ];
@@ -967,14 +967,6 @@ const matchesLogos = [
 // DATOS DE EVENTOS
 // =====================================================
 const eventsData = [
-  { time: "15:00", match: "Copa del Rey de Arabia Saudita: Al Kholood vs Al Hilal - Final", link: "https://streamx550.com/global2.php?channel=foxdeportes" },
-  { time: "15:00", match: "Copa del Rey de Arabia Saudita: Al Kholood vs Al Hilal - Final", link: "https://streamx550.com/global2.php?channel=foxone1" },
-  { time: "15:30", match: "LaLiga 2: Cádiz vs Deportivo La Coruña", link: "https://streamx550.com/global2.php?channel=hyper1" },
-  { time: "15:30", match: "Bundesliga: Borussia Dortmund vs Eintracht Frankfurt", link: "https://streamx550.com/global2.php?channel=disney1" },
-  { time: "15:30", match: "Bundesliga: Borussia Dortmund vs Eintracht Frankfurt", link: "https://streamx550.com/global2.php?channel=espn5" },
-  { time: "15:45", match: "Ligue 1: Lens vs Nantes", link: "https://streamx550.com/global2.php?channel=disney2" },
-  { time: "15:45", match: "Ligue 1: Lens vs Nantes", link: "https://streamx550.com/global2.php?channel=foxone2" },
-  { time: "15:45", match: "Serie A: Torino vs Sassuolo", link: "https://streamx550.com/global2.php?channel=disney3" },
   { time: "16:00", match: "LaLiga: Levante vs Osasuna", link: "https://streamx550.com/global2.php?channel=disney4" },
   { time: "16:00", match: "LaLiga: Levante vs Osasuna", link: "https://streamx550.com/global2.php?channel=espn2" },
   { time: "16:00", match: "LaLiga: Levante vs Osasuna", link: "https://streamx550.com/global2.php?channel=espndeportes" },
@@ -1259,7 +1251,14 @@ function selectChannel(matchId, link, name) {
 function renderEvents(list = eventsData) {
   const container = document.getElementById("events");
   container.innerHTML = "";
-  groupedEventsCache = groupEventsByMatch(list);
+  
+  // Agrupar eventos
+  let grouped = groupEventsByMatch(list);
+  
+  // FILTRO: Ocultar partidos FINALIZADOS del home
+  grouped = grouped.filter(ev => getStatus(ev.time) !== "FINALIZADO");
+  
+  groupedEventsCache = grouped;
   updateStats(list);
 
   if (groupedEventsCache.length === 0) {
@@ -1278,20 +1277,19 @@ function renderEvents(list = eventsData) {
   groupedEventsCache.forEach((ev, index) => {
     const status = getStatus(ev.time);
     const isActive = status === "EN VIVO";
-    const isFinished = status === "FINALIZADO";
     const league = getLeague(ev.match);
     const hasMultipleChannels = ev.channels.length > 1;
     const matchId = `${ev.time}-${ev.match.replace(/[^a-zA-Z0-9]/g, '-')}`;
 
     const card = document.createElement("div");
-    card.className = `glass-card ${isActive ? 'live' : ''} ${isFinished ? 'finished' : ''}`;
+    card.className = `glass-card ${isActive ? 'live' : ''}`;
     card.dataset.matchId = matchId;
     card.dataset.time = ev.time;
     card.dataset.selectedChannel = ev.channels[0]?.link || '';
     card.style.animationDelay = `${index * 0.05}s`;
 
     let channelHTML = '';
-    if (!isFinished && ev.channels.length > 0) {
+    if (ev.channels.length > 0) {
       if (hasMultipleChannels) {
         channelHTML = `
           <div class="channel-selector">
@@ -1322,12 +1320,11 @@ function renderEvents(list = eventsData) {
             <span class="league-badge">${league}</span>
           </div>
           <div class="match">${generateMatchHTML(ev.match)}</div>
-          <div class="status-badge ${isActive ? 'status-live' : isFinished ? 'status-finished' : 'status-upcoming'}">
-            ${isActive ? '<span class="pulse-dot"></span>' : isFinished ? '&#10003;' : '&#8987;'}
+          <div class="status-badge ${isActive ? 'status-live' : 'status-upcoming'}">
+            ${isActive ? '<span class="pulse-dot"></span>' : '&#8987;'}
             <span>${status}</span>
           </div>
         </div>
-        ${!isFinished ? `
         <div class="card-actions">
           ${channelHTML}
           <button class="btn-watch ${isActive ? 'enabled' : 'disabled'}" 
@@ -1336,7 +1333,6 @@ function renderEvents(list = eventsData) {
             <span>${isActive ? 'Ver' : 'Pr&oacute;ximo'}</span>
           </button>
         </div>
-        ` : ''}
       </div>
     `;
 
@@ -1370,7 +1366,11 @@ function closePlayer() {
 }
 
 function filterEvents(text) {
-  const filtered = eventsData.filter(e => e.match.toLowerCase().includes(text.toLowerCase()));
+  // FILTRO: Al buscar tambi&eacute;n excluir partidos finalizados
+  const filtered = eventsData.filter(e => {
+    if (!e.match.toLowerCase().includes(text.toLowerCase())) return false;
+    return getStatus(e.time) !== "FINALIZADO";
+  });
   renderEvents(filtered);
 }
 
@@ -1381,31 +1381,48 @@ function updateStatuses() {
     const time = card.dataset.time;
     if (!time) return;
     const status = getStatus(time);
+    
+    // Si el partido acaba de finalizar, eliminar la card con animaci&oacute;n
+    if (status === "FINALIZADO") {
+      card.classList.add('removing');
+      setTimeout(() => {
+        if (card.parentNode) card.remove();
+        // Revisar si quedan cards visibles
+        const remaining = document.querySelectorAll('.glass-card:not(.removing)');
+        if (remaining.length === 0) {
+          const container = document.getElementById("events");
+          container.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-state-icon">&#128269;</div>
+              <p class="empty-state-text">No hay partidos en curso</p>
+              <p class="empty-state-subtext">Vuelve m&aacute;s tarde para ver nuevos eventos</p>
+            </div>
+          `;
+        }
+      }, 400);
+      return;
+    }
+    
     const statusEl = card.querySelector('.status-badge');
     const btn = card.querySelector('.btn-watch');
     if (status === "EN VIVO") liveCount++;
     else if (status === "PR&Oacute;XIMO") upcomingCount++;
     const currentStatusText = statusEl.querySelector('span:last-child').textContent;
     if (currentStatusText !== status) {
-      statusEl.className = `status-badge ${status === 'EN VIVO' ? 'status-live' : status === 'FINALIZADO' ? 'status-finished' : 'status-upcoming'}`;
-      statusEl.innerHTML = `${status === 'EN VIVO' ? '<span class="pulse-dot"></span>' : status === 'FINALIZADO' ? '&#10003;' : '&#8987;'}<span>${status}</span>`;
-      card.classList.remove('live', 'finished');
+      statusEl.className = `status-badge ${status === 'EN VIVO' ? 'status-live' : 'status-upcoming'}`;
+      statusEl.innerHTML = `${status === 'EN VIVO' ? '<span class="pulse-dot"></span>' : '&#8987;'}<span>${status}</span>`;
+      card.classList.remove('live');
       if (status === 'EN VIVO') card.classList.add('live');
-      if (status === 'FINALIZADO') card.classList.add('finished');
       if (btn) {
         const isActive = status === "EN VIVO";
         btn.className = `btn-watch ${isActive ? 'enabled' : 'disabled'}`;
         btn.onclick = isActive ? () => watchMatch(card.dataset.matchId) : null;
         btn.innerHTML = `<span>${isActive ? '&#9654;' : '&#8987;'}</span><span>${isActive ? 'Ver' : 'Pr&oacute;ximo'}</span>`;
       }
-      if (status === 'FINALIZADO') {
-        const actions = card.querySelector('.card-actions');
-        if (actions) actions.style.display = 'none';
-      }
     }
   });
   document.getElementById("live-count").textContent = `${liveCount} EN VIVO`;
-  document.getElementById("upcoming-count").textContent = `${upcomingCount} PR&Oacute;XIMOS`;
+  document.getElementById("upcoming-count").textContent = `${upcomingCount} PROXIMOS`;
 }
 
 // Event listeners
