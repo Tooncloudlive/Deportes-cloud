@@ -1,10 +1,5 @@
 [
   {
-    "match": "Torino vs Sassuolo",
-    "homeLogo": "https://static.flashscore.com/res/image/data/OQWGjGcM-0lwy4Ij1.png",
-    "awayLogo": "https://static.flashscore.com/res/image/data/IFKEHRGG-6ZDR6zEL.png"
-  },
-  {
     "match": "Levante vs Osasuna",
     "homeLogo": "https://static.flashscore.com/res/image/data/25Tx45il-QqzX7amJ.png",
     "awayLogo": "https://static.flashscore.com/res/image/data/84LOczeM-Yu8w588N.png"
@@ -31,8 +26,8 @@
   },
   {
     "match": "Knicks vs 76ers",
-    "homeLogo": "https://static.flashscore.com/res/image/data/UBTxFpcM-I30Q0K9l.png",
-    "awayLogo": "https://static.flashscore.com/res/image/data/rNU4bqCr-4bqaxRtQ.png"
+    "homeLogo": "https://static.flashscore.com/res/image/data/rNU4bqCr-4bqaxRtQ.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/UBTxFpcM-I30Q0K9l.png"
   },
   {
     "match": "Banfield vs San Martín Tucumán",
