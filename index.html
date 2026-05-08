@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ToonCloud Deportes</title>
-<!-- Build: 2026-05-08 11:52 -->
+<!-- Build: 2026-05-08 13:25 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -950,12 +950,41 @@ header {
 // El formato es: { match: "Equipo Local vs Equipo Visitante", homeLogo: "URL_ESCUDO_LOCAL", awayLogo: "URL_ESCUDO_VISITANTE" }
 // Si no quieres escudo para un equipo, deja el campo vac&iacute;o: ""
 
-const matchesLogos = [];
+const matchesLogos = [
+  { match: "Hull City vs Millwall", homeLogo: "https://static.flashscore.com/res/image/data/jL2Nk4Fa-bJFnYpTt.png", awayLogo: "https://static.flashscore.com/res/image/data/C8aMqcXg-4UX5t7jk.png" },
+  { match: "Boca Juniors de Cali vs Alianza", homeLogo: "https://static.flashscore.com/res/image/data/KtChAhe5-YkXz5hTm.png", awayLogo: "https://static.flashscore.com/res/image/data/hlFxY4e5-jqTIQW5H.png" },
+  { match: "Wanderers vs Liverpool", homeLogo: "https://static.flashscore.com/res/image/data/WCc1ByCa-zFwegNb8.png", awayLogo: "https://static.flashscore.com/res/image/data/pG3ecDhl-ziBT4qwJ.png" },
+  { match: "Knicks vs 76ers", homeLogo: "https://static.flashscore.com/res/image/data/rNU4bqCr-4bqaxRtQ.png", awayLogo: "https://static.flashscore.com/res/image/data/UBTxFpcM-I30Q0K9l.png" },
+  { match: "Banfield vs San Martín Tucumán", homeLogo: "https://static.flashscore.com/res/image/data/UBFrXuDa-zPA7Mpsn.png", awayLogo: "https://static.flashscore.com/res/image/data/0hFCl2f5-QitRwNMT.png" },
+  { match: "Spurs vs Timberwolves", homeLogo: "https://static.flashscore.com/res/image/data/8f2WVCFG-SrHHDGUm.png", awayLogo: "https://static.flashscore.com/res/image/data/hv2nHleM-KbXk58wB.png" }
+];
 
 // =====================================================
 // DATOS DE EVENTOS
 // =====================================================
-const eventsData = [];
+const eventsData = [
+  { time: "15:00", match: "Copa del Rey de Arabia Saudita: Al Kholood vs Al Hilal - Final", link: "https://streamx550.com/global2.php?channel=foxdeportes" },
+  { time: "15:00", match: "Copa del Rey de Arabia Saudita: Al Kholood vs Al Hilal - Final", link: "https://streamx550.com/global2.php?channel=foxone1" },
+  { time: "15:30", match: "LaLiga 2: Cádiz vs Deportivo La Coruña", link: "https://streamx550.com/global2.php?channel=hyper1" },
+  { time: "15:30", match: "Bundesliga: Borussia Dortmund vs Eintracht Frankfurt", link: "https://streamx550.com/global2.php?channel=disney1" },
+  { time: "15:30", match: "Bundesliga: Borussia Dortmund vs Eintracht Frankfurt", link: "https://streamx550.com/global2.php?channel=espn5" },
+  { time: "15:45", match: "Ligue 1: Lens vs Nantes", link: "https://streamx550.com/global2.php?channel=disney2" },
+  { time: "15:45", match: "Ligue 1: Lens vs Nantes", link: "https://streamx550.com/global2.php?channel=foxone2" },
+  { time: "15:45", match: "Serie A: Torino vs Sassuolo", link: "https://streamx550.com/global2.php?channel=disney3" },
+  { time: "16:00", match: "LaLiga: Levante vs Osasuna", link: "https://streamx550.com/global2.php?channel=disney4" },
+  { time: "16:00", match: "LaLiga: Levante vs Osasuna", link: "https://streamx550.com/global2.php?channel=espn2" },
+  { time: "16:00", match: "LaLiga: Levante vs Osasuna", link: "https://streamx550.com/global2.php?channel=espndeportes" },
+  { time: "16:00", match: "Championship: Hull City vs Millwall", link: "https://streamx550.com/global2.php?channel=espn7" },
+  { time: "17:00", match: "Liga 1: UTC Cajamarca vs FC Cajamarca", link: "https://streamx550.com/global2.php?channel=liga1max" },
+  { time: "17:00", match: "Liga 1: UTC Cajamarca vs FC Cajamarca", link: "https://streamx550.com/global2.php?channel=fanatiz1" },
+  { time: "17:00", match: "Copa Colombia: Boca Juniors de Cali vs Alianza", link: "https://streamx550.com/global2.php?channel=winplus" },
+  { time: "17:00", match: "Copa Colombia: Boca Juniors de Cali vs Alianza", link: "https://streamx550.com/global2.php?channel=winplus2" },
+  { time: "19:30", match: "Primera División: Wanderers vs Liverpool", link: "https://streamx550.com/global2.php?channel=disney1" },
+  { time: "20:00", match: "NBA: Knicks vs 76ers", link: "https://streamx550.com/global2.php?channel=amazon1" },
+  { time: "21:10", match: "Copa Argentina: Banfield vs San Martín Tucumán", link: "https://streamx550.com/global2.php?channel=tyc" },
+  { time: "21:10", match: "Copa Argentina: Banfield vs San Martín Tucumán", link: "https://streamx550.com/global2.php?channel=tycint" },
+  { time: "22:30", match: "NBA: Spurs vs Timberwolves", link: "https://streamx550.com/global2.php?channel=amazon2" }
+];
 
 const leagueMap = {
   'Super Lig': 'Super Lig', 'UEFA Champions League': 'UCL', 'UEFA Europa League': 'UEL',
