@@ -1,7 +1,12 @@
 [
   {
-    "match": "Wanderers vs Liverpool",
-    "homeLogo": "https://static.flashscore.com/res/image/data/hhDbGZYg-2ajKz8t4.png",
-    "awayLogo": "https://static.flashscore.com/res/image/data/veY50yzB-UHrERd2h.png"
+    "match": "Banfield vs San Martín Tucumán",
+    "homeLogo": "https://static.flashscore.com/res/image/data/UBFrXuDa-zPA7Mpsn.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/IoUymhzB-A51QHPTO.png"
+  },
+  {
+    "match": "Spurs vs Timberwolves",
+    "homeLogo": "https://static.flashscore.com/res/image/data/8f2WVCFG-SrHHDGUm.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/hv2nHleM-KbXk58wB.png"
   }
 ]
