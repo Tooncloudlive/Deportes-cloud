@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ToonCloud Deportes</title>
-<!-- Build: 2026-05-07 23:53 -->
+<!-- Build: 2026-05-08 01:08 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -950,42 +950,12 @@ header {
 // El formato es: { match: "Equipo Local vs Equipo Visitante", homeLogo: "URL_ESCUDO_LOCAL", awayLogo: "URL_ESCUDO_VISITANTE" }
 // Si no quieres escudo para un equipo, deja el campo vac&iacute;o: ""
 
-const matchesLogos = [
-  { match: "Boston River vs Millonarios", homeLogo: "https://static.flashscore.com/res/image/data/lvnKywHG-pOoSyvxr.png", awayLogo: "https://static.flashscore.com/res/image/data/COAjhCg5-6kduDy6P.png" },
-  { match: "O'Higgins vs São Paulo", homeLogo: "https://static.flashscore.com/res/image/data/YgK3qNCa-AkTesf41.png", awayLogo: "https://static.flashscore.com/res/image/data/f1MK7GzS-zPh2QHcM.png" },
-  { match: "Ind. Yumbo vs Deportivo Pereira", homeLogo: "https://static.flashscore.com/res/image/data/YoyCsODa-4CASjXQA.png", awayLogo: "https://static.flashscore.com/res/image/data/l2DCBWh5-rysGeGXN.png" },
-  { match: "Cavaliers vs Pistons", homeLogo: "https://static.flashscore.com/res/image/data/MoYJBde5-xrW85HXg.png", awayLogo: "https://static.flashscore.com/res/image/data/AqYiLvHG-6ZJgih6O.png" },
-  { match: "Coquimbo Unido vs Universitario", homeLogo: "https://static.flashscore.com/res/image/data/O40oH8h5-hMng3olL.png", awayLogo: "https://static.flashscore.com/res/image/data/QNQhOVBr-pzbJPTLS.png" },
-  { match: "Medellín vs Flamengo", homeLogo: "https://static.flashscore.com/res/image/data/lMyrsdhl-plopiAtN.png", awayLogo: "https://static.flashscore.com/res/image/data/ADvIaiZA-2R2JjDQC.png" },
-  { match: "Carabobo vs River Plate", homeLogo: "https://static.flashscore.com/res/image/data/0vOQijWg-CtnfXRKE.png", awayLogo: "https://static.flashscore.com/res/image/data/Ic4xH0Yg-nqhLBCKD.png" },
-  { match: "Atlético Bucaramanga vs Real Santander", homeLogo: "https://static.flashscore.com/res/image/data/Eovph8GG-0xyt4W2g.png", awayLogo: "https://static.flashscore.com/res/image/data/p6ESPiYg-YLa74tUj.png" },
-  { match: "Lakers vs Thunder", homeLogo: "https://static.flashscore.com/res/image/data/06fGDMdM-6y7aqqwb.png", awayLogo: "https://static.flashscore.com/res/image/data/bFgddNh5-4zc22IQb.png" },
-  { match: "Junior vs Cerro Porteño", homeLogo: "https://static.flashscore.com/res/image/data/Ovlb3hBr-0fSZKKz2.png", awayLogo: "https://static.flashscore.com/res/image/data/Kz2UFMh5-G2820wU0.png" }
-];
+const matchesLogos = [];
 
 // =====================================================
 // DATOS DE EVENTOS
 // =====================================================
 const eventsData = [
-  { time: "19:00", match: "Copa Libertadores: Mirassol vs LDU Quito", link: "https://streamx550.com/global2.php?channel=disney5" },
-  { time: "19:00", match: "Copa Libertadores: Mirassol vs LDU Quito", link: "https://streamx550.com/global2.php?channel=fanatiz1" },
-  { time: "19:00", match: "Copa Libertadores: Mirassol vs LDU Quito", link: "https://streamx550.com/global2.php?channel=espn7" },
-  { time: "19:00", match: "Copa Libertadores: Mirassol vs LDU Quito", link: "https://streamx550.com/global2.php?channel=fox2ar" },
-  { time: "19:00", match: "Copa Libertadores: Platense vs Peñarol", link: "https://streamx550.com/global2.php?channel=disney6" },
-  { time: "19:00", match: "Copa Libertadores: Platense vs Peñarol", link: "https://streamx550.com/global2.php?channel=fanatiz2" },
-  { time: "19:00", match: "Copa Libertadores: Platense vs Peñarol", link: "https://streamx550.com/global2.php?channel=fox1ar" },
-  { time: "19:00", match: "Copa Libertadores: Platense vs Peñarol", link: "https://streamx550.com/global2.php?channel=espn2" },
-  { time: "19:00", match: "Copa Libertadores: Platense vs Peñarol", link: "https://streamx550.com/global2.php?channel=espn2mx" },
-  { time: "19:00", match: "Copa Sudamericana: Boston River vs Millonarios", link: "https://streamx550.com/global2.php?channel=disney7" },
-  { time: "19:00", match: "Copa Sudamericana: Boston River vs Millonarios", link: "https://streamx550.com/global2.php?channel=fanatiz3" },
-  { time: "19:00", match: "Copa Sudamericana: Boston River vs Millonarios", link: "https://streamx550.com/global2.php?channel=dsports" },
-  { time: "19:00", match: "Copa Sudamericana: Boston River vs Millonarios", link: "https://streamx550.com/global2.php?channel=espn" },
-  { time: "19:00", match: "Copa Sudamericana: O'Higgins vs São Paulo", link: "https://streamx550.com/global2.php?channel=disney8" },
-  { time: "19:00", match: "Copa Sudamericana: O'Higgins vs São Paulo", link: "https://streamx550.com/global2.php?channel=fanatiz4" },
-  { time: "19:00", match: "Copa Sudamericana: O'Higgins vs São Paulo", link: "https://streamx550.com/global2.php?channel=espn5" },
-  { time: "20:00", match: "Copa Colombia: Ind. Yumbo vs Deportivo Pereira", link: "https://streamx550.com/global2.php?channel=winplus" },
-  { time: "20:00", match: "Copa Colombia: Ind. Yumbo vs Deportivo Pereira", link: "https://streamx550.com/global2.php?channel=winplus2" },
-  { time: "20:00", match: "NBA: Cavaliers vs Pistons", link: "https://streamx550.com/global2.php?channel=amazon1" },
   { time: "21:00", match: "Copa Libertadores: Coquimbo Unido vs Universitario", link: "https://streamx550.com/global2.php?channel=disney9" },
   { time: "21:00", match: "Copa Libertadores: Coquimbo Unido vs Universitario", link: "https://streamx550.com/global2.php?channel=fanatiz5" },
   { time: "21:00", match: "Copa Libertadores: Coquimbo Unido vs Universitario", link: "https://streamx550.com/global2.php?channel=espn" },
