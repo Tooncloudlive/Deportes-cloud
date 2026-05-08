@@ -419,13 +419,19 @@ header {
   border-radius: 20px 0 0 20px;
 }
 
-.glass-card.finished {
-  opacity: 0.5;
+/* Animacion para eliminar cards finalizadas */
+.glass-card.removing {
+  animation: slide-out 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @keyframes slide-up {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-out {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(-20px); height: 0; padding: 0; margin: 0; overflow: hidden; }
 }
 
 /* Card Content */
@@ -535,11 +541,6 @@ header {
 .status-upcoming {
   background: rgba(245, 158, 11, 0.15);
   color: var(--warning);
-}
-
-.status-finished {
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.5);
 }
 
 /* Card Actions */
@@ -872,6 +873,7 @@ header {
 <base target="_blank">
 <base target="_blank">
 <base target="_blank">
+<base target="_blank">
 </head>
 
 <body>
@@ -891,7 +893,7 @@ header {
   
 <div class="container">
   <div style="text-align: center; padding: 20px 16px; margin-bottom: 16px;">
-    <p class="subtitle">Este sitio no aloja ni transmite contenido propio. Todo el material proviene de fuentes públicas externas. No tenemos control ni responsabilidad sobre dicho contenido ni sobre los enlaces compartidos.</p>
+    <p class="subtitle">Este sitio no aloja ni transmite contenido propio. Todo el material proviene de fuentes p&uacute;blicas externas. No tenemos control ni responsabilidad sobre dicho contenido ni sobre los enlaces compartidos.</p>
     <p class="copyright">Larvas S.A &copy;</p>
   </div>
 
@@ -1228,7 +1230,14 @@ function selectChannel(matchId, link, name) {
 function renderEvents(list = eventsData) {
   const container = document.getElementById("events");
   container.innerHTML = "";
-  groupedEventsCache = groupEventsByMatch(list);
+  
+  // Agrupar eventos
+  let grouped = groupEventsByMatch(list);
+  
+  // FILTRO: Ocultar partidos FINALIZADOS del home
+  grouped = grouped.filter(ev => getStatus(ev.time) !== "FINALIZADO");
+  
+  groupedEventsCache = grouped;
   updateStats(list);
 
   if (groupedEventsCache.length === 0) {
@@ -1247,20 +1256,19 @@ function renderEvents(list = eventsData) {
   groupedEventsCache.forEach((ev, index) => {
     const status = getStatus(ev.time);
     const isActive = status === "EN VIVO";
-    const isFinished = status === "FINALIZADO";
     const league = getLeague(ev.match);
     const hasMultipleChannels = ev.channels.length > 1;
     const matchId = `${ev.time}-${ev.match.replace(/[^a-zA-Z0-9]/g, '-')}`;
 
     const card = document.createElement("div");
-    card.className = `glass-card ${isActive ? 'live' : ''} ${isFinished ? 'finished' : ''}`;
+    card.className = `glass-card ${isActive ? 'live' : ''}`;
     card.dataset.matchId = matchId;
     card.dataset.time = ev.time;
     card.dataset.selectedChannel = ev.channels[0]?.link || '';
     card.style.animationDelay = `${index * 0.05}s`;
 
     let channelHTML = '';
-    if (!isFinished && ev.channels.length > 0) {
+    if (ev.channels.length > 0) {
       if (hasMultipleChannels) {
         channelHTML = `
           <div class="channel-selector">
@@ -1291,12 +1299,11 @@ function renderEvents(list = eventsData) {
             <span class="league-badge">${league}</span>
           </div>
           <div class="match">${generateMatchHTML(ev.match)}</div>
-          <div class="status-badge ${isActive ? 'status-live' : isFinished ? 'status-finished' : 'status-upcoming'}">
-            ${isActive ? '<span class="pulse-dot"></span>' : isFinished ? '&#10003;' : '&#8987;'}
+          <div class="status-badge ${isActive ? 'status-live' : 'status-upcoming'}">
+            ${isActive ? '<span class="pulse-dot"></span>' : '&#8987;'}
             <span>${status}</span>
           </div>
         </div>
-        ${!isFinished ? `
         <div class="card-actions">
           ${channelHTML}
           <button class="btn-watch ${isActive ? 'enabled' : 'disabled'}" 
@@ -1305,7 +1312,6 @@ function renderEvents(list = eventsData) {
             <span>${isActive ? 'Ver' : 'Pr&oacute;ximo'}</span>
           </button>
         </div>
-        ` : ''}
       </div>
     `;
 
@@ -1339,7 +1345,11 @@ function closePlayer() {
 }
 
 function filterEvents(text) {
-  const filtered = eventsData.filter(e => e.match.toLowerCase().includes(text.toLowerCase()));
+  // FILTRO: Al buscar tambi&eacute;n excluir partidos finalizados
+  const filtered = eventsData.filter(e => {
+    if (!e.match.toLowerCase().includes(text.toLowerCase())) return false;
+    return getStatus(e.time) !== "FINALIZADO";
+  });
   renderEvents(filtered);
 }
 
@@ -1350,31 +1360,48 @@ function updateStatuses() {
     const time = card.dataset.time;
     if (!time) return;
     const status = getStatus(time);
+    
+    // Si el partido acaba de finalizar, eliminar la card con animaci&oacute;n
+    if (status === "FINALIZADO") {
+      card.classList.add('removing');
+      setTimeout(() => {
+        if (card.parentNode) card.remove();
+        // Revisar si quedan cards visibles
+        const remaining = document.querySelectorAll('.glass-card:not(.removing)');
+        if (remaining.length === 0) {
+          const container = document.getElementById("events");
+          container.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-state-icon">&#128269;</div>
+              <p class="empty-state-text">No hay partidos en curso</p>
+              <p class="empty-state-subtext">Vuelve m&aacute;s tarde para ver nuevos eventos</p>
+            </div>
+          `;
+        }
+      }, 400);
+      return;
+    }
+    
     const statusEl = card.querySelector('.status-badge');
     const btn = card.querySelector('.btn-watch');
     if (status === "EN VIVO") liveCount++;
     else if (status === "PR&Oacute;XIMO") upcomingCount++;
     const currentStatusText = statusEl.querySelector('span:last-child').textContent;
     if (currentStatusText !== status) {
-      statusEl.className = `status-badge ${status === 'EN VIVO' ? 'status-live' : status === 'FINALIZADO' ? 'status-finished' : 'status-upcoming'}`;
-      statusEl.innerHTML = `${status === 'EN VIVO' ? '<span class="pulse-dot"></span>' : status === 'FINALIZADO' ? '&#10003;' : '&#8987;'}<span>${status}</span>`;
-      card.classList.remove('live', 'finished');
+      statusEl.className = `status-badge ${status === 'EN VIVO' ? 'status-live' : 'status-upcoming'}`;
+      statusEl.innerHTML = `${status === 'EN VIVO' ? '<span class="pulse-dot"></span>' : '&#8987;'}<span>${status}</span>`;
+      card.classList.remove('live');
       if (status === 'EN VIVO') card.classList.add('live');
-      if (status === 'FINALIZADO') card.classList.add('finished');
       if (btn) {
         const isActive = status === "EN VIVO";
         btn.className = `btn-watch ${isActive ? 'enabled' : 'disabled'}`;
         btn.onclick = isActive ? () => watchMatch(card.dataset.matchId) : null;
         btn.innerHTML = `<span>${isActive ? '&#9654;' : '&#8987;'}</span><span>${isActive ? 'Ver' : 'Pr&oacute;ximo'}</span>`;
       }
-      if (status === 'FINALIZADO') {
-        const actions = card.querySelector('.card-actions');
-        if (actions) actions.style.display = 'none';
-      }
     }
   });
   document.getElementById("live-count").textContent = `${liveCount} EN VIVO`;
-  document.getElementById("upcoming-count").textContent = `${upcomingCount} PR&Oacute;XIMOS`;
+  document.getElementById("upcoming-count").textContent = `${upcomingCount} PROXIMOS`;
 }
 
 // Event listeners
