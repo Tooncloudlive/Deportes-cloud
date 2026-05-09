@@ -1,18 +1,18 @@
 /**
- * Scraping de escudos desde Flashscore
- * Lee data/partidos.json, busca cada partido en Flashscore via Google,
- * extrae la URL del escudo desde el participantsData de la pagina del partido
- * y guarda en data/escudos.json
+ * SCRAPER DEFINITIVO DE ESCUDOS
+ * Soluciona partidos faltantes con estrategia multinivel:
  *
- * Mejoras:
- * - Acepta extraccion parcial (si encuentra solo un escudo, lo guarda)
- * - Cache mejorado (no congela null como resultado definitivo)
- * - Mejor deteccion de logos en distintas estructuras
- * - Mas robustez en Flashscore
+ * NIVEL 1: Google -> Flashscore partido
+ * NIVEL 2: Google -> Flashscore equipo local
+ * NIVEL 3: Google -> Flashscore equipo visitante
+ * NIVEL 4: Busqueda directa por logos en Google Images (fallback)
  *
- * Si falla o no hay partidos:
- * - guarda [] en escudos.json
- * - NO rompe GitHub Actions
+ * Mejora enorme para equipos como:
+ * - Elche
+ * - Cagliari
+ * - Ceuta
+ * - Castellon
+ * - ligas menores
  */
 
 const { chromium } = require('playwright');
@@ -25,22 +25,14 @@ const GOOGLE_SEARCH_URL = 'https://www.google.com/search?q=';
 
 function ensureDir(filePath) {
   const dir = path.dirname(filePath);
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
-  }
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 }
 
 function saveEmptyJson() {
   ensureDir(OUTPUT);
   fs.writeFileSync(OUTPUT, JSON.stringify([], null, 2), 'utf-8');
-  console.log('[Escudos] JSON vacio guardado');
 }
 
-/**
- * Extrae nombres de equipos
- * Ej:
- * "Copa Libertadores: Mirassol vs LDU Quito"
- */
 function extractTeamNames(matchText) {
   if (!matchText) return [null, null];
 
@@ -52,20 +44,17 @@ function extractTeamNames(matchText) {
   return [vsMatch[1].trim(), vsMatch[2].trim()];
 }
 
-/**
- * Limpieza para busqueda
- */
 function cleanTeamNameForSearch(name) {
   if (!name) return '';
+
   return name
     .replace(/\s*\([^)]*\)\s*$/, '')
     .replace(/[^\w\s\-áéíóúñü]/gi, '')
+    .replace(/\bfc\b/gi, '')
+    .replace(/\bclub\b/gi, '')
     .trim();
 }
 
-/**
- * Detecta bloqueo de Google
- */
 async function isGoogleBlocked(page) {
   return page.evaluate(() => {
     const title = document.title.toLowerCase();
@@ -76,325 +65,285 @@ async function isGoogleBlocked(page) {
       title.includes('unusual traffic') ||
       body.includes('captcha') ||
       body.includes('unusual traffic') ||
-      body.includes('automated requests') ||
-      body.includes("i'm not a robot") ||
-      body.includes('no soy un robot') ||
-      !!document.querySelector('#captcha') ||
-      !!document.querySelector('form[action*="captcha"]')
+      body.includes('automated requests')
     );
   });
 }
 
 /**
- * Busca URL del partido en Flashscore
+ * BUSQUEDA GOOGLE GENERICA
  */
-async function findFlashscoreMatchUrl(page, homeTeam, awayTeam) {
-  const homeClean = cleanTeamNameForSearch(homeTeam);
-  const awayClean = cleanTeamNameForSearch(awayTeam);
-
-  const searchQuery = encodeURIComponent(`${homeClean} vs ${awayClean} flashscore`);
-  const searchUrl = `${GOOGLE_SEARCH_URL}${searchQuery}`;
+async function googleSearch(page, query) {
+  const url = `${GOOGLE_SEARCH_URL}${encodeURIComponent(query)}`;
 
   try {
-    await page.goto(searchUrl, {
+    await page.goto(url, {
       waitUntil: 'domcontentloaded',
       timeout: 30000,
     });
 
     await page.waitForTimeout(2500);
 
-    const blocked = await isGoogleBlocked(page);
-    if (blocked) {
-      console.log('  [BLOQUEO] Google detecto bot');
-      return null;
-    }
+    if (await isGoogleBlocked(page)) return null;
 
-    const flashscoreUrl = await page.evaluate(() => {
-      const links = [...document.querySelectorAll('a[href]')]
-        .map(a => a.href)
-        .filter(Boolean);
-
-      // Prioridad 1: match
-      for (const href of links) {
-        if (
-          href.includes('flashscore') &&
-          href.includes('/match/') &&
-          !href.includes('/odds/') &&
-          !href.includes('/h2h/') &&
-          !href.includes('/standings/') &&
-          !href.includes('/clasificacion/')
-        ) {
-          return href;
-        }
-      }
-
-      // Prioridad 2: cualquier pagina util
-      for (const href of links) {
-        if (
-          href.includes('flashscore') &&
-          !href.includes('/team/') &&
-          !href.includes('/news/')
-        ) {
-          return href;
-        }
-      }
-
-      return null;
-    });
-
-    return flashscoreUrl;
-  } catch (error) {
-    console.log(`  [ERROR] Buscando en Google: ${error.message}`);
+    return true;
+  } catch {
     return null;
   }
 }
 
 /**
- * Extrae JSON balanceado
+ * Busca partido Flashscore
  */
-function extractBalancedJson(text, startOffset) {
-  let depth = 0;
-  let inString = false;
-  let escapeNext = false;
-  let startIdx = -1;
+async function findFlashscoreMatchUrl(page, homeTeam, awayTeam) {
+  const success = await googleSearch(
+    page,
+    `${cleanTeamNameForSearch(homeTeam)} vs ${cleanTeamNameForSearch(
+      awayTeam
+    )} flashscore`
+  );
 
-  for (let i = startOffset; i < text.length; i++) {
-    const char = text[i];
+  if (!success) return null;
 
-    if (escapeNext) {
-      escapeNext = false;
-      continue;
-    }
+  return page.evaluate(() => {
+    const links = [...document.querySelectorAll('a[href]')].map(a => a.href);
 
-    if (char === '\\') {
-      escapeNext = true;
-      continue;
-    }
-
-    if (char === '"' && !inString) {
-      inString = true;
-      continue;
-    }
-
-    if (char === '"' && inString) {
-      inString = false;
-      continue;
-    }
-
-    if (!inString) {
-      if (char === '{') {
-        if (depth === 0) startIdx = i;
-        depth++;
-      } else if (char === '}') {
-        depth--;
-        if (depth === 0 && startIdx !== -1) {
-          return text.substring(startIdx, i + 1);
-        }
+    for (const href of links) {
+      if (
+        href.includes('flashscore') &&
+        href.includes('/match/') &&
+        !href.includes('/odds/') &&
+        !href.includes('/h2h/')
+      ) {
+        return href;
       }
     }
-  }
 
-  return null;
+    return null;
+  });
 }
 
 /**
- * Extrae escudos desde pagina Flashscore
+ * Busca pagina de equipo Flashscore
  */
-async function extractShieldsFromFlashscore(page) {
+async function findTeamFlashscoreUrl(page, teamName) {
+  const success = await googleSearch(
+    page,
+    `${cleanTeamNameForSearch(teamName)} flashscore team`
+  );
+
+  if (!success) return null;
+
   return page.evaluate(() => {
-    function extractBalancedJsonInner(text, startOffset) {
-      let depth = 0;
-      let inString = false;
-      let escapeNext = false;
-      let startIdx = -1;
+    const links = [...document.querySelectorAll('a[href]')].map(a => a.href);
 
-      for (let i = startOffset; i < text.length; i++) {
-        const char = text[i];
+    for (const href of links) {
+      if (
+        href.includes('flashscore') &&
+        (href.includes('/team/') || href.includes('/equipo/'))
+      ) {
+        return href;
+      }
+    }
 
-        if (escapeNext) {
-          escapeNext = false;
-          continue;
-        }
+    return null;
+  });
+}
 
-        if (char === '\\') {
-          escapeNext = true;
-          continue;
-        }
+/**
+ * Extrae logo desde pagina de equipo
+ */
+async function extractLogoFromTeamPage(page, teamUrl) {
+  if (!teamUrl) return null;
 
-        if (char === '"' && !inString) {
-          inString = true;
-          continue;
-        }
+  try {
+    await page.goto(teamUrl, {
+      waitUntil: 'domcontentloaded',
+      timeout: 30000,
+    });
 
-        if (char === '"' && inString) {
-          inString = false;
-          continue;
-        }
+    await page.waitForTimeout(2500);
 
-        if (!inString) {
-          if (char === '{') {
-            if (depth === 0) startIdx = i;
-            depth++;
-          } else if (char === '}') {
-            depth--;
-            if (depth === 0 && startIdx !== -1) {
-              return text.substring(startIdx, i + 1);
-            }
-          }
+    return page.evaluate(() => {
+      const selectors = [
+        'img.participant__image',
+        '.heading img',
+        '.teamHeader img',
+        'img[alt*="logo"]',
+        'img[src*="logo"]',
+      ];
+
+      for (const selector of selectors) {
+        const img = document.querySelector(selector);
+
+        if (img?.src) return img.src;
+      }
+
+      // fallback general
+      const allImgs = [...document.querySelectorAll('img')];
+
+      for (const img of allImgs) {
+        const src = img.src || '';
+
+        if (
+          src.includes('logo') ||
+          src.includes('team') ||
+          src.includes('participant')
+        ) {
+          return src;
         }
       }
 
       return null;
-    }
+    });
+  } catch {
+    return null;
+  }
+}
 
-    function normalizeParticipant(side) {
-      if (!side) return null;
+/**
+ * Extrae desde pagina de partido
+ */
+async function extractShieldsFromMatchPage(page, url) {
+  try {
+    await page.goto(url, {
+      waitUntil: 'domcontentloaded',
+      timeout: 30000,
+    });
 
-      const item = Array.isArray(side) ? side[0] : side;
+    await page.waitForTimeout(3000);
 
-      if (!item || typeof item !== 'object') return null;
+    return page.evaluate(() => {
+      function normalize(side) {
+        if (!side) return null;
 
-      return {
-        logo:
+        const item = Array.isArray(side) ? side[0] : side;
+
+        if (!item) return null;
+
+        return (
           item.image_path ||
           item.small_image_path ||
           item.image ||
           item.logo ||
-          item.images?.[0] ||
-          null,
-        name: item.name || null,
-      };
-    }
-
-    function buildResult(home, away) {
-      if (!home && !away) return null;
-
-      return {
-        homeLogo: home?.logo || null,
-        awayLogo: away?.logo || null,
-        homeName: home?.name || null,
-        awayName: away?.name || null,
-      };
-    }
-
-    try {
-      // Metodo 1: scripts
-      const scripts = document.querySelectorAll('script');
-
-      for (const script of scripts) {
-        const content = script.textContent || '';
-
-        if (!content.includes('"participantsData"')) continue;
-
-        const idx = content.indexOf('"participantsData"');
-        const colonIdx = content.indexOf(':', idx);
-
-        if (colonIdx === -1) continue;
-
-        const jsonStr = extractBalancedJsonInner(content, colonIdx + 1);
-
-        if (!jsonStr) continue;
-
-        try {
-          const data = JSON.parse(jsonStr);
-
-          const home = normalizeParticipant(data.home);
-          const away = normalizeParticipant(data.away);
-
-          const result = buildResult(home, away);
-
-          if (result) return result;
-        } catch (_) {}
+          null
+        );
       }
 
-      // Metodo 2: INITIAL STATE
-      if (window.__INITIAL_STATE__) {
-        const state = window.__INITIAL_STATE__;
+      const state = window.__INITIAL_STATE__;
+
+      if (state) {
         const participants =
           state.event?.participantsData ||
           state.participantsData ||
           state.match?.participantsData;
 
         if (participants) {
-          const home = normalizeParticipant(participants.home);
-          const away = normalizeParticipant(participants.away);
-
-          const result = buildResult(home, away);
-
-          if (result) return result;
+          return {
+            homeLogo: normalize(participants.home),
+            awayLogo: normalize(participants.away),
+          };
         }
       }
 
-      // Metodo 3: environment
-      if (window.environment?.participantsData) {
-        const participants = window.environment.participantsData;
+      return null;
+    });
+  } catch {
+    return null;
+  }
+}
 
-        const home = normalizeParticipant(participants.home);
-        const away = normalizeParticipant(participants.away);
+/**
+ * FALLBACK Google Images
+ */
+async function searchLogoByImage(page, teamName) {
+  const success = await googleSearch(
+    page,
+    `${cleanTeamNameForSearch(teamName)} football club logo png`
+  );
 
-        const result = buildResult(home, away);
+  if (!success) return null;
 
-        if (result) return result;
+  return page.evaluate(() => {
+    const imgs = [...document.querySelectorAll('img')];
+
+    for (const img of imgs) {
+      const src = img.src || '';
+
+      if (
+        src.startsWith('http') &&
+        !src.includes('google') &&
+        !src.includes('gstatic')
+      ) {
+        return src;
       }
-
-      return null;
-    } catch (_) {
-      return null;
     }
+
+    return null;
   });
 }
 
 /**
- * Busca logos de partido
+ * BUSQUEDA MAESTRA
  */
 async function searchMatchLogos(page, homeTeam, awayTeam) {
-  console.log(`  Buscando partido: ${homeTeam} vs ${awayTeam}`);
+  console.log(`  Buscando: ${homeTeam} vs ${awayTeam}`);
 
-  const flashscoreUrl = await findFlashscoreMatchUrl(page, homeTeam, awayTeam);
+  // NIVEL 1
+  const matchUrl = await findFlashscoreMatchUrl(page, homeTeam, awayTeam);
 
-  if (!flashscoreUrl) {
-    console.log('  [WARN] No se encontro partido en Flashscore');
-    return { homeLogo: null, awayLogo: null };
+  if (matchUrl) {
+    const matchResult = await extractShieldsFromMatchPage(page, matchUrl);
+
+    if (matchResult?.homeLogo || matchResult?.awayLogo) {
+      return {
+        homeLogo: matchResult.homeLogo || null,
+        awayLogo: matchResult.awayLogo || null,
+      };
+    }
   }
 
-  console.log(`  [OK] URL encontrada: ${flashscoreUrl}`);
+  console.log('  [Fallback] Busqueda por equipos individuales');
 
-  try {
-    await page.goto(flashscoreUrl, {
-      waitUntil: 'domcontentloaded',
-      timeout: 30000,
-    });
+  // NIVEL 2
+  let homeLogo = null;
+  let awayLogo = null;
 
-    await page.waitForTimeout(3500);
-  } catch (error) {
-    console.log(`  [ERROR] Navegando a Flashscore: ${error.message}`);
-    return { homeLogo: null, awayLogo: null };
+  const homeTeamUrl = await findTeamFlashscoreUrl(page, homeTeam);
+  if (homeTeamUrl) {
+    homeLogo = await extractLogoFromTeamPage(page, homeTeamUrl);
   }
 
-  const shields = await extractShieldsFromFlashscore(page);
-
-  if (shields) {
-    console.log(
-      `  [OK] Escudos extraidos - Local: ${
-        shields.homeLogo ? 'SI' : 'NO'
-      }, Visitante: ${shields.awayLogo ? 'SI' : 'NO'}`
-    );
-
-    return shields;
+  // NIVEL 3
+  const awayTeamUrl = await findTeamFlashscoreUrl(page, awayTeam);
+  if (awayTeamUrl) {
+    awayLogo = await extractLogoFromTeamPage(page, awayTeamUrl);
   }
 
-  console.log('  [WARN] No se pudieron extraer escudos');
-  return { homeLogo: null, awayLogo: null };
+  // NIVEL 4
+  if (!homeLogo) {
+    console.log(`  [Google Images] ${homeTeam}`);
+    homeLogo = await searchLogoByImage(page, homeTeam);
+  }
+
+  if (!awayLogo) {
+    console.log(`  [Google Images] ${awayTeam}`);
+    awayLogo = await searchLogoByImage(page, awayTeam);
+  }
+
+  return {
+    homeLogo: homeLogo || null,
+    awayLogo: awayLogo || null,
+  };
 }
 
 /**
- * Main
+ * MAIN
  */
 async function scrapeEscudos() {
   console.log('[Escudos] Iniciando scraping...');
 
   if (!fs.existsSync(PARTIDOS_PATH)) {
-    console.warn('[Escudos] No existe partidos.json');
     saveEmptyJson();
     return;
   }
@@ -402,12 +351,9 @@ async function scrapeEscudos() {
   const partidos = JSON.parse(fs.readFileSync(PARTIDOS_PATH, 'utf-8'));
 
   if (!partidos?.length) {
-    console.log('[Escudos] No hay partidos');
     saveEmptyJson();
     return;
   }
-
-  console.log(`[Escudos] ${partidos.length} partidos encontrados`);
 
   const browser = await chromium.launch({
     headless: true,
@@ -415,135 +361,84 @@ async function scrapeEscudos() {
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-dev-shm-usage',
-      '--disable-blink-features=AutomationControlled',
     ],
   });
 
   const context = await browser.newContext({
     locale: 'es-ES',
     userAgent:
-      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-    viewport: { width: 1920, height: 1080 },
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+    viewport: { width: 1600, height: 900 },
   });
 
   const page = await context.newPage();
 
-  await page.route('**/*', route => {
-    const url = route.request().url();
-
-    if (url.includes('consent.google.com')) {
-      route.abort();
-    } else {
-      route.continue();
-    }
-  });
-
   await context.addCookies([
     {
       name: 'CONSENT',
-      value: 'YES+ES.es+V14+BX',
+      value: 'YES+',
       domain: '.google.com',
-      path: '/',
-    },
-    {
-      name: 'CONSENT',
-      value: 'YES+ES.es+V14+BX',
-      domain: '.google.es',
       path: '/',
     },
   ]);
 
   const logoCache = new Map();
   const escudos = [];
-  const seenMatches = new Set();
 
   try {
     for (let i = 0; i < partidos.length; i++) {
-      const partido = partidos[i];
-      const matchText = partido.match;
-
-      if (!matchText) continue;
+      const matchText = partidos[i].match;
 
       const [homeTeam, awayTeam] = extractTeamNames(matchText);
 
-      if (!homeTeam || !awayTeam) {
-        console.log(
-          `[${i + 1}/${partidos.length}] Saltando: "${matchText}"`
-        );
-        continue;
-      }
+      if (!homeTeam || !awayTeam) continue;
 
-      const matchKey = `${homeTeam} vs ${awayTeam}`;
+      console.log(`\n[${i + 1}/${partidos.length}] ${homeTeam} vs ${awayTeam}`);
 
-      if (seenMatches.has(matchKey)) continue;
-      seenMatches.add(matchKey);
+      let homeLogo = logoCache.get(homeTeam) || null;
+      let awayLogo = logoCache.get(awayTeam) || null;
 
-      console.log(`\n[${i + 1}/${partidos.length}] ${matchKey}`);
-
-      let homeLogo = logoCache.get(homeTeam);
-      let awayLogo = logoCache.get(awayTeam);
-
-      const needHome = !homeLogo;
-      const needAway = !awayLogo;
-
-      if (!needHome && !needAway) {
-        console.log('  [CACHE] Ambos escudos encontrados');
-      } else {
+      if (!homeLogo || !awayLogo) {
         const result = await searchMatchLogos(page, homeTeam, awayTeam);
 
-        if (needHome && result.homeLogo) {
+        if (!homeLogo && result.homeLogo) {
           homeLogo = result.homeLogo;
           logoCache.set(homeTeam, homeLogo);
         }
 
-        if (needAway && result.awayLogo) {
+        if (!awayLogo && result.awayLogo) {
           awayLogo = result.awayLogo;
           logoCache.set(awayTeam, awayLogo);
         }
       }
 
-      if (homeLogo || awayLogo) {
-        escudos.push({
-          match: matchKey,
-          homeLogo: homeLogo || '',
-          awayLogo: awayLogo || '',
-        });
-      }
+      escudos.push({
+        match: `${homeTeam} vs ${awayTeam}`,
+        homeLogo: homeLogo || '',
+        awayLogo: awayLogo || '',
+      });
 
-      if (i < partidos.length - 1) {
-        await page.waitForTimeout(2000 + Math.random() * 2000);
-      }
+      await page.waitForTimeout(1500 + Math.random() * 1500);
     }
 
     ensureDir(OUTPUT);
-    fs.writeFileSync(OUTPUT, JSON.stringify(escudos, null, 2), 'utf-8');
 
-    console.log(`\n[Escudos] ${escudos.length} partidos guardados`);
-
-    const totalTeams = new Set();
-
-    for (const p of partidos) {
-      const [h, a] = extractTeamNames(p.match);
-      if (h) totalTeams.add(h);
-      if (a) totalTeams.add(a);
-    }
-
-    const foundTeams = [...logoCache.values()].filter(Boolean).length;
-
-    console.log(
-      `[Escudos] Equipos unicos: ${totalTeams.size}, Escudos encontrados: ${foundTeams}`
+    fs.writeFileSync(
+      OUTPUT,
+      JSON.stringify(escudos, null, 2),
+      'utf-8'
     );
+
+    console.log(`\n[Escudos] Guardados ${escudos.length} partidos`);
   } catch (error) {
     console.warn('[Escudos] Error:', error.message);
     saveEmptyJson();
-    process.exitCode = 0;
   } finally {
     await browser.close();
   }
 }
 
 scrapeEscudos().catch(error => {
-  console.warn('[Escudos] Error inesperado:', error.message);
+  console.warn('[Escudos] Fatal:', error.message);
   saveEmptyJson();
-  process.exitCode = 0;
 });
