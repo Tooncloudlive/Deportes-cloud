@@ -1,12 +1,182 @@
 [
   {
-    "match": "Banfield vs San Martín Tucumán",
-    "homeLogo": "https://static.flashscore.com/res/image/data/UBFrXuDa-zPA7Mpsn.png",
-    "awayLogo": "https://static.flashscore.com/res/image/data/IoUymhzB-A51QHPTO.png"
+    "match": "Galatasaray vs Antalyaspor",
+    "homeLogo": "https://static.flashscore.com/res/image/data/f1wRMdEG-ptkIYGIF.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/ziy5KsdM-dEXkR0Wq.png"
+  },
+  {
+    "match": "İstanbul Başakşehir vs Samsunspor",
+    "homeLogo": "https://static.flashscore.com/res/image/data/2qYOOtEa-bwY1oXje.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/QTKd3FxS-StKLPBm2.png"
+  },
+  {
+    "match": "Deportivo Moquegua vs ADT",
+    "homeLogo": "https://static.flashscore.com/res/image/data/YwmtayEa-zXduG1dl.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/Isea2GWg-EXA8dtRS.png"
+  },
+  {
+    "match": "Danubio vs Albion",
+    "homeLogo": "https://static.flashscore.com/res/image/data/SE9ju9cM-vaUkIxVj.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/YTykoqh5-xAzQVWsQ.png"
+  },
+  {
+    "match": "Chicago Fire vs New York RB",
+    "homeLogo": "https://static.flashscore.com/res/image/data/rgIrA6ZA-OtF9hTxk.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/d6K4IsyB-IP5syE99.png"
+  },
+  {
+    "match": "Lecce vs Juventus",
+    "homeLogo": "https://static.flashscore.com/res/image/data/AaI0V5Fa-McvX4bye.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/GKF3dlf5-0nz5yHcE.png"
+  },
+  {
+    "match": "Real Sociedad vs Real Betis",
+    "homeLogo": "https://static.flashscore.com/res/image/data/QJraUAcM-vJb36ZBF.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/hvyaw5HG-zkU5wiAr.png"
+  },
+  {
+    "match": "Málaga vs Sporting Gijón",
+    "homeLogo": "https://static.flashscore.com/res/image/data/b7abRme5-MTxwaw7C.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/n9PvyJhl-IDZgZhUt.png"
+  },
+  {
+    "match": "Coritiba vs Internacional",
+    "homeLogo": "https://static.flashscore.com/res/image/data/xKm8lie5-bwYqIWsq.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/4EdoEoil-ALgHCh57.png"
+  },
+  {
+    "match": "La Serena vs Audax Italiano",
+    "homeLogo": "https://static.flashscore.com/res/image/data/YDcd9wDa-Mkzo6oBm.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/fZSe86hl-6kEqxN0C.png"
+  },
+  {
+    "match": "Pistons vs Cavaliers",
+    "homeLogo": "https://static.flashscore.com/res/image/data/MoYJBde5-xrW85HXg.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/AqYiLvHG-6ZJgih6O.png"
+  },
+  {
+    "match": "Talleres Córdoba vs Belgrano",
+    "homeLogo": "https://static.flashscore.com/res/image/data/p45YOHAr-hUOWZpWa.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/fVzQ4lxS-jXvNrLYt.png"
+  },
+  {
+    "match": "Atlético Grau vs Cienciano",
+    "homeLogo": "https://static.flashscore.com/res/image/data/l6DT03h5-OIQgs2YQ.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/dI31wDil-Mu345fFj.png"
+  },
+  {
+    "match": "2 de Mayo vs Rubio Ñú",
+    "homeLogo": "https://static.flashscore.com/res/image/data/prv1MFxS-0fWrlsjA.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/SYOSI3Ea-naCm8i0g.png"
+  },
+  {
+    "match": "Fluminense vs Vitória",
+    "homeLogo": "https://static.flashscore.com/res/image/data/ryyNRNyS-G8svG3to.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/zBFo1nyS-KI1Vj8xD.png"
+  },
+  {
+    "match": "Inter Bogotá vs Atlético Nacional",
+    "homeLogo": "https://static.flashscore.com/res/image/data/EVh8vJcM-tnwDCzLD.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/xCeMUuZg-nouesssi.png"
+  },
+  {
+    "match": "Central Español vs Racing",
+    "homeLogo": "https://static.flashscore.com/res/image/data/MFvEZxZA-txbJkCjs.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/v12aAjil-YRdHXM28.png"
+  },
+  {
+    "match": "Cobresal vs Univ. Concepción",
+    "homeLogo": "https://static.flashscore.com/res/image/data/zLKcbhyS-p8NClxtb.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/nmpUa0FG-Eq74Jcjl.png"
+  },
+  {
+    "match": "Colo-Colo vs Deportes Concepción",
+    "homeLogo": "https://static.flashscore.com/res/image/data/CMCTeMxS-tnwDCzLD.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/nkZ3BZjl-KbTonrXB.png"
+  },
+  {
+    "match": "Boca Juniors vs Huracán",
+    "homeLogo": "https://static.flashscore.com/res/image/data/h4UwH8Cr-pGZDw8HC.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/vBUdlvf5-xxyFAG42.png"
+  },
+  {
+    "match": "Nacional Asunción vs Sportivo Trinidense",
+    "homeLogo": "https://static.flashscore.com/res/image/data/WIKARXhl-6PG8meHs.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/h0WsLVGG-hpyVjm6H.png"
+  },
+  {
+    "match": "Deportes Tolima vs Deportivo Pasto",
+    "homeLogo": "https://static.flashscore.com/res/image/data/ngiuiwYg-bXlV9lJE.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/rPpVBxZg-hjn5AE5Q.png"
+  },
+  {
+    "match": "Charlotte vs Cincinnati",
+    "homeLogo": "https://static.flashscore.com/res/image/data/zThr1XYg-bePDAcBO.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/nqEwF6GG-hfMSf4LN.png"
+  },
+  {
+    "match": "New England vs Philadelphia Union",
+    "homeLogo": "https://static.flashscore.com/res/image/data/SvDc2L9r-UkKy8hsL.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/beeklfGG-pft1D8uk.png"
+  },
+  {
+    "match": "Bahia vs Cruzeiro",
+    "homeLogo": "https://static.flashscore.com/res/image/data/f5V5z1Cr-dKUmd286.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/lCWrxmg5-SjJmyx86.png"
+  },
+  {
+    "match": "Argentinos Juniors vs Lanús",
+    "homeLogo": "https://static.flashscore.com/res/image/data/xplqslf5-CUuaFAMD.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/h4Xuyuf5-xQnxBzcF.png"
+  },
+  {
+    "match": "Independiente Rivadavia vs Unión Santa Fe",
+    "homeLogo": "https://static.flashscore.com/res/image/data/MkO7nbDa-dMZHs4g0.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/YuZso7jl-OS9FbeGg.png"
+  },
+  {
+    "match": "Alianza Lima vs Sporting Cristal",
+    "homeLogo": "https://static.flashscore.com/res/image/data/OdDDfjWg-tE1csI3A.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/bT8P90Ar-Em9Gxj8O.png"
+  },
+  {
+    "match": "Guadalajara vs Tigres UANL",
+    "homeLogo": "https://static.flashscore.com/res/image/data/0SByRvZA-rg4dr7Mm.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/jcSZ4BAr-jJ3ijTtC.png"
+  },
+  {
+    "match": "Nashville SC vs DC United",
+    "homeLogo": "https://static.flashscore.com/res/image/data/Y7Y3g4Da-6JqXhTSA.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/MuhwhtwS-M1jIRGkS.png"
+  },
+  {
+    "match": "América de Cali vs Santa Fe",
+    "homeLogo": "https://static.flashscore.com/res/image/data/fySikCAr-hSZHTo4B.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/dlONm5jl-AaS9a4Ho.png"
   },
   {
     "match": "Spurs vs Timberwolves",
     "homeLogo": "https://static.flashscore.com/res/image/data/8f2WVCFG-SrHHDGUm.png",
     "awayLogo": "https://static.flashscore.com/res/image/data/hv2nHleM-KbXk58wB.png"
+  },
+  {
+    "match": "Colorado Rapids vs St. Louis City",
+    "homeLogo": "https://static.flashscore.com/res/image/data/OOiHXVAr-fyzFgPy8.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/fZQ24ABr-jmLPWdtA.png"
+  },
+  {
+    "match": "Seattle Sounders FC vs San Diego",
+    "homeLogo": "https://static.flashscore.com/res/image/data/2NlXcSAr-Q7Ql2Qbi.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/pQjpOMWg-b7NYdTs6.png"
+  },
+  {
+    "match": "Portland Timbers vs Sporting KC",
+    "homeLogo": "https://static.flashscore.com/res/image/data/CEuiHggl-xf2WUeO1.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/neS4MpEa-88w2wUnG.png"
+  },
+  {
+    "match": "SJ Earthquakes vs Vancouver Whitecaps",
+    "homeLogo": "https://static.flashscore.com/res/image/data/nXTMece5-nJrkMuTE.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/6Fh3DODa-GpqxHjf5.png"
   }
 ]
