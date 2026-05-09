@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ToonCloud Deportes</title>
-<!-- Build: 2026-05-09 05:07 -->
+<!-- Build: 2026-05-09 05:54 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -953,30 +953,34 @@ header {
 // Si no quieres escudo para un equipo, deja el campo vac&iacute;o: ""
 
 const matchesLogos = [
+  { match: "Cruz Azul vs Atlas", homeLogo: "https://static.flashscore.com/res/image/data/juUdUvvS-4UD5BJKp.png", awayLogo: "https://static.flashscore.com/res/image/data/OfIFJZYg-OtymR74A.png" },
   { match: "Liverpool vs Chelsea", homeLogo: "https://static.flashscore.com/res/image/data/Gr0cGteM-KCp4zq5F.png", awayLogo: "https://static.flashscore.com/res/image/data/GMmvDEdM-IROrZEJb.png" },
   { match: "Middlesbrough vs Southampton", homeLogo: "https://static.flashscore.com/res/image/data/Ongu1qAr-vcNAdtF9.png", awayLogo: "https://static.flashscore.com/res/image/data/fmA9gnyB-raLYxovi.png" },
-  { match: "Augsburg vs Borussia M'gladbach", homeLogo: "https://static.flashscore.com/res/image/data/rDRx1VXg-84sATBUR.png", awayLogo: "https://static.flashscore.com/res/image/data/6ZUvwjgl-Qmnf8wEL.png" },
+  { match: "Elche vs Deportivo Alavés", homeLogo: "https://static.flashscore.com/res/image/data/UcRA5fil-YmCZKGcR.png", awayLogo: "https://static.flashscore.com/res/image/data/hrI86AzS-EXAuP9cb.png" },
+  { match: "Ceuta vs CD Castellon", homeLogo: "https://static.flashscore.com/res/image/data/xIxIQ3f5-xpqBFn5c.png", awayLogo: "https://static.flashscore.com/res/image/data/lxWg57g5-zBFXR8iF.png" },
+  { match: "Cagliari vs Udinese", homeLogo: "https://static.flashscore.com/res/image/data/IBlLf9f5-McvX4bye.png", awayLogo: "https://static.flashscore.com/res/image/data/AZBQMaYA-SYw7EcY6.png" },
+  { match: "Augsburg vs Borussia M'gladbach", homeLogo: "https://static.flashscore.com/res/image/data/6ZUvwjgl-Qmnf8wEL.png", awayLogo: "https://static.flashscore.com/res/image/data/rDRx1VXg-84sATBUR.png" },
   { match: "Stuttgart vs Bayer Leverkusen", homeLogo: "https://static.flashscore.com/res/image/data/x0YB6veM-f1Z3XxZa.png", awayLogo: "https://static.flashscore.com/res/image/data/OWpaDOYA-WrjrBuU2.png" },
-  { match: "RB Leipzig vs St. Pauli", homeLogo: "https://static.flashscore.com/res/image/data/0d9JBTCr-dMcBTrOk.png", awayLogo: "https://static.flashscore.com/res/image/data/02lwXYkl-WvvSE8Dm.png" },
+  { match: "RB Leipzig vs St. Pauli", homeLogo: "https://static.flashscore.com/res/image/data/02lwXYkl-WvvSE8Dm.png", awayLogo: "https://static.flashscore.com/res/image/data/0d9JBTCr-dMcBTrOk.png" },
   { match: "Hoffenheim vs Werder Bremen", homeLogo: "https://static.flashscore.com/res/image/data/0G073zcM-U7ZDQpCT.png", awayLogo: "https://static.flashscore.com/res/image/data/jkuP5lxS-z5faW5U1.png" },
   { match: "Sunderland vs Manchester United", homeLogo: "https://static.flashscore.com/res/image/data/ln86XXjl-0d34NJCO.png", awayLogo: "https://static.flashscore.com/res/image/data/nwSRlyWg-h2pPXz3k.png" },
   { match: "Fulham vs AFC Bournemouth", homeLogo: "https://static.flashscore.com/res/image/data/naaAVOzB-ImMEe0UF.png", awayLogo: "https://static.flashscore.com/res/image/data/2Pb55xWg-fVlIcxl3.png" },
-  { match: "Brighton & Hove Albion vs Wolverhampton Wanderers", homeLogo: "https://static.flashscore.com/res/image/data/40juIezB-b92lfEJC.png", awayLogo: "https://static.flashscore.com/res/image/data/E7TgUZkl-ABWS7fBq.png" },
-  { match: "Sevilla vs Espanyol", homeLogo: "https://static.flashscore.com/res/image/data/xCfrFvYg-dWEKj39N.png", awayLogo: "https://static.flashscore.com/res/image/data/SQnCmTEa-KfNNfcCT.png" },
+  { match: "Brighton & Hove Albion vs Wolverhampton Wanderers", homeLogo: "https://static.flashscore.com/res/image/data/40juIezB-b92lfEJC.png", awayLogo: "https://cdn.cookielaw.org/logos/static/ot_company_logo.png" },
+  { match: "Sevilla vs Espanyol", homeLogo: "https://static.flashscore.com/res/image/data/G2BgO5Ar-tIT0KyhE.png", awayLogo: "https://static.flashscore.com/res/image/data/SObn7xDr-Msjm1Bq4.png" },
   { match: "Burgos vs Almería", homeLogo: "https://static.flashscore.com/res/image/data/0AalHeAr-0ME49KyM.png", awayLogo: "https://static.flashscore.com/res/image/data/8C5Bj3wS-nDyT2xMM.png" },
   { match: "Albacete vs Cultural Leonesa", homeLogo: "https://static.flashscore.com/res/image/data/M9tNPVfM-4297a0ys.png", awayLogo: "https://static.flashscore.com/res/image/data/UNSRimZg-WAOkzK99.png" },
-  { match: "Lazio vs Inter", homeLogo: "https://static.flashscore.com/res/image/data/lxz64qDa-O8c8nWOb.png", awayLogo: "https://static.flashscore.com/res/image/data/dSOFGshl-GC3oqsYS.png" },
+  { match: "Lazio vs Inter", homeLogo: "https://static.flashscore.com/res/image/data/zXqymff5-EaFfQ9z6.png", awayLogo: "https://static.flashscore.com/res/image/data/lxz64qDa-O8c8nWOb.png" },
   { match: "Manchester City vs Brentford", homeLogo: "https://static.flashscore.com/res/image/data/UXcqj7HG-lQuhqN8N.png", awayLogo: "https://static.flashscore.com/res/image/data/bBj3NWfM-r9Mudk7j.png" },
-  { match: "Wolfsburg vs Bayern München", homeLogo: "https://static.flashscore.com/res/image/data/tMir8iCr-SvLFaVNH.png", awayLogo: "https://static.flashscore.com/res/image/data/xK5jP2FG-KjF1j4v3.png" },
-  { match: "Atlético Madrid vs Celta de Vigo", homeLogo: "https://static.flashscore.com/res/image/data/O2htOWDa-SOY3p1Si.png", awayLogo: "https://static.flashscore.com/res/image/data/CjfjIsYg-GhHiNvXF.png" },
+  { match: "Wolfsburg vs Bayern München", homeLogo: "https://static.flashscore.com/res/image/data/0Omms5Br-KjF1j4v3.png", awayLogo: "https://static.flashscore.com/res/image/data/bLImRoyB-GvWQ6nVp.png" },
+  { match: "Atlético Madrid vs Celta de Vigo", homeLogo: "https://livesport-ott-images.ssl.cdn.cra.cz/r900xfq60/558d576a-5856-4122-85a9-ddc201a51d8e.avif", awayLogo: "https://static.flashscore.com/res/image/data/O2htOWDa-SOY3p1Si.png" },
   { match: "Real Valladolid vs Real Zaragoza", homeLogo: "https://static.flashscore.com/res/image/data/pCJjU8yB-htRvrFH6.png", awayLogo: "https://static.flashscore.com/res/image/data/xAVdihZA-EykfZB0Q.png" },
   { match: "Beşiktaş vs Trabzonspor", homeLogo: "https://static.flashscore.com/res/image/data/W0HRCIjl-UcWWlFia.png", awayLogo: "https://static.flashscore.com/res/image/data/AmS7XBYA-MobtE80i.png" },
   { match: "Konyaspor vs Fenerbahçe", homeLogo: "https://static.flashscore.com/res/image/data/tIm7wGzB-IB8hJkKa.png", awayLogo: "https://static.flashscore.com/res/image/data/2NnRTQjl-llnQ8REs.png" },
-  { match: "Galatasaray vs Antalyaspor", homeLogo: "https://static.flashscore.com/res/image/data/f1wRMdEG-ptkIYGIF.png", awayLogo: "https://static.flashscore.com/res/image/data/ziy5KsdM-dEXkR0Wq.png" },
-  { match: "Deportivo Moquegua vs ADT", homeLogo: "https://static.flashscore.com/res/image/data/YwmtayEa-zXduG1dl.png", awayLogo: "https://static.flashscore.com/res/image/data/Isea2GWg-EXA8dtRS.png" },
-  { match: "Danubio vs Albion", homeLogo: "https://static.flashscore.com/res/image/data/YTykoqh5-xAzQVWsQ.png", awayLogo: "https://static.flashscore.com/res/image/data/SE9ju9cM-vaUkIxVj.png" },
-  { match: "Chicago Fire vs New York RB", homeLogo: "https://static.flashscore.com/res/image/data/rgIrA6ZA-OtF9hTxk.png", awayLogo: "https://static.flashscore.com/res/image/data/d6K4IsyB-IP5syE99.png" },
-  { match: "Lecce vs Juventus", homeLogo: "https://static.flashscore.com/res/image/data/KCT5kBg5-fq0nHBOl.png", awayLogo: "https://static.flashscore.com/res/image/data/jJZSR9HG-GtNb9h2q.png" },
+  { match: "Galatasaray vs Antalyaspor", homeLogo: "https://static.flashscore.com/res/image/data/ziy5KsdM-dEXkR0Wq.png", awayLogo: "https://static.flashscore.com/res/image/data/f1wRMdEG-ptkIYGIF.png" },
+  { match: "İstanbul Başakşehir vs Samsunspor", homeLogo: "https://static.flashscore.com/res/image/data/2qYOOtEa-bwY1oXje.png", awayLogo: "https://static.flashscore.com/res/image/data/QTKd3FxS-StKLPBm2.png" },
+  { match: "Danubio vs Albion", homeLogo: "https://static.flashscore.com/res/image/data/SE9ju9cM-vaUkIxVj.png", awayLogo: "https://static.flashscore.com/res/image/data/YTykoqh5-xAzQVWsQ.png" },
+  { match: "Chicago Fire vs New York RB", homeLogo: "https://static.flashscore.com/res/image/data/2k9tZ9EG-0lw00xPr.png", awayLogo: "https://static.flashscore.com/res/image/data/8QMM9XcM-GxTXAzv3.png" },
+  { match: "Lecce vs Juventus", homeLogo: "https://static.flashscore.com/res/image/data/AaI0V5Fa-McvX4bye.png", awayLogo: "https://static.flashscore.com/res/image/data/GKF3dlf5-0nz5yHcE.png" },
   { match: "Real Sociedad vs Real Betis", homeLogo: "https://static.flashscore.com/res/image/data/QJraUAcM-vJb36ZBF.png", awayLogo: "https://static.flashscore.com/res/image/data/hvyaw5HG-zkU5wiAr.png" },
   { match: "Málaga vs Sporting Gijón", homeLogo: "https://static.flashscore.com/res/image/data/b7abRme5-MTxwaw7C.png", awayLogo: "https://static.flashscore.com/res/image/data/n9PvyJhl-IDZgZhUt.png" },
   { match: "Coritiba vs Internacional", homeLogo: "https://static.flashscore.com/res/image/data/xKm8lie5-bwYqIWsq.png", awayLogo: "https://static.flashscore.com/res/image/data/4EdoEoil-ALgHCh57.png" },
@@ -987,27 +991,29 @@ const matchesLogos = [
   { match: "CF Montréal vs Orlando City SC", homeLogo: "https://static.flashscore.com/res/image/data/6Ve48IyS-APghxIAJ.png", awayLogo: "https://static.flashscore.com/res/image/data/0WseRhDa-AFpqya1j.png" },
   { match: "2 de Mayo vs Rubio Ñú", homeLogo: "https://static.flashscore.com/res/image/data/prv1MFxS-0fWrlsjA.png", awayLogo: "https://static.flashscore.com/res/image/data/SYOSI3Ea-naCm8i0g.png" },
   { match: "Fluminense vs Vitória", homeLogo: "https://static.flashscore.com/res/image/data/WlxJgSdM-WUfDDYk1.png", awayLogo: "https://static.flashscore.com/res/image/data/6TftvFdM-I9oI79Jc.png" },
-  { match: "Inter Bogotá vs Atlético Nacional", homeLogo: "https://static.flashscore.com/res/image/data/CdUqWuZA-YJpoAeAD.png", awayLogo: "https://static.flashscore.com/res/image/data/dld7rEYA-rLzS8sxI.png" },
+  { match: "Inter Bogotá vs Atlético Nacional", homeLogo: "https://static.flashscore.com/res/image/data/xCeMUuZg-nouesssi.png", awayLogo: "https://static.flashscore.com/res/image/data/EVh8vJcM-tnwDCzLD.png" },
   { match: "Central Español vs Racing", homeLogo: "https://static.flashscore.com/res/image/data/MFvEZxZA-txbJkCjs.png", awayLogo: "https://static.flashscore.com/res/image/data/v12aAjil-YRdHXM28.png" },
-  { match: "Cobresal vs Univ. Concepción", homeLogo: "https://static.flashscore.com/res/image/data/zLKcbhyS-p8NClxtb.png", awayLogo: "https://static.flashscore.com/res/image/data/nkZ3BZjl-KbTonrXB.png" },
+  { match: "Cobresal vs Univ. Concepción", homeLogo: "https://static.flashscore.com/res/image/data/zLKcbhyS-p8NClxtb.png", awayLogo: "https://static.flashscore.com/res/image/data/nmpUa0FG-Eq74Jcjl.png" },
   { match: "Colo-Colo vs Deportes Concepción", homeLogo: "https://static.flashscore.com/res/image/data/CMCTeMxS-tnwDCzLD.png", awayLogo: "https://static.flashscore.com/res/image/data/nkZ3BZjl-KbTonrXB.png" },
   { match: "Boca Juniors vs Huracán", homeLogo: "https://static.flashscore.com/res/image/data/h4UwH8Cr-pGZDw8HC.png", awayLogo: "https://static.flashscore.com/res/image/data/vBUdlvf5-xxyFAG42.png" },
   { match: "Nacional Asunción vs Sportivo Trinidense", homeLogo: "https://static.flashscore.com/res/image/data/WIKARXhl-6PG8meHs.png", awayLogo: "https://static.flashscore.com/res/image/data/h0WsLVGG-hpyVjm6H.png" },
   { match: "Deportes Tolima vs Deportivo Pasto", homeLogo: "https://static.flashscore.com/res/image/data/ngiuiwYg-bXlV9lJE.png", awayLogo: "https://static.flashscore.com/res/image/data/rPpVBxZg-hjn5AE5Q.png" },
-  { match: "Charlotte vs Cincinnati", homeLogo: "https://static.flashscore.com/res/image/data/zThr1XYg-bePDAcBO.png", awayLogo: "https://static.flashscore.com/res/image/data/nqEwF6GG-hfMSf4LN.png" },
-  { match: "New England vs Philadelphia Union", homeLogo: "https://static.flashscore.com/res/image/data/SvDc2L9r-UkKy8hsL.png", awayLogo: "https://static.flashscore.com/res/image/data/beeklfGG-pft1D8uk.png" },
+  { match: "Atlanta United vs LA Galaxy", homeLogo: "https://static.flashscore.com/res/image/data/WpdfffCa-MeFN3n19.png", awayLogo: "https://cdn.cookielaw.org/logos/static/ot_company_logo.png" },
+  { match: "Charlotte vs Cincinnati", homeLogo: "https://static.flashscore.com/res/image/data/zThr1XYg-bePDAcBO.png", awayLogo: "https://livesport-ott-images.ssl.cdn.cra.cz/r900xfq60/124ae507-0640-4b0f-9acd-69e4a7baa6b8.avif" },
+  { match: "New England vs Philadelphia Union", homeLogo: "https://static.flashscore.com/res/image/data/beeklfGG-pft1D8uk.png", awayLogo: "https://static.flashscore.com/res/image/data/SvDc2L9r-UkKy8hsL.png" },
   { match: "Bahia vs Cruzeiro", homeLogo: "https://static.flashscore.com/res/image/data/EJwzXngl-I933qJPg.png", awayLogo: "https://static.flashscore.com/res/image/data/tE3XE0Ca-re7YM05n.png" },
   { match: "Argentinos Juniors vs Lanús", homeLogo: "https://static.flashscore.com/res/image/data/xplqslf5-CUuaFAMD.png", awayLogo: "https://static.flashscore.com/res/image/data/h4Xuyuf5-xQnxBzcF.png" },
   { match: "Independiente Rivadavia vs Unión Santa Fe", homeLogo: "https://static.flashscore.com/res/image/data/MkO7nbDa-dMZHs4g0.png", awayLogo: "https://static.flashscore.com/res/image/data/YuZso7jl-OS9FbeGg.png" },
+  { match: "Thunder vs Lakers", homeLogo: "https://static.flashscore.com/res/image/data/bFgddNh5-4zc22IQb.png", awayLogo: "https://static.flashscore.com/res/image/data/06fGDMdM-6y7aqqwb.png" },
   { match: "Dallas vs Real Salt Lake", homeLogo: "https://static.flashscore.com/res/image/data/IPVa0Qhl-08eoEXKh.png", awayLogo: "https://static.flashscore.com/res/image/data/OxGZ7ve5-vgy39tSd.png" },
   { match: "Alianza Lima vs Sporting Cristal", homeLogo: "https://static.flashscore.com/res/image/data/OdDDfjWg-tE1csI3A.png", awayLogo: "https://static.flashscore.com/res/image/data/bT8P90Ar-Em9Gxj8O.png" },
-  { match: "Guadalajara vs Tigres UANL", homeLogo: "https://static.flashscore.com/res/image/data/t069TNWg-xj2pMTQu.png", awayLogo: "https://static.flashscore.com/res/image/data/0vODuHCr-S2LhLtKb.png" },
+  { match: "Guadalajara vs Tigres UANL", homeLogo: "https://static.flashscore.com/res/image/data/ro844CyS-lEs0thDm.png", awayLogo: "https://static.flashscore.com/res/image/data/h2nbvbZA-IJnFXA9L.png" },
   { match: "Nashville SC vs DC United", homeLogo: "https://static.flashscore.com/res/image/data/Y7Y3g4Da-6JqXhTSA.png", awayLogo: "https://static.flashscore.com/res/image/data/MuhwhtwS-M1jIRGkS.png" },
   { match: "América de Cali vs Santa Fe", homeLogo: "https://static.flashscore.com/res/image/data/fySikCAr-hSZHTo4B.png", awayLogo: "https://static.flashscore.com/res/image/data/dlONm5jl-AaS9a4Ho.png" },
   { match: "Colorado Rapids vs St. Louis City", homeLogo: "https://static.flashscore.com/res/image/data/OOiHXVAr-fyzFgPy8.png", awayLogo: "https://static.flashscore.com/res/image/data/fZQ24ABr-jmLPWdtA.png" },
-  { match: "Seattle Sounders FC vs San Diego", homeLogo: "https://static.flashscore.com/res/image/data/2NlXcSAr-Q7Ql2Qbi.png", awayLogo: "https://static.flashscore.com/res/image/data/pQjpOMWg-b7NYdTs6.png" },
-  { match: "Portland Timbers vs Sporting KC", homeLogo: "https://static.flashscore.com/res/image/data/23fNMrcM-pft1D8uk.png", awayLogo: "https://static.flashscore.com/res/image/data/QNOH3lYg-pft1D8uk.png" },
-  { match: "SJ Earthquakes vs Vancouver Whitecaps", homeLogo: "https://static.flashscore.com/res/image/data/nXTMece5-nJrkMuTE.png", awayLogo: "https://static.flashscore.com/res/image/data/6Fh3DODa-GpqxHjf5.png" }
+  { match: "Seattle Sounders FC vs San Diego", homeLogo: "https://static.flashscore.com/res/image/data/2NlXcSAr-Q7Ql2Qbi.png", awayLogo: "https://livesport-ott-images.ssl.cdn.cra.cz/r900xfq60/423eaf54-a3cc-4b4a-b672-bc777aa3125f.avif" },
+  { match: "Portland Timbers vs Sporting KC", homeLogo: "https://static.flashscore.com/res/image/data/QNOH3lYg-pft1D8uk.png", awayLogo: "https://static.flashscore.com/res/image/data/23fNMrcM-pft1D8uk.png" },
+  { match: "SJ Earthquakes vs Vancouver Whitecaps", homeLogo: "https://static.flashscore.com/res/image/data/6Fh3DODa-GpqxHjf5.png", awayLogo: "https://static.flashscore.com/res/image/data/nXTMece5-nJrkMuTE.png" }
 ];
 
 // =====================================================
