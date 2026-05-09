@@ -1,18 +1,15 @@
 /**
- * SCRAPER DEFINITIVO DE ESCUDOS
- * Soluciona partidos faltantes con estrategia multinivel:
+ * VERSION OPTIMIZADA
  *
- * NIVEL 1: Google -> Flashscore partido
- * NIVEL 2: Google -> Flashscore equipo local
- * NIVEL 3: Google -> Flashscore equipo visitante
- * NIVEL 4: Busqueda directa por logos en Google Images (fallback)
+ * Flujo:
+ * 1. Busca SIEMPRE el partido primero (rápido)
+ * 2. Solo si falta home o away:
+ *    - Busca individualmente SOLO el equipo faltante
+ * 3. Usa cache
  *
- * Mejora enorme para equipos como:
- * - Elche
- * - Cagliari
- * - Ceuta
- * - Castellon
- * - ligas menores
+ * Resultado:
+ * - Mucho más rápido
+ * - Mantiene cobertura alta
  */
 
 const { chromium } = require('playwright');
@@ -55,45 +52,26 @@ function cleanTeamNameForSearch(name) {
     .trim();
 }
 
-async function isGoogleBlocked(page) {
-  return page.evaluate(() => {
-    const title = document.title.toLowerCase();
-    const body = document.body?.innerText?.toLowerCase() || '';
-
-    return (
-      title.includes('captcha') ||
-      title.includes('unusual traffic') ||
-      body.includes('captcha') ||
-      body.includes('unusual traffic') ||
-      body.includes('automated requests')
-    );
-  });
-}
-
-/**
- * BUSQUEDA GOOGLE GENERICA
- */
 async function googleSearch(page, query) {
-  const url = `${GOOGLE_SEARCH_URL}${encodeURIComponent(query)}`;
-
   try {
-    await page.goto(url, {
-      waitUntil: 'domcontentloaded',
-      timeout: 30000,
-    });
+    await page.goto(
+      `${GOOGLE_SEARCH_URL}${encodeURIComponent(query)}`,
+      {
+        waitUntil: 'domcontentloaded',
+        timeout: 25000,
+      }
+    );
 
-    await page.waitForTimeout(2500);
-
-    if (await isGoogleBlocked(page)) return null;
+    await page.waitForTimeout(1800);
 
     return true;
   } catch {
-    return null;
+    return false;
   }
 }
 
 /**
- * Busca partido Flashscore
+ * BUSCAR PARTIDO (PRIORIDAD)
  */
 async function findFlashscoreMatchUrl(page, homeTeam, awayTeam) {
   const success = await googleSearch(
@@ -124,94 +102,18 @@ async function findFlashscoreMatchUrl(page, homeTeam, awayTeam) {
 }
 
 /**
- * Busca pagina de equipo Flashscore
+ * EXTRAER ESCUDOS DEL PARTIDO
  */
-async function findTeamFlashscoreUrl(page, teamName) {
-  const success = await googleSearch(
-    page,
-    `${cleanTeamNameForSearch(teamName)} flashscore team`
-  );
-
-  if (!success) return null;
-
-  return page.evaluate(() => {
-    const links = [...document.querySelectorAll('a[href]')].map(a => a.href);
-
-    for (const href of links) {
-      if (
-        href.includes('flashscore') &&
-        (href.includes('/team/') || href.includes('/equipo/'))
-      ) {
-        return href;
-      }
-    }
-
-    return null;
-  });
-}
-
-/**
- * Extrae logo desde pagina de equipo
- */
-async function extractLogoFromTeamPage(page, teamUrl) {
-  if (!teamUrl) return null;
+async function extractShieldsFromMatchPage(page, matchUrl) {
+  if (!matchUrl) return null;
 
   try {
-    await page.goto(teamUrl, {
+    await page.goto(matchUrl, {
       waitUntil: 'domcontentloaded',
-      timeout: 30000,
+      timeout: 25000,
     });
 
     await page.waitForTimeout(2500);
-
-    return page.evaluate(() => {
-      const selectors = [
-        'img.participant__image',
-        '.heading img',
-        '.teamHeader img',
-        'img[alt*="logo"]',
-        'img[src*="logo"]',
-      ];
-
-      for (const selector of selectors) {
-        const img = document.querySelector(selector);
-
-        if (img?.src) return img.src;
-      }
-
-      // fallback general
-      const allImgs = [...document.querySelectorAll('img')];
-
-      for (const img of allImgs) {
-        const src = img.src || '';
-
-        if (
-          src.includes('logo') ||
-          src.includes('team') ||
-          src.includes('participant')
-        ) {
-          return src;
-        }
-      }
-
-      return null;
-    });
-  } catch {
-    return null;
-  }
-}
-
-/**
- * Extrae desde pagina de partido
- */
-async function extractShieldsFromMatchPage(page, url) {
-  try {
-    await page.goto(url, {
-      waitUntil: 'domcontentloaded',
-      timeout: 30000,
-    });
-
-    await page.waitForTimeout(3000);
 
     return page.evaluate(() => {
       function normalize(side) {
@@ -232,18 +134,73 @@ async function extractShieldsFromMatchPage(page, url) {
 
       const state = window.__INITIAL_STATE__;
 
-      if (state) {
-        const participants =
-          state.event?.participantsData ||
-          state.participantsData ||
-          state.match?.participantsData;
+      if (!state) return null;
 
-        if (participants) {
-          return {
-            homeLogo: normalize(participants.home),
-            awayLogo: normalize(participants.away),
-          };
-        }
+      const participants =
+        state.event?.participantsData ||
+        state.participantsData ||
+        state.match?.participantsData;
+
+      if (!participants) return null;
+
+      return {
+        homeLogo: normalize(participants.home),
+        awayLogo: normalize(participants.away),
+      };
+    });
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * BUSQUEDA INDIVIDUAL SOLO PARA EL FALTANTE
+ */
+async function findTeamLogo(page, teamName) {
+  const success = await googleSearch(
+    page,
+    `${cleanTeamNameForSearch(teamName)} flashscore team`
+  );
+
+  if (!success) return null;
+
+  const teamUrl = await page.evaluate(() => {
+    const links = [...document.querySelectorAll('a[href]')].map(a => a.href);
+
+    for (const href of links) {
+      if (
+        href.includes('flashscore') &&
+        (href.includes('/team/') || href.includes('/equipo/'))
+      ) {
+        return href;
+      }
+    }
+
+    return null;
+  });
+
+  if (!teamUrl) return null;
+
+  try {
+    await page.goto(teamUrl, {
+      waitUntil: 'domcontentloaded',
+      timeout: 25000,
+    });
+
+    await page.waitForTimeout(1800);
+
+    return page.evaluate(() => {
+      const selectors = [
+        'img.participant__image',
+        '.heading img',
+        '.teamHeader img',
+        'img[src*="logo"]',
+      ];
+
+      for (const selector of selectors) {
+        const img = document.querySelector(selector);
+
+        if (img?.src) return img.src;
       }
 
       return null;
@@ -254,81 +211,59 @@ async function extractShieldsFromMatchPage(page, url) {
 }
 
 /**
- * FALLBACK Google Images
+ * MASTER
  */
-async function searchLogoByImage(page, teamName) {
-  const success = await googleSearch(
-    page,
-    `${cleanTeamNameForSearch(teamName)} football club logo png`
-  );
+async function searchMatchLogos(page, homeTeam, awayTeam, logoCache) {
+  let homeLogo = logoCache.get(homeTeam) || null;
+  let awayLogo = logoCache.get(awayTeam) || null;
 
-  if (!success) return null;
+  // Si ambos ya están cacheados, salir rápido
+  if (homeLogo && awayLogo) {
+    return { homeLogo, awayLogo };
+  }
 
-  return page.evaluate(() => {
-    const imgs = [...document.querySelectorAll('img')];
-
-    for (const img of imgs) {
-      const src = img.src || '';
-
-      if (
-        src.startsWith('http') &&
-        !src.includes('google') &&
-        !src.includes('gstatic')
-      ) {
-        return src;
-      }
-    }
-
-    return null;
-  });
-}
-
-/**
- * BUSQUEDA MAESTRA
- */
-async function searchMatchLogos(page, homeTeam, awayTeam) {
-  console.log(`  Buscando: ${homeTeam} vs ${awayTeam}`);
-
-  // NIVEL 1
+  /**
+   * PASO 1:
+   * Buscar partido completo
+   */
   const matchUrl = await findFlashscoreMatchUrl(page, homeTeam, awayTeam);
 
   if (matchUrl) {
-    const matchResult = await extractShieldsFromMatchPage(page, matchUrl);
+    const matchLogos = await extractShieldsFromMatchPage(page, matchUrl);
 
-    if (matchResult?.homeLogo || matchResult?.awayLogo) {
-      return {
-        homeLogo: matchResult.homeLogo || null,
-        awayLogo: matchResult.awayLogo || null,
-      };
+    if (matchLogos) {
+      if (!homeLogo && matchLogos.homeLogo) {
+        homeLogo = matchLogos.homeLogo;
+        logoCache.set(homeTeam, homeLogo);
+      }
+
+      if (!awayLogo && matchLogos.awayLogo) {
+        awayLogo = matchLogos.awayLogo;
+        logoCache.set(awayTeam, awayLogo);
+      }
     }
   }
 
-  console.log('  [Fallback] Busqueda por equipos individuales');
-
-  // NIVEL 2
-  let homeLogo = null;
-  let awayLogo = null;
-
-  const homeTeamUrl = await findTeamFlashscoreUrl(page, homeTeam);
-  if (homeTeamUrl) {
-    homeLogo = await extractLogoFromTeamPage(page, homeTeamUrl);
-  }
-
-  // NIVEL 3
-  const awayTeamUrl = await findTeamFlashscoreUrl(page, awayTeam);
-  if (awayTeamUrl) {
-    awayLogo = await extractLogoFromTeamPage(page, awayTeamUrl);
-  }
-
-  // NIVEL 4
+  /**
+   * PASO 2:
+   * Solo buscar individualmente lo que falte
+   */
   if (!homeLogo) {
-    console.log(`  [Google Images] ${homeTeam}`);
-    homeLogo = await searchLogoByImage(page, homeTeam);
+    console.log(`  [Fallback local] ${homeTeam}`);
+    homeLogo = await findTeamLogo(page, homeTeam);
+
+    if (homeLogo) {
+      logoCache.set(homeTeam, homeLogo);
+    }
   }
 
   if (!awayLogo) {
-    console.log(`  [Google Images] ${awayTeam}`);
-    awayLogo = await searchLogoByImage(page, awayTeam);
+    console.log(`  [Fallback visitante] ${awayTeam}`);
+    awayLogo = await findTeamLogo(page, awayTeam);
+
+    if (awayLogo) {
+      logoCache.set(awayTeam, awayLogo);
+    }
   }
 
   return {
@@ -341,7 +276,7 @@ async function searchMatchLogos(page, homeTeam, awayTeam) {
  * MAIN
  */
 async function scrapeEscudos() {
-  console.log('[Escudos] Iniciando scraping...');
+  console.log('[Escudos] Iniciando scraping optimizado...');
 
   if (!fs.existsSync(PARTIDOS_PATH)) {
     saveEmptyJson();
@@ -393,32 +328,24 @@ async function scrapeEscudos() {
 
       if (!homeTeam || !awayTeam) continue;
 
-      console.log(`\n[${i + 1}/${partidos.length}] ${homeTeam} vs ${awayTeam}`);
+      console.log(
+        `\n[${i + 1}/${partidos.length}] ${homeTeam} vs ${awayTeam}`
+      );
 
-      let homeLogo = logoCache.get(homeTeam) || null;
-      let awayLogo = logoCache.get(awayTeam) || null;
-
-      if (!homeLogo || !awayLogo) {
-        const result = await searchMatchLogos(page, homeTeam, awayTeam);
-
-        if (!homeLogo && result.homeLogo) {
-          homeLogo = result.homeLogo;
-          logoCache.set(homeTeam, homeLogo);
-        }
-
-        if (!awayLogo && result.awayLogo) {
-          awayLogo = result.awayLogo;
-          logoCache.set(awayTeam, awayLogo);
-        }
-      }
+      const result = await searchMatchLogos(
+        page,
+        homeTeam,
+        awayTeam,
+        logoCache
+      );
 
       escudos.push({
         match: `${homeTeam} vs ${awayTeam}`,
-        homeLogo: homeLogo || '',
-        awayLogo: awayLogo || '',
+        homeLogo: result.homeLogo || '',
+        awayLogo: result.awayLogo || '',
       });
 
-      await page.waitForTimeout(1500 + Math.random() * 1500);
+      await page.waitForTimeout(1000 + Math.random() * 1000);
     }
 
     ensureDir(OUTPUT);
@@ -430,6 +357,9 @@ async function scrapeEscudos() {
     );
 
     console.log(`\n[Escudos] Guardados ${escudos.length} partidos`);
+    console.log(
+      `[Escudos] Equipos cacheados: ${logoCache.size}`
+    );
   } catch (error) {
     console.warn('[Escudos] Error:', error.message);
     saveEmptyJson();
