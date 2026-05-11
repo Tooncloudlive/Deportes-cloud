@@ -4,241 +4,231 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ToonCloud Deportes</title>
-<!-- Build: 2026-05-10 08:12 -->
+<!-- Build: 2026-05-11 04:18 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
+/* ================================================================
+   TOONCLOUD DEPORTES — APPLE SPORTS REDESIGN
+   UI/UX Overhaul | All logic preserved | Design-only changes
+   ================================================================ */
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+/* ------------------------------------------------------------------
+   DESIGN TOKENS — Apple Sports Dark Palette
+   ------------------------------------------------------------------ */
 :root {
-  --pink-primary: #f767d8;
-  --purple-primary: #7c3aed;
-  --pink-glow: rgba(247, 103, 216, 0.5);
-  --purple-glow: rgba(124, 58, 237, 0.4);
-  --bg-dark: #0a0a0f;
-  --success: #22c55e;
-  --warning: #f59e0b;
-  --danger: #ef4444;
-  --glass-bg: rgba(255, 255, 255, 0.03);
-  --glass-bg-hover: rgba(255, 255, 255, 0.06);
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-border-hover: rgba(247, 103, 216, 0.25);
+  --green-primary: #1A5632;
+  --green-glow: #236B40;
+  --green-dark: #08110C;
+  --peony: #F7D7DF;
+  --peony-subtle: rgba(247, 215, 223, 0.15);
+
+  --bg: #000000;
+  --surface: #111111;
+  --surface-elevated: #1A1A1A;
+
+  --glass: rgba(255, 255, 255, 0.04);
+  --glass-hover: rgba(255, 255, 255, 0.08);
+  --border: rgba(255, 255, 255, 0.06);
+  --border-hover: rgba(255, 255, 255, 0.14);
+
+  --text-primary: #FFFFFF;
+  --text-secondary: rgba(255, 255, 255, 0.72);
+  --text-muted: rgba(255, 255, 255, 0.45);
+
+  --success: #30D158;
+  --warning: #FF9F0A;
+  --danger: #FF453A;
+
+  --cta-bg: #F5F5F5;
+  --cta-text: #000000;
+}
+
+/* ------------------------------------------------------------------
+   BASE
+   ------------------------------------------------------------------ */
+html {
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
-  background: var(--bg-dark);
-  color: #ffffff;
+  background: var(--bg);
+  color: var(--text-primary);
   min-height: 100vh;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Ambient Background */
+/* ------------------------------------------------------------------
+   AMBIENT BACKGROUND — Green gradient hero + subtle orbs
+   ------------------------------------------------------------------ */
 .ambient-bg {
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 0;
-  overflow: hidden;
-}
-
-.ambient-bg::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: 
-    radial-gradient(ellipse at 20% 20%, rgba(247, 103, 216, 0.12) 0%, transparent 40%),
-    radial-gradient(ellipse at 80% 80%, rgba(124, 58, 237, 0.08) 0%, transparent 40%),
-    radial-gradient(ellipse at 50% 50%, rgba(247, 103, 216, 0.05) 0%, transparent 60%);
-  animation: ambient-float 20s ease-in-out infinite;
+  background: linear-gradient(
+    180deg,
+    var(--green-primary) 0%,
+    var(--green-dark) 22%,
+    var(--bg) 50%
+  );
 }
 
 .ambient-orb {
   position: absolute;
   border-radius: 50%;
-  filter: blur(60px);
   pointer-events: none;
 }
 
 .ambient-orb-1 {
   width: 600px;
   height: 600px;
-  background: radial-gradient(circle, rgba(247, 103, 216, 0.3) 0%, transparent 70%);
-  top: 10%;
-  left: -10%;
-  animation: float 8s ease-in-out infinite;
+  background: radial-gradient(circle, rgba(35, 107, 64, 0.5) 0%, transparent 65%);
+  filter: blur(90px);
+  top: -8%;
+  right: 5%;
 }
 
 .ambient-orb-2 {
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, rgba(124, 58, 237, 0.3) 0%, transparent 70%);
-  bottom: 10%;
-  right: -5%;
-  animation: float 10s ease-in-out infinite reverse;
+  width: 450px;
+  height: 450px;
+  background: radial-gradient(circle, rgba(247, 215, 223, 0.12) 0%, transparent 65%);
+  filter: blur(100px);
+  bottom: 15%;
+  left: -8%;
 }
 
-@keyframes ambient-float {
-  0%, 100% { transform: translate(0, 0) rotate(0deg); }
-  33% { transform: translate(2%, 2%) rotate(1deg); }
-  66% { transform: translate(-1%, 1%) rotate(-1deg); }
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-6px); }
-}
-
-.container {
-  position: relative;
-  z-index: 1;
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 100px 20px 40px;
-}
-
-/* Header */
-header {
-  text-align: center;
-  margin-bottom: 32px;
-}
-
-.logo {
-  display: inline-flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 16px;
-}
-
-.logo-icon {
-  width: 56px;
-  height: 56px;
-  background: linear-gradient(135deg, var(--pink-primary), var(--purple-primary));
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 28px;
-  animation: logo-pulse 2s ease-in-out infinite;
-}
-
-@keyframes logo-pulse {
-  0%, 100% { box-shadow: 0 0 20px rgba(247, 103, 216, 0.4); }
-  50% { box-shadow: 0 0 40px rgba(247, 103, 216, 0.7), 0 0 60px rgba(124, 58, 237, 0.4); }
-}
-
-h1 {
-  font-size: 2rem;
-  font-weight: 700;
-  background: linear-gradient(135deg, #fff 0%, var(--pink-primary) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  letter-spacing: -0.5px;
-}
-
-.subtitle {
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 0.875rem;
-  max-width: 600px;
-  margin: 0 auto 8px;
-  line-height: 1.6;
-}
-
-.copyright {
-  color: rgba(255, 255, 255, 0.3);
-  font-size: 0.75rem;
-}
-/* New Header/Nav Styles */
+/* ------------------------------------------------------------------
+   NAVIGATION BAR — Minimal, sticky, glass
+   ------------------------------------------------------------------ */
 nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 24px;
-  width: 100vw;
-  z-index: 100;
-  box-sizing: border-box;
-  gap: 12px;
-  background: linear-gradient(to bottom, rgba(10, 10, 15, 0.98), rgba(10, 10, 15, 0.8));
   position: fixed;
   top: 0;
   left: 0;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--glass-border);
+  right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  height: 52px;
+  padding: 0 20px;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(24px) saturate(150%);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+  border-bottom: 1px solid var(--border);
 }
 
-.logo-container img { 
-  height: 36px; 
-  filter: drop-shadow(0 0 10px var(--pink-glow)); 
-  cursor: pointer; 
-  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+.logo-container img {
+  height: 32px;
+  width: auto;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
 }
 
 .logo-container img:hover {
-  transform: scale(1.05);
-  filter: drop-shadow(0 0 20px var(--pink-glow));
+  opacity: 0.8;
 }
 
-.nav-right { 
-  display: flex; 
-  gap: 10px; 
-  align-items: center; 
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   flex: 1;
   justify-content: flex-end;
 }
 
 .nav-search {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  padding: 10px 16px;
-  border-radius: 25px;
-  color: white;
-  outline: none;
-  backdrop-filter: blur(12px);
-  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  width: 100%;
+  max-width: 220px;
+  min-width: 140px;
+  padding: 9px 16px;
   font-family: inherit;
   font-size: 13px;
-  flex: 1;
-  max-width: 200px;
-  min-width: 120px;
-}
-
-.nav-search:focus { 
-  border-color: var(--pink-primary); 
-  background: rgba(255, 255, 255, 0.08); 
-  box-shadow: 0 0 20px var(--pink-glow);
-  max-width: 250px;
-  transform: scale(1.02);
+  font-weight: 500;
+  color: var(--text-primary);
+  background: var(--surface-elevated);
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+  outline: none;
+  transition: all 0.25s ease;
 }
 
 .nav-search::placeholder {
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--text-muted);
 }
 
-/* Remove old header styles that conflict */
+.nav-search:focus {
+  border-color: rgba(35, 107, 64, 0.5);
+  background: rgba(26, 26, 26, 0.9);
+  box-shadow: 0 0 0 3px rgba(35, 107, 64, 0.15);
+}
+
+/* ------------------------------------------------------------------
+   CONTAINER
+   ------------------------------------------------------------------ */
+.container {
+  position: relative;
+  z-index: 1;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 76px 20px 40px;
+}
+
+/* ------------------------------------------------------------------
+   HERO / DISCLAIMER — Editorial, clean
+   ------------------------------------------------------------------ */
 header {
-  display: none;
+  text-align: center;
+  margin-bottom: 28px;
 }
 
+.hero-title {
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
 
-/* Stats Bar */
+.hero-title span {
+  color: var(--green-glow);
+}
+
+.subtitle {
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  max-width: 560px;
+  margin: 0 auto 6px;
+  line-height: 1.6;
+}
+
+.copyright {
+  color: rgba(255, 255, 255, 0.25);
+  font-size: 0.6875rem;
+  letter-spacing: 0.02em;
+}
+
+/* ------------------------------------------------------------------
+   STATS BAR — Floating pills
+   ------------------------------------------------------------------ */
 .stats-bar {
   display: flex;
   justify-content: center;
-  gap: 16px;
-  margin-bottom: 24px;
+  gap: 12px;
+  margin-bottom: 28px;
   flex-wrap: wrap;
 }
 
@@ -246,14 +236,15 @@ header {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 20px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid var(--glass-border);
+  padding: 10px 18px;
+  background: var(--surface-elevated);
+  border: 1px solid var(--border);
   border-radius: 9999px;
-  font-size: 0.875rem;
-  font-weight: 500;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
 }
 
 .pulse-dot {
@@ -261,12 +252,12 @@ header {
   height: 8px;
   border-radius: 50%;
   background: var(--success);
-  animation: pulse-dot 1.5s ease-in-out infinite;
+  animation: pulse-dot 1.8s ease-in-out infinite;
 }
 
 @keyframes pulse-dot {
   0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.3); opacity: 0.7; }
+  50% { transform: scale(1.4); opacity: 0.6; }
 }
 
 .blink-dot {
@@ -274,81 +265,88 @@ header {
   height: 8px;
   border-radius: 50%;
   background: var(--warning);
-  animation: blink 1.5s ease-in-out infinite;
+  animation: blink 1.8s ease-in-out infinite;
 }
 
 @keyframes blink {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
+  50% { opacity: 0.3; }
 }
 
-/* Search */
+/* ------------------------------------------------------------------
+   SEARCH — iOS style rounded input
+   ------------------------------------------------------------------ */
 .search-container {
   position: relative;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
 
 .search-icon {
   position: absolute;
-  left: 20px;
+  left: 18px;
   top: 50%;
   transform: translateY(-50%);
-  color: rgba(255, 255, 255, 0.4);
-  font-size: 1.1rem;
+  color: var(--text-muted);
+  font-size: 1rem;
+  z-index: 2;
+  pointer-events: none;
 }
 
 .search {
   width: 100%;
-  padding: 16px 20px 16px 56px;
-  border-radius: 16px;
-  border: 1px solid var(--glass-border);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  color: #ffffff;
+  padding: 15px 20px 15px 48px;
+  border-radius: 9999px;
+  border: 1px solid var(--border);
+  background: var(--surface-elevated);
+  color: var(--text-primary);
   font-size: 1rem;
   font-family: inherit;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  font-weight: 500;
+  outline: none;
+  transition: all 0.25s ease;
 }
 
 .search::placeholder {
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--text-muted);
 }
 
 .search:focus {
-  outline: none;
-  border-color: var(--pink-primary);
-  box-shadow: 0 0 0 3px rgba(247, 103, 216, 0.2);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%);
+  border-color: rgba(35, 107, 64, 0.45);
+  background: rgba(26, 26, 26, 0.95);
+  box-shadow: 0 0 0 3px rgba(35, 107, 64, 0.12);
 }
 
-/* Banner */
+/* ------------------------------------------------------------------
+   BANNER
+   ------------------------------------------------------------------ */
 .banner-container {
   display: flex;
   justify-content: center;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
 
 .banner-container a {
   display: block;
-  border-radius: 12px;
+  border-radius: 16px;
   overflow: hidden;
-  transition: all 0.3s ease;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
 }
 
 .banner-container a:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(247, 103, 216, 0.3);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
 }
 
 .banner-img {
   max-width: 100%;
   height: auto;
   display: block;
-  border-radius: 12px;
+  border-radius: 16px;
 }
 
-/* Section Header */
+/* ------------------------------------------------------------------
+   SECTION HEADER
+   ------------------------------------------------------------------ */
 .section-header {
   display: flex;
   align-items: center;
@@ -358,32 +356,33 @@ header {
 }
 
 .section-title {
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.2em;
-  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 0.18em;
+  color: var(--text-muted);
+  white-space: nowrap;
 }
 
 .section-line {
   flex: 1;
   height: 1px;
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+  background: linear-gradient(90deg, var(--border) 0%, transparent 100%);
 }
 
-/* Glass Cards */
+/* ------------------------------------------------------------------
+   GLASS CARDS — Main event cards (Apple Sports style)
+   ------------------------------------------------------------------ */
 .glass-card {
   position: relative;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid var(--glass-border);
-  border-radius: 20px;
-  padding: 20px 24px;
-  margin-bottom: 12px;
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 24px 28px;
+  margin-bottom: 14px;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
-  animation: slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: slide-up 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   opacity: 0;
 }
 
@@ -391,21 +390,32 @@ header {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%, rgba(255, 255, 255, 0.03) 100%);
   border-radius: inherit;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.04) 0%,
+    transparent 50%
+  );
   pointer-events: none;
 }
 
 .glass-card:hover {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%);
-  border-color: var(--glass-border-hover);
+  background: #161616;
+  border-color: var(--border-hover);
   transform: translateY(-2px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 30px rgba(247, 103, 216, 0.15);
+  box-shadow:
+    0 20px 48px rgba(0, 0, 0, 0.5),
+    0 0 1px rgba(255, 255, 255, 0.08);
 }
 
+/* LIVE STATE — Green accent */
 .glass-card.live {
-  border-color: rgba(34, 197, 94, 0.3);
-  background: linear-gradient(135deg, rgba(34, 197, 94, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border-color: rgba(48, 209, 88, 0.18);
+  background: linear-gradient(
+    135deg,
+    rgba(48, 209, 88, 0.04) 0%,
+    var(--surface) 40%
+  );
 }
 
 .glass-card.live::after {
@@ -413,32 +423,41 @@ header {
   position: absolute;
   left: 0;
   top: 0;
-  width: 3px;
+  width: 4px;
   height: 100%;
-  background: linear-gradient(180deg, var(--success), #16a34a);
-  border-radius: 20px 0 0 20px;
+  background: linear-gradient(180deg, var(--success), rgba(48, 209, 88, 0.4));
+  border-radius: 24px 0 0 24px;
 }
 
-/* Animacion para eliminar cards finalizadas */
+.glass-card.live:hover {
+  border-color: rgba(48, 209, 88, 0.3);
+  box-shadow:
+    0 20px 48px rgba(0, 0, 0, 0.5),
+    0 0 30px rgba(48, 209, 88, 0.08);
+}
+
+/* Removing animation */
 .glass-card.removing {
-  animation: slide-out 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: slide-out 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @keyframes slide-up {
-  from { opacity: 0; transform: translateY(20px); }
+  from { opacity: 0; transform: translateY(16px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes slide-out {
   from { opacity: 1; transform: translateY(0); }
-  to { opacity: 0; transform: translateY(-20px); height: 0; padding: 0; margin: 0; overflow: hidden; }
+  to { opacity: 0; transform: translateY(-16px); height: 0; padding: 0; margin: 0; overflow: hidden; }
 }
 
-/* Card Content */
+/* ------------------------------------------------------------------
+   CARD CONTENT LAYOUT
+   ------------------------------------------------------------------ */
 .card-content {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
   position: relative;
   z-index: 1;
 }
@@ -455,6 +474,9 @@ header {
   min-width: 0;
 }
 
+/* ------------------------------------------------------------------
+   TIME ROW
+   ------------------------------------------------------------------ */
 .time-row {
   display: flex;
   align-items: center;
@@ -463,87 +485,97 @@ header {
 }
 
 .time {
-  font-size: 1.25rem;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  color: #ffffff;
+  font-size: 1.375rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
 }
 
 .league-badge {
-  font-size: 0.625rem;
+  font-size: 0.6875rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  padding: 4px 10px;
-  background: rgba(247, 103, 216, 0.15);
-  color: var(--pink-primary);
+  letter-spacing: 0.08em;
+  padding: 5px 12px;
+  background: rgba(26, 86, 50, 0.25);
+  color: #4ADE80;
   border-radius: 9999px;
+  white-space: nowrap;
 }
 
-/* Match with team logos */
+/* ------------------------------------------------------------------
+   MATCH — Teams display
+   ------------------------------------------------------------------ */
 .match {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   font-size: 0.9375rem;
-  font-weight: 500;
-  color: #ffffff;
-  margin-bottom: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 14px;
   flex-wrap: wrap;
 }
 
 .team-section {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .team-logo {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   object-fit: contain;
-  border-radius: 4px;
+  border-radius: 6px;
 }
 
 .team-logo-placeholder {
-  width: 24px;
-  height: 24px;
-  background: rgba(255, 255, 255, 0.1);
+  width: 28px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.08);
   border-radius: 50%;
   flex-shrink: 0;
 }
 
 .vs-text {
-  color: rgba(255, 255, 255, 0.4);
-  font-weight: 600;
-  font-size: 0.75rem;
-  margin: 0 4px;
+  color: var(--text-muted);
+  font-weight: 700;
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 0 2px;
 }
 
-/* Status Badge */
+/* ------------------------------------------------------------------
+   STATUS BADGE
+   ------------------------------------------------------------------ */
 .status-badge {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 12px;
-  font-size: 0.6875rem;
-  font-weight: 600;
+  padding: 6px 14px;
+  font-size: 0.75rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   border-radius: 9999px;
 }
 
 .status-live {
-  background: rgba(34, 197, 94, 0.15);
+  background: rgba(48, 209, 88, 0.12);
   color: var(--success);
 }
 
 .status-upcoming {
-  background: rgba(245, 158, 11, 0.15);
+  background: rgba(255, 159, 10, 0.12);
   color: var(--warning);
 }
 
-/* Card Actions */
+/* ------------------------------------------------------------------
+   CARD ACTIONS
+   ------------------------------------------------------------------ */
 .card-actions {
   display: flex;
   flex-direction: column;
@@ -553,12 +585,23 @@ header {
 @media (min-width: 640px) {
   .card-actions {
     align-items: flex-end;
+    min-width: 160px;
   }
 }
 
-/* Channel Selector */
+/* ------------------------------------------------------------------
+   CHANNEL SELECTOR
+   ------------------------------------------------------------------ */
 .channel-selector {
   position: relative;
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .channel-selector {
+    width: auto;
+    min-width: 170px;
+  }
 }
 
 .channel-btn {
@@ -566,20 +609,22 @@ header {
   align-items: center;
   gap: 8px;
   padding: 10px 16px;
-  font-size: 0.875rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--glass-border);
-  border-radius: 12px;
-  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  font-family: inherit;
+  background: var(--surface-elevated);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  color: var(--text-secondary);
   cursor: pointer;
   transition: all 0.2s ease;
-  min-width: 140px;
+  width: 100%;
   justify-content: space-between;
 }
 
 .channel-btn:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--border-hover);
 }
 
 .channel-dropdown {
@@ -587,92 +632,119 @@ header {
   right: 0;
   top: calc(100% + 8px);
   min-width: 180px;
-  background: linear-gradient(135deg, rgba(30, 30, 40, 0.95) 0%, rgba(20, 20, 30, 0.95) 100%);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--glass-border);
-  border-radius: 12px;
+  width: 100%;
+  background: linear-gradient(135deg, rgba(28, 28, 30, 0.98) 0%, rgba(20, 20, 22, 0.98) 100%);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--border);
+  border-radius: 16px;
   padding: 8px;
-  z-index: 10;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  z-index: 20;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.6);
 }
 
 .channel-option {
   display: block;
   width: 100%;
   padding: 10px 14px;
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  font-family: inherit;
   text-align: left;
   background: transparent;
   border: none;
-  border-radius: 8px;
-  color: rgba(255, 255, 255, 0.7);
+  border-radius: 10px;
+  color: var(--text-secondary);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
 }
 
 .channel-option:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-primary);
 }
 
 .channel-option.active {
-  background: rgba(247, 103, 216, 0.2);
-  color: var(--pink-primary);
+  background: rgba(26, 86, 50, 0.3);
+  color: #4ADE80;
+  font-weight: 600;
 }
 
 .single-channel {
   font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.4);
+  font-weight: 500;
+  color: var(--text-muted);
+  text-align: right;
 }
 
-/* Watch Button */
+@media (max-width: 639px) {
+  .single-channel {
+    text-align: left;
+  }
+}
+
+/* ------------------------------------------------------------------
+   WATCH BUTTON — Apple CTA style
+   ------------------------------------------------------------------ */
 .btn-watch {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 12px 24px;
-  font-size: 0.875rem;
-  font-weight: 600;
+  padding: 14px 28px;
+  font-size: 0.9375rem;
+  font-weight: 700;
   font-family: inherit;
   border: none;
-  border-radius: 12px;
+  border-radius: 14px;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .btn-watch {
+    width: auto;
+    min-width: 140px;
+  }
 }
 
 .btn-watch.enabled {
-  background: linear-gradient(135deg, var(--pink-primary), var(--purple-primary));
-  color: white;
-  box-shadow: 0 4px 20px rgba(247, 103, 216, 0.3);
+  background: var(--cta-bg);
+  color: var(--cta-text);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .btn-watch.enabled:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(247, 103, 216, 0.5);
+  transform: scale(1.03);
+  filter: brightness(1.1);
+  box-shadow: 0 4px 16px rgba(245, 245, 245, 0.15);
 }
 
 .btn-watch.enabled:active {
-  transform: translateY(0);
+  transform: scale(0.98);
+  filter: brightness(0.95);
 }
 
 .btn-watch.disabled {
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-muted);
   cursor: not-allowed;
 }
 
-/* Player Overlay */
+/* ------------------------------------------------------------------
+   PLAYER OVERLAY
+   ------------------------------------------------------------------ */
 .player-overlay {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(0, 0, 0, 0.92);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   z-index: 1000;
   padding: 20px;
-  animation: fade-in 0.3s ease;
+  animation: fade-in 0.25s ease;
 }
 
 .player-overlay.active {
@@ -691,7 +763,8 @@ header {
   justify-content: space-between;
   margin-bottom: 16px;
   padding-bottom: 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--border);
+  gap: 12px;
 }
 
 .player-title {
@@ -700,11 +773,13 @@ header {
   gap: 10px;
   font-size: 1rem;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--text-primary);
+  min-width: 0;
 }
 
 .player-title-icon {
-  color: var(--pink-primary);
+  color: var(--success);
+  flex-shrink: 0;
 }
 
 .btn-close {
@@ -715,23 +790,24 @@ header {
   font-size: 0.875rem;
   font-weight: 600;
   font-family: inherit;
-  background: rgba(239, 68, 68, 0.2);
+  background: rgba(255, 69, 58, 0.12);
   color: var(--danger);
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  border-radius: 10px;
+  border: 1px solid rgba(255, 69, 58, 0.2);
+  border-radius: 12px;
   cursor: pointer;
   transition: all 0.2s ease;
+  flex-shrink: 0;
 }
 
 .btn-close:hover {
-  background: rgba(239, 68, 68, 0.3);
+  background: rgba(255, 69, 58, 0.22);
 }
 
 .player-wrapper {
   flex: 1;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
-  border: 1px solid var(--glass-border);
-  border-radius: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
   overflow: hidden;
 }
 
@@ -742,42 +818,66 @@ header {
   background: #000;
 }
 
-/* Empty State */
+/* ------------------------------------------------------------------
+   EMPTY STATE
+   ------------------------------------------------------------------ */
 .empty-state {
   text-align: center;
-  padding: 60px 20px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
-  backdrop-filter: blur(20px);
-  border: 1px solid var(--glass-border);
-  border-radius: 20px;
+  padding: 64px 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 24px;
   animation: scale-in 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .empty-state-icon {
   font-size: 3rem;
   margin-bottom: 16px;
-  opacity: 0.3;
+  opacity: 0.25;
 }
 
 .empty-state-text {
   font-size: 1.125rem;
-  color: rgba(255, 255, 255, 0.5);
+  font-weight: 600;
+  color: var(--text-secondary);
 }
 
 .empty-state-subtext {
   font-size: 0.875rem;
-  color: rgba(255, 255, 255, 0.3);
-  margin-top: 8px;
+  color: var(--text-muted);
+  margin-top: 6px;
 }
 
 @keyframes scale-in {
-  from { opacity: 0; transform: scale(0.95); }
+  from { opacity: 0; transform: scale(0.96); }
   to { opacity: 1; transform: scale(1); }
 }
 
-/* Scrollbar */
+/* ------------------------------------------------------------------
+   CHEVRON
+   ------------------------------------------------------------------ */
+.chevron {
+  transition: transform 0.25s ease;
+  font-size: 0.625rem;
+  color: var(--text-muted);
+}
+
+.chevron.open {
+  transform: rotate(180deg);
+}
+
+/* ------------------------------------------------------------------
+   HIDDEN UTILITY
+   ------------------------------------------------------------------ */
+.hidden {
+  display: none !important;
+}
+
+/* ------------------------------------------------------------------
+   SCROLLBAR
+   ------------------------------------------------------------------ */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
 }
 
 ::-webkit-scrollbar-track {
@@ -785,119 +885,138 @@ header {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.22);
 }
 
-/* Responsive */
-@media (max-width: 640px) {
+/* ------------------------------------------------------------------
+   RESPONSIVE — Mobile-first refinements
+   ------------------------------------------------------------------ */
+@media (max-width: 639px) {
   .container {
-    padding: 24px 16px;
+    padding: 68px 16px 32px;
   }
-  
-  h1 {
-    font-size: 1.5rem;
+
+  .hero-title {
+    font-size: 1.625rem;
   }
-  
-  .logo-icon {
-    width: 48px;
-    height: 48px;
-    font-size: 24px;
-  }
-  
+
   .glass-card {
-    padding: 16px 20px;
+    padding: 18px 20px;
+    border-radius: 20px;
+    margin-bottom: 12px;
   }
-  
+
+  .glass-card.live::after {
+    border-radius: 20px 0 0 20px;
+  }
+
   .time {
-    font-size: 1.125rem;
+    font-size: 1.25rem;
   }
-  
+
   .match {
     font-size: 0.875rem;
   }
-  
-  .team-logo, .team-logo-placeholder {
-    width: 20px;
-    height: 20px;
+
+  .team-logo,
+  .team-logo-placeholder {
+    width: 24px;
+    height: 24px;
   }
-  
+
   .btn-watch {
     width: 100%;
+    padding: 14px;
+    font-size: 0.9375rem;
   }
-  
+
   .channel-btn {
     width: 100%;
+    padding: 12px 16px;
   }
-  
+
   .player-header {
     flex-direction: column;
-    gap: 12px;
     align-items: flex-start;
   }
-  
+
   .btn-close {
     width: 100%;
     justify-content: center;
   }
-  
+
   .player-title {
-    font-size: 0.875rem;
+    font-size: 0.9375rem;
+  }
+
+  .stats-pill {
+    padding: 8px 14px;
+    font-size: 0.75rem;
+  }
+
+  .banner-container a {
+    border-radius: 12px;
+  }
+
+  .banner-img {
+    border-radius: 12px;
+  }
+
+  .empty-state {
+    padding: 48px 20px;
+    border-radius: 20px;
   }
 }
 
-/* Chevron icon */
-.chevron {
-  transition: transform 0.2s ease;
-}
-
-.chevron.open {
-  transform: rotate(180deg);
-}
-
-.hidden {
-  display: none !important;
+/* Subtle green glow on focus for accessibility */
+:focus-visible {
+  outline: 2px solid rgba(35, 107, 64, 0.5);
+  outline-offset: 2px;
 }
 </style>
+
 <base target="_blank">
-<base target="_blank">
-  <link rel="icon" type="image/png" href="https://i.imgur.com/XAHG8BW.png">
-  <link rel="apple-touch-icon" href="https://i.imgur.com/XAHG8BW.png">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="ToonCloud">
-<base target="_blank">
-<base target="_blank">
-<base target="_blank">
-<base target="_blank">
+<link rel="icon" type="image/png" href="https://i.imgur.com/XAHG8BW.png">
+<link rel="apple-touch-icon" href="https://i.imgur.com/XAHG8BW.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ToonCloud">
 <base target="_blank">
 </head>
 
 <body>
 
+<!-- Ambient Background -->
 <div class="ambient-bg">
   <div class="ambient-orb ambient-orb-1"></div>
   <div class="ambient-orb ambient-orb-2"></div>
 </div>
 
+<!-- Navigation Bar -->
 <nav>
-    <div class="logo-container"><img src="https://i.imgur.com/XAHG8BW.png" onclick="location.reload()"></div>
-    <div class="nav-right">
-      <input type="text" id="nav-search" class="nav-search" placeholder="Buscar partidos..." oninput="filterEvents(this.value)">
-    </div>
-  </nav>
+  <div class="logo-container">
+    <img src="https://i.imgur.com/XAHG8BW.png" onclick="location.reload()" alt="ToonCloud">
+  </div>
+  <div class="nav-right">
+    <input type="text" id="nav-search" class="nav-search" placeholder="Buscar partidos..." oninput="filterEvents(this.value)">
+  </div>
+</nav>
 
-  
+<!-- Main Container -->
 <div class="container">
-  <div style="text-align: center; padding: 20px 16px; margin-bottom: 16px;">
+
+  <!-- Hero / Disclaimer -->
+  <header>
     <p class="subtitle">Este sitio no aloja ni transmite contenido propio. Todo el material proviene de fuentes p&uacute;blicas externas. No tenemos control ni responsabilidad sobre dicho contenido ni sobre los enlaces compartidos.</p>
     <p class="copyright">Larvas S.A &copy;</p>
-  </div>
+  </header>
 
+  <!-- Stats Bar -->
   <div class="stats-bar">
     <div class="stats-pill">
       <span class="pulse-dot"></span>
@@ -909,26 +1028,30 @@ header {
     </div>
   </div>
 
+  <!-- Search -->
   <div class="search-container">
     <span class="search-icon">&#128269;</span>
     <input class="search" placeholder="Buscar partidos, equipos, ligas..." oninput="filterEvents(this.value)">
   </div>
 
-  <!-- Banner Publicitario -->
+  <!-- Banner -->
   <div class="banner-container">
     <a href="https://1xlite-87822.bar/es?tag=d_5378140m_99260c_" target="_blank" rel="noopener noreferrer">
       <img src="Media99260__WEEKEND-BOOSTER_970x90.gif" alt="1xBet Weekend Booster" class="banner-img">
     </a>
   </div>
 
+  <!-- Section Header -->
   <div class="section-header">
     <span class="section-title">Programaci&oacute;n</span>
     <div class="section-line"></div>
   </div>
 
+  <!-- Events Container -->
   <div id="events"></div>
 </div>
 
+<!-- Player Overlay -->
 <div class="player-overlay" id="player">
   <div class="player-header">
     <div class="player-title">
@@ -953,190 +1076,12 @@ header {
 // El formato es: { match: "Equipo Local vs Equipo Visitante", homeLogo: "URL_ESCUDO_LOCAL", awayLogo: "URL_ESCUDO_VISITANTE" }
 // Si no quieres escudo para un equipo, deja el campo vac&iacute;o: ""
 
-const matchesLogos = [
-  { match: "Mallorca vs Villarreal", homeLogo: "https://static.flashscore.com/res/image/data/pSBNl3eM-rmDEjevK.png", awayLogo: "https://static.flashscore.com/res/image/data/EBxZSOjT-GSuwY3p9.png" },
-  { match: "Verona vs Como", homeLogo: "https://static.flashscore.com/res/image/data/vgsKSajl-Kxh373f3.png", awayLogo: "https://static.flashscore.com/res/image/data/Cf5pQNyS-hpmw8K1h.png" },
-  { match: "FC Andorra vs Las Palmas", homeLogo: "https://static.flashscore.com/res/image/data/AqQKdNHG-p6WBruc4.png", awayLogo: "https://static.flashscore.com/res/image/data/44xPoqHG-d6gaf9ua.png" },
-  { match: "Burnley vs Aston Villa", homeLogo: "https://static.flashscore.com/res/image/data/UaPJjYBr-6PhTI7J6.png", awayLogo: "https://static.flashscore.com/res/image/data/QsnteKXg-jwz95gs0.png" },
-  { match: "Crystal Palace vs Everton", homeLogo: "https://static.flashscore.com/res/image/data/AFNlsDzS-drybTCiH.png", awayLogo: "https://static.flashscore.com/res/image/data/EwJqZUZA-bRmKmISE.png" },
-  { match: "Nottingham Forest vs Newcastle United", homeLogo: "https://static.flashscore.com/res/image/data/GCLLkTzB-ImKwLTtA.png", awayLogo: "https://static.flashscore.com/res/image/data/fojwJwZA-2Vnc5VQf.png" },
-  { match: "Cremonese vs Pisa", homeLogo: "https://static.flashscore.com/res/image/data/EDUhUrDr-8b0QRXR3.png", awayLogo: "https://static.flashscore.com/res/image/data/CzC5XtGG-GMOw3SI3.png" },
-  { match: "Fiorentina vs Genoa", homeLogo: "https://static.flashscore.com/res/image/data/488hnIxS-6XKdgOM6.png", awayLogo: "https://static.flashscore.com/res/image/data/KSOt1Xjl-hCD6m1R3.png" },
-  { match: "Hamburger SV vs Freiburg", homeLogo: "https://static.flashscore.com/res/image/data/vy7iqCwS-86lnAaq9.png", awayLogo: "https://static.flashscore.com/res/image/data/ttZErLg5-86lnAaq9.png" },
-  { match: "Defensor Sporting vs Juventud", homeLogo: "https://static.flashscore.com/res/image/data/UgKB6TzS-vZdejfYC.png", awayLogo: "https://static.flashscore.com/res/image/data/6XyukXjl-WIGOXbOL.png" },
-  { match: "Athletic Club vs Valencia", homeLogo: "https://static.flashscore.com/res/image/data/Y7CgBGYg-vJb36ZBF.png", awayLogo: "https://static.flashscore.com/res/image/data/Ioshoye5-MHrRLNUo.png" },
-  { match: "Leganés vs Racing Santander", homeLogo: "https://static.flashscore.com/res/image/data/IqhNyYjl-Q3zX1dyT.png", awayLogo: "https://static.flashscore.com/res/image/data/COqz35Ar-MsWrauH8.png" },
-  { match: "Feyenoord vs AZ", homeLogo: "https://static.flashscore.com/res/image/data/2ebRtpBr-zVZIA7Nc.png", awayLogo: "https://static.flashscore.com/res/image/data/t27Sa8wS-xOiZhZoE.png" },
-  { match: "Go Ahead Eagles vs PSV", homeLogo: "https://static.flashscore.com/res/image/data/rgj4XeZA-CYLEXeh5.png", awayLogo: "https://static.flashscore.com/res/image/data/OEStlXZA-j5zA1baQ.png" },
-  { match: "Ajax vs Utrecht", homeLogo: "https://static.flashscore.com/res/image/data/nHNpUPcM-bZZPiwAI.png", awayLogo: "https://static.flashscore.com/res/image/data/29zAb9f5-4vob7cTR.png" },
-  { match: "Groningen vs NEC", homeLogo: "https://static.flashscore.com/res/image/data/x8kjVDh5-Mm3KkBrA.png", awayLogo: "https://cdn.cookielaw.org/logos/static/ot_company_logo.png" },
-  { match: "West Ham United vs Arsenal", homeLogo: "https://static.flashscore.com/res/image/data/Qo3RdMjl-Q9DJHs4l.png", awayLogo: "https://static.flashscore.com/res/image/data/pfchdCg5-vcNAdtF9.png" },
-  { match: "Köln vs Heidenheim", homeLogo: "https://static.flashscore.com/res/image/data/8hxnRHEa-86lnAaq9.png", awayLogo: "https://static.flashscore.com/res/image/data/pEIoHCil-bNiAN2lt.png" },
-  { match: "Parma vs Roma", homeLogo: "https://static.flashscore.com/res/image/data/8WX7fNil-hYMrKVhi.png", awayLogo: "https://static.flashscore.com/res/image/data/4ncIiycM-WfK67WWe.png" },
-  { match: "Real Oviedo vs Getafe", homeLogo: "https://static.flashscore.com/res/image/data/z16nhrjl-Y7pkY0PJ.png", awayLogo: "https://static.flashscore.com/res/image/data/OjieMlGG-YmCZKGcR.png" },
-  { match: "Córdoba vs Granada", homeLogo: "https://static.flashscore.com/res/image/data/SvAe0DxS-4YF9PAyB.png", awayLogo: "https://static.flashscore.com/res/image/data/8AhQm2xS-pEzOUfJL.png" },
-  { match: "Mirandés vs Eibar", homeLogo: "https://static.flashscore.com/res/image/data/0pN1qrxS-ns1CJmLE.png", awayLogo: "https://static.flashscore.com/res/image/data/CvetxaAr-4U3vjZKk.png" },
-  { match: "Mainz 05 vs Union Berlin", homeLogo: "https://static.flashscore.com/res/image/data/nwmyWZVg-EoYxhN5r.png", awayLogo: "https://static.flashscore.com/res/image/data/dI26KXzB-ncmj9JbF.png" },
-  { match: "Rosario Central vs Independiente", homeLogo: "https://static.flashscore.com/res/image/data/hKqVGwgl-vuxu02Jt.png", awayLogo: "https://static.flashscore.com/res/image/data/MqbBGgxS-ALgHCh57.png" },
-  { match: "Sport Huancayo vs Juan Pablo II College", homeLogo: "https://static.flashscore.com/res/image/data/hnIOJwGG-6ayjGGhJ.png", awayLogo: "https://static.flashscore.com/res/image/data/YRQE9BFG-CrkK62Mu.png" },
-  { match: "Milan vs Atalanta", homeLogo: "https://static.flashscore.com/res/image/data/htYjIjFa-KtCfnbWp.png", awayLogo: "https://static.flashscore.com/res/image/data/xASUZ6il-rg6usZns.png" },
-  { match: "Barcelona vs Real Madrid", homeLogo: "https://static.flashscore.com/res/image/data/8dhw5vxS-fcDVLdrL.png", awayLogo: "https://static.flashscore.com/res/image/data/A7kHoxZA-ttfpEDUq.png" },
-  { match: "PSG vs Brest", homeLogo: "https://static.flashscore.com/res/image/data/EskJufg5-A7UDDuOO.png", awayLogo: "https://static.flashscore.com/res/image/data/r9aDJ9eM-prdkpc50.png" },
-  { match: "Le Havre vs Olympique Marseille", homeLogo: "https://static.flashscore.com/res/image/data/jHtKekgl-UBLTQxXg.png", awayLogo: "https://static.flashscore.com/res/image/data/v94q3Ghl-SUPBdxc0.png" },
-  { match: "Monaco vs Lille", homeLogo: "https://static.flashscore.com/res/image/data/GzvUVteM-0SFGJsPk.png", awayLogo: "https://static.flashscore.com/res/image/data/Y91hQAzS-UDticXKP.png" },
-  { match: "Metz vs Lorient", homeLogo: "https://static.flashscore.com/res/image/data/hYoTPchl-OlVl3yC1.png", awayLogo: "https://static.flashscore.com/res/image/data/p2FxcRYA-UeJuSHAp.png" },
-  { match: "Rennes vs Paris", homeLogo: "https://static.flashscore.com/res/image/data/IsanuwAr-Y5eozcI6.png", awayLogo: "https://static.flashscore.com/res/image/data/t0fTGng5-8KeYdZPc.png" },
-  { match: "Auxerre vs Nice", homeLogo: "https://static.flashscore.com/res/image/data/CngTkQyS-StfGPPS1.png", awayLogo: "https://static.flashscore.com/res/image/data/boyRUvyB-00sqJmg8.png" },
-  { match: "Angers SCO vs Strasbourg", homeLogo: "https://static.flashscore.com/res/image/data/KtWXbYkl-Eimu30ua.png", awayLogo: "https://static.flashscore.com/res/image/data/biqhUSCr-ALPgCqDh.png" },
-  { match: "Coquimbo Unido vs Huachipato", homeLogo: "https://static.flashscore.com/res/image/data/O40oH8h5-hMng3olL.png", awayLogo: "https://static.flashscore.com/res/image/data/v7pzlUCa-xIMey4eD.png" },
-  { match: "Unión La Calera vs Universidad Chile", homeLogo: "https://static.flashscore.com/res/image/data/AJdiRXkl-0p3SjwUb.png", awayLogo: "https://static.flashscore.com/res/image/data/lS666WGG-fuSaShZI.png" },
-  { match: "Atlético Mineiro vs Botafogo", homeLogo: "https://static.flashscore.com/res/image/data/WbSJHDh5-UHhQ6Y1N.png", awayLogo: "https://static.flashscore.com/res/image/data/jBDSUABr-rJBthgZj.png" },
-  { match: "Remo vs Palmeiras", homeLogo: "https://static.flashscore.com/res/image/data/tpQfTEg5-0r4Jm0gm.png", awayLogo: "https://static.flashscore.com/res/image/data/tp1nxryB-6FV54WZb.png" },
-  { match: "Knicks vs 76ers", homeLogo: "https://static.flashscore.com/res/image/data/UBTxFpcM-I30Q0K9l.png", awayLogo: "https://static.flashscore.com/res/image/data/rNU4bqCr-4bqaxRtQ.png" },
-  { match: "Estudiantes LP vs Racing Club", homeLogo: "https://static.flashscore.com/res/image/data/b5zYZjFa-dzgZMUiA.png", awayLogo: "https://static.flashscore.com/res/image/data/Uwpl0Vg5-ri9M8Hb4.png" },
-  { match: "Comerciantes Unidos vs Melgar", homeLogo: "https://static.flashscore.com/res/image/data/lOuqQhhl-8dieWfgh.png", awayLogo: "https://static.flashscore.com/res/image/data/fmdls5HG-dl2Dbcr1.png" },
-  { match: "New York City vs Columbus Crew", homeLogo: "https://static.flashscore.com/res/image/data/MNX4GYWg-t2mZYeLO.png", awayLogo: "https://static.flashscore.com/res/image/data/prKcmWFG-WG3amigs.png" },
-  { match: "Sportivo San Lorenzo vs Olimpia", homeLogo: "https://static.flashscore.com/res/image/data/OEgPhXYA-jwW2wgsf.png", awayLogo: "https://static.flashscore.com/res/image/data/fFjeTTwS-UPd1WAes.png" },
-  { match: "Universidad Católica vs Ñublense", homeLogo: "https://static.flashscore.com/res/image/data/OvyAhfyB-nRWWeW7h.png", awayLogo: "https://static.flashscore.com/res/image/data/MVoXktAr-KM9757Oh.png" },
-  { match: "Corinthians vs São Paulo", homeLogo: "https://static.flashscore.com/res/image/data/lY91WW9r-6cpWH3kh.png", awayLogo: "https://static.flashscore.com/res/image/data/YgK3qNCa-AkTesf41.png" },
-  { match: "Mirassol vs Chapecoense", homeLogo: "https://static.flashscore.com/res/image/data/SUmYTyAr-fVnYQB8j.png", awayLogo: "https://static.flashscore.com/res/image/data/v9EKoUeM-CYex0lQl.png" },
-  { match: "Santos vs RB Bragantino", homeLogo: "https://static.flashscore.com/res/image/data/rJGaKUhl-hv442jSk.png", awayLogo: "https://static.flashscore.com/res/image/data/xxm5TNfM-zV7mJUhj.png" },
-  { match: "River Plate vs San Lorenzo", homeLogo: "https://static.flashscore.com/res/image/data/Ic4xH0Yg-nqhLBCKD.png", awayLogo: "https://static.flashscore.com/res/image/data/0xTdzwCr-YyppIBwT.png" },
-  { match: "Cusco vs Los Chankas", homeLogo: "https://static.flashscore.com/res/image/data/OjnbBwXg-06OeOzI0.png", awayLogo: "https://static.flashscore.com/res/image/data/Q91LTSg5-v9LWknvd.png" },
-  { match: "Nacional vs Cerro", homeLogo: "https://static.flashscore.com/res/image/data/WUIDNjFa-xErFNzEn.png", awayLogo: "https://static.flashscore.com/res/image/data/8MMCZtGG-dUH9C2gd.png" },
-  { match: "Grêmio vs Flamengo", homeLogo: "https://static.flashscore.com/res/image/data/QPdJscAr-tQsU6dGl.png", awayLogo: "https://static.flashscore.com/res/image/data/ADvIaiZA-2R2JjDQC.png" },
-  { match: "Pachuca vs Toluca", homeLogo: "https://static.flashscore.com/res/image/data/x4yMKjh5-zFZbB1JF.png", awayLogo: "https://static.flashscore.com/res/image/data/2XmJUlzB-0pHVJYjM.png" },
-  { match: "Sportivo Luqueño vs Libertad", homeLogo: "https://static.flashscore.com/res/image/data/6BPq9VdM-4GUthy9Q.png", awayLogo: "https://static.flashscore.com/res/image/data/ln1XQ9Ar-UwvYANk9.png" },
-  { match: "Minnesota United vs Austin", homeLogo: "https://static.flashscore.com/res/image/data/fXYygQfM-Y5BuxdGt.png", awayLogo: "https://static.flashscore.com/res/image/data/CEZPnWh5-AP3GsSz8.png" },
-  { match: "Once Caldas vs Junior", homeLogo: "https://static.flashscore.com/res/image/data/lbR6GxBr-faOifw18.png", awayLogo: "https://static.flashscore.com/res/image/data/beszd7EG-UeTqQWzh.png" },
-  { match: "Vasco da Gama vs Athletico-PR", homeLogo: "https://static.flashscore.com/res/image/data/d2irXNjl-bam8o1Nj.png", awayLogo: "https://static.flashscore.com/res/image/data/SdnmINcM-QaMaOfUh.png" },
-  { match: "Spurs vs Timberwolves", homeLogo: "https://static.flashscore.com/res/image/data/8f2WVCFG-SrHHDGUm.png", awayLogo: "https://static.flashscore.com/res/image/data/hv2nHleM-KbXk58wB.png" },
-  { match: "O'Higgins vs Everton", homeLogo: "https://static.flashscore.com/res/image/data/f1MK7GzS-zPh2QHcM.png", awayLogo: "https://static.flashscore.com/res/image/data/EwJqZUZA-bRmKmISE.png" },
-  { match: "Vélez Sarsfield vs Gimnasia La Plata", homeLogo: "https://static.flashscore.com/res/image/data/MiclPtFa-YF2zL4v9.png", awayLogo: "https://static.flashscore.com/res/image/data/GzWhXUfM-OSVEHifC.png" },
-  { match: "Los Angeles FC vs Houston Dynamo", homeLogo: "https://static.flashscore.com/res/image/data/bPW7CeZg-h6S6xFbF.png", awayLogo: "https://static.flashscore.com/res/image/data/Sp63uSDa-YLT3ZeZm.png" },
-  { match: "Pumas UNAM vs América", homeLogo: "https://static.flashscore.com/res/image/data/2mlyLKEG-pEQGCKC1.png", awayLogo: "https://static.flashscore.com/res/image/data/OIErBVEa-OGkmEu0T.png" }
-];
+const matchesLogos = [];
 
 // =====================================================
 // DATOS DE EVENTOS
 // =====================================================
-const eventsData = [
-  { time: "07:30", match: "Serie A: Verona vs Como", link: "https://streamx550.com/global2.php?channel=espn" },
-  { time: "07:30", match: "Serie A: Verona vs Como", link: "https://streamx550.com/global2.php?channel=espnmx" },
-  { time: "09:00", match: "LaLiga: Mallorca vs Villarreal", link: "https://streamx550.com/global2.php?channel=disney1" },
-  { time: "09:00", match: "LaLiga: Mallorca vs Villarreal", link: "https://streamx550.com/global2.php?channel=espn4" },
-  { time: "09:00", match: "LaLiga: Mallorca vs Villarreal", link: "https://streamx550.com/global2.php?channel=espndeportes" },
-  { time: "09:00", match: "LaLiga 2: FC Andorra vs Las Palmas", link: "https://streamx550.com/global2.php?channel=hyper1" },
-  { time: "10:00", match: "Premier League: Burnley vs Aston Villa", link: "https://streamx550.com/global2.php?channel=disney2" },
-  { time: "10:00", match: "Premier League: Burnley vs Aston Villa", link: "https://streamx550.com/global2.php?channel=espn" },
-  { time: "10:00", match: "Premier League: Burnley vs Aston Villa", link: "https://streamx550.com/global2.php?channel=max1" },
-  { time: "10:00", match: "Premier League: Crystal Palace vs Everton", link: "https://streamx550.com/global2.php?channel=disney3" },
-  { time: "10:00", match: "Premier League: Crystal Palace vs Everton", link: "https://streamx550.com/global2.php?channel=foxone1" },
-  { time: "10:00", match: "Premier League: Nottingham Forest vs Newcastle United", link: "https://streamx550.com/global2.php?channel=disney4" },
-  { time: "10:00", match: "Premier League: Nottingham Forest vs Newcastle United", link: "https://streamx550.com/global2.php?channel=max2" },
-  { time: "10:00", match: "Premier League: Nottingham Forest vs Newcastle United", link: "https://streamx550.com/global2.php?channel=telemundo" },
-  { time: "10:00", match: "Serie A: Cremonese vs Pisa", link: "https://streamx550.com/global2.php?channel=disney5" },
-  { time: "10:00", match: "Serie A: Fiorentina vs Genoa", link: "https://streamx550.com/global2.php?channel=disney6" },
-  { time: "10:00", match: "Serie A: Fiorentina vs Genoa", link: "https://streamx550.com/global2.php?channel=espnmx" },
-  { time: "10:30", match: "Bundesliga: Hamburger SV vs Freiburg", link: "https://streamx550.com/global2.php?channel=disney7" },
-  { time: "10:30", match: "Bundesliga: Hamburger SV vs Freiburg", link: "https://streamx550.com/global2.php?channel=espn5" },
-  { time: "11:00", match: "Primera División: Defensor Sporting vs Juventud", link: "https://streamx550.com/global2.php?channel=disney8" },
-  { time: "11:15", match: "LaLiga: Athletic Club vs Valencia", link: "https://streamx550.com/global2.php?channel=dsports" },
-  { time: "11:15", match: "LaLiga: Athletic Club vs Valencia", link: "https://streamx550.com/global2.php?channel=espndeportes" },
-  { time: "11:15", match: "LaLiga 2: Leganés vs Racing Santander", link: "https://streamx550.com/global2.php?channel=hyper1" },
-  { time: "11:45", match: "Eredivisie: Feyenoord vs AZ", link: "https://streamx550.com/global2.php?channel=disney9" },
-  { time: "11:45", match: "Eredivisie: Feyenoord vs AZ", link: "https://streamx550.com/global2.php?channel=espn4mx" },
-  { time: "11:45", match: "Eredivisie: Go Ahead Eagles vs PSV", link: "https://streamx550.com/global2.php?channel=disney10" },
-  { time: "11:45", match: "Eredivisie: Ajax vs Utrecht", link: "https://streamx550.com/global2.php?channel=disney11" },
-  { time: "11:45", match: "Eredivisie: Groningen vs NEC", link: "https://streamx550.com/global2.php?channel=disney12" },
-  { time: "12:30", match: "Premier League: West Ham United vs Arsenal", link: "https://streamx550.com/global2.php?channel=disney13" },
-  { time: "12:30", match: "Premier League: West Ham United vs Arsenal", link: "https://streamx550.com/global2.php?channel=espn" },
-  { time: "12:30", match: "Premier League: West Ham United vs Arsenal", link: "https://streamx550.com/global2.php?channel=foxone2" },
-  { time: "12:30", match: "Premier League: West Ham United vs Arsenal", link: "https://streamx550.com/global2.php?channel=telemundo" },
-  { time: "12:30", match: "Bundesliga: Köln vs Heidenheim", link: "https://streamx550.com/global2.php?channel=disney14" },
-  { time: "12:30", match: "Bundesliga: Köln vs Heidenheim", link: "https://streamx550.com/global2.php?channel=espn5" },
-  { time: "13:00", match: "Serie A: Parma vs Roma", link: "https://streamx550.com/global2.php?channel=disney15" },
-  { time: "13:00", match: "Serie A: Parma vs Roma", link: "https://streamx550.com/global2.php?channel=espnmx" },
-  { time: "13:00", match: "Serie A: Parma vs Roma", link: "https://streamx550.com/global2.php?channel=foxdeportes" },
-  { time: "13:30", match: "LaLiga: Real Oviedo vs Getafe", link: "https://streamx550.com/global2.php?channel=disney16" },
-  { time: "13:30", match: "LaLiga: Real Oviedo vs Getafe", link: "https://streamx550.com/global2.php?channel=espn3" },
-  { time: "13:30", match: "LaLiga: Real Oviedo vs Getafe", link: "https://streamx550.com/global2.php?channel=espndeportes" },
-  { time: "13:30", match: "LaLiga 2: Córdoba vs Granada", link: "https://streamx550.com/global2.php?channel=hyper1" },
-  { time: "13:30", match: "LaLiga 2: Mirandés vs Eibar", link: "https://streamx550.com/global2.php?channel=hyper2" },
-  { time: "14:30", match: "Bundesliga: Mainz 05 vs Union Berlin", link: "https://streamx550.com/global2.php?channel=disney17" },
-  { time: "15:00", match: "Liga Profesional: Rosario Central vs Independiente", link: "https://streamx550.com/global2.php?channel=fanatiz1" },
-  { time: "15:00", match: "Liga Profesional: Rosario Central vs Independiente", link: "https://streamx550.com/global2.php?channel=espnpremium" },
-  { time: "15:00", match: "Liga 1: Sport Huancayo vs Juan Pablo II College", link: "https://streamx550.com/global2.php?channel=liga1max" },
-  { time: "15:00", match: "Liga 1: Sport Huancayo vs Juan Pablo II College", link: "https://streamx550.com/global2.php?channel=fanatiz2" },
-  { time: "15:45", match: "Serie A: Milan vs Atalanta", link: "https://streamx550.com/global2.php?channel=disney18" },
-  { time: "16:00", match: "LaLiga: Barcelona vs Real Madrid", link: "https://streamx550.com/global2.php?channel=dsports" },
-  { time: "16:00", match: "LaLiga: Barcelona vs Real Madrid", link: "https://streamx550.com/global2.php?channel=espndeportes" },
-  { time: "16:00", match: "Ligue 1: PSG vs Brest", link: "https://streamx550.com/global2.php?channel=disney19" },
-  { time: "16:00", match: "Ligue 1: PSG vs Brest", link: "https://streamx550.com/global2.php?channel=espn" },
-  { time: "16:00", match: "Ligue 1: PSG vs Brest", link: "https://streamx550.com/global2.php?channel=foxone3" },
-  { time: "16:00", match: "Ligue 1: Le Havre vs Olympique Marseille", link: "https://streamx550.com/global2.php?channel=disney20" },
-  { time: "16:00", match: "Ligue 1: Le Havre vs Olympique Marseille", link: "https://streamx550.com/global2.php?channel=foxone4" },
-  { time: "16:00", match: "Ligue 1: Toulouse vs Olympique Lyonnais", link: "https://streamx550.com/global2.php?channel=disney1" },
-  { time: "16:00", match: "Ligue 1: Toulouse vs Olympique Lyonnais", link: "https://streamx550.com/global2.php?channel=foxone5" },
-  { time: "16:00", match: "Ligue 1: Monaco vs Lille", link: "https://streamx550.com/global2.php?channel=disney2" },
-  { time: "16:00", match: "Ligue 1: Monaco vs Lille", link: "https://streamx550.com/global2.php?channel=foxone6" },
-  { time: "16:00", match: "Ligue 1: Metz vs Lorient", link: "https://streamx550.com/global2.php?channel=disney3" },
-  { time: "16:00", match: "Ligue 1: Rennes vs Paris", link: "https://streamx550.com/global2.php?channel=disney4" },
-  { time: "16:00", match: "Ligue 1: Auxerre vs Nice", link: "https://streamx550.com/global2.php?channel=disney5" },
-  { time: "16:00", match: "Ligue 1: Angers SCO vs Strasbourg", link: "https://streamx550.com/global2.php?channel=disney6" },
-  { time: "16:00", match: "Primera División: Torque vs Progreso", link: "https://streamx550.com/global2.php?channel=disney7" },
-  { time: "16:00", match: "Copa de la Liga: Coquimbo Unido vs Huachipato", link: "https://streamx550.com/global2.php?channel=max3" },
-  { time: "16:00", match: "Copa de la Liga: Unión La Calera vs Universidad Chile", link: "https://streamx550.com/global2.php?channel=max4" },
-  { time: "16:00", match: "Brasileirão: Atlético Mineiro vs Botafogo", link: "https://streamx550.com/global2.php?channel=fanatiz3" },
-  { time: "16:00", match: "Brasileirão: Atlético Mineiro vs Botafogo", link: "https://streamx550.com/global2.php?channel=winsports" },
-  { time: "16:00", match: "Brasileirão: Atlético Mineiro vs Botafogo", link: "https://streamx550.com/global2.php?channel=premiere1" },
-  { time: "16:00", match: "Brasileirão: Remo vs Palmeiras", link: "https://streamx550.com/global2.php?channel=fanatiz4" },
-  { time: "16:00", match: "Brasileirão: Remo vs Palmeiras", link: "https://streamx550.com/global2.php?channel=premiere3" },
-  { time: "16:30", match: "NBA: Knicks vs 76ers", link: "https://streamx550.com/global2.php?channel=espn2" },
-  { time: "16:30", match: "NBA: Knicks vs 76ers", link: "https://streamx550.com/global2.php?channel=espnmx" },
-  { time: "17:00", match: "Liga Profesional: Estudiantes LP vs Racing Club", link: "https://streamx550.com/global2.php?channel=fanatiz5" },
-  { time: "17:00", match: "Liga Profesional: Estudiantes LP vs Racing Club", link: "https://streamx550.com/global2.php?channel=tntar" },
-  { time: "17:00", match: "Liga Profesional: Estudiantes LP vs Racing Club", link: "https://streamx550.com/global2.php?channel=tycint" },
-  { time: "17:15", match: "Liga 1: Comerciantes Unidos vs Melgar", link: "https://streamx550.com/global2.php?channel=liga1max" },
-  { time: "17:15", match: "Liga 1: Comerciantes Unidos vs Melgar", link: "https://streamx550.com/global2.php?channel=fanatiz6" },
-  { time: "17:30", match: "MLS: New York City vs Columbus Crew", link: "https://streamx550.com/global2.php?channel=mls1" },
-  { time: "17:45", match: "Copa de Primera: Sportivo San Lorenzo vs Olimpia", link: "https://streamx550.com/global2.php?channel=fanatiz7" },
-  { time: "18:30", match: "Copa de la Liga: Universidad Católica vs Ñublense", link: "https://streamx550.com/global2.php?channel=max5" },
-  { time: "18:30", match: "Brasileirão: Corinthians vs São Paulo", link: "https://streamx550.com/global2.php?channel=fanatiz8" },
-  { time: "18:30", match: "Brasileirão: Corinthians vs São Paulo", link: "https://streamx550.com/global2.php?channel=amazon1" },
-  { time: "18:30", match: "Brasileirão: Mirassol vs Chapecoense", link: "https://streamx550.com/global2.php?channel=fanatiz9" },
-  { time: "18:30", match: "Brasileirão: Mirassol vs Chapecoense", link: "https://streamx550.com/global2.php?channel=premiere4" },
-  { time: "18:30", match: "Brasileirão: Santos vs RB Bragantino", link: "https://streamx550.com/global2.php?channel=fanatiz10" },
-  { time: "18:30", match: "Brasileirão: Santos vs RB Bragantino", link: "https://streamx550.com/global2.php?channel=premiere3" },
-  { time: "19:00", match: "Liga Profesional: River Plate vs San Lorenzo", link: "https://streamx550.com/global2.php?channel=disney8" },
-  { time: "19:00", match: "Liga Profesional: River Plate vs San Lorenzo", link: "https://streamx550.com/global2.php?channel=fanatiz1" },
-  { time: "19:00", match: "Liga Profesional: River Plate vs San Lorenzo", link: "https://streamx550.com/global2.php?channel=espnpremium" },
-  { time: "19:00", match: "Liga Profesional: River Plate vs San Lorenzo", link: "https://streamx550.com/global2.php?channel=espn" },
-  { time: "19:30", match: "Liga 1: Cusco vs Los Chankas", link: "https://streamx550.com/global2.php?channel=liga1max" },
-  { time: "19:30", match: "Liga 1: Cusco vs Los Chankas", link: "https://streamx550.com/global2.php?channel=fanatiz2" },
-  { time: "19:30", match: "Primera División: Nacional vs Cerro", link: "https://streamx550.com/global2.php?channel=disney9" },
-  { time: "19:30", match: "Brasileirão: Grêmio vs Flamengo", link: "https://streamx550.com/global2.php?channel=fanatiz3" },
-  { time: "19:30", match: "Brasileirão: Grêmio vs Flamengo", link: "https://streamx550.com/global2.php?channel=winsports" },
-  { time: "19:30", match: "Brasileirão: Grêmio vs Flamengo", link: "https://streamx550.com/global2.php?channel=premiere1" },
-  { time: "20:00", match: "Liga MX: Pachuca vs Toluca", link: "https://streamx550.com/global2.php?channel=foxone7" },
-  { time: "20:00", match: "Liga MX: Pachuca vs Toluca", link: "https://streamx550.com/global2.php?channel=tudnus" },
-  { time: "20:00", match: "Copa de Primera: Sportivo Luqueño vs Libertad", link: "https://streamx550.com/global2.php?channel=fanatiz4" },
-  { time: "20:00", match: "MLS: Minnesota United vs Austin", link: "https://streamx550.com/global2.php?channel=mls2" },
-  { time: "20:10", match: "Liga BetPlay: Once Caldas vs Junior", link: "https://streamx550.com/global2.php?channel=winplus" },
-  { time: "20:10", match: "Liga BetPlay: Once Caldas vs Junior", link: "https://streamx550.com/global2.php?channel=winplus2" },
-  { time: "20:30", match: "Brasileirão: Vasco da Gama vs Athletico-PR", link: "https://streamx550.com/global2.php?channel=fanatiz5" },
-  { time: "20:30", match: "Brasileirão: Vasco da Gama vs Athletico-PR", link: "https://streamx550.com/global2.php?channel=premiere5" },
-  { time: "20:30", match: "NBA: Spurs vs Timberwolves", link: "https://streamx550.com/global2.php?channel=max1" },
-  { time: "20:30", match: "NBA: Spurs vs Timberwolves", link: "https://streamx550.com/global2.php?channel=amazon2" },
-  { time: "21:00", match: "Copa de la Liga: O'Higgins vs Everton", link: "https://streamx550.com/global2.php?channel=max2" },
-  { time: "21:30", match: "Liga Profesional: Vélez Sarsfield vs Gimnasia La Plata", link: "https://streamx550.com/global2.php?channel=fanatiz6" },
-  { time: "21:30", match: "Liga Profesional: Vélez Sarsfield vs Gimnasia La Plata", link: "https://streamx550.com/global2.php?channel=tntar" },
-  { time: "21:30", match: "Liga Profesional: Vélez Sarsfield vs Gimnasia La Plata", link: "https://streamx550.com/global2.php?channel=tycint" },
-  { time: "22:00", match: "MLS: Los Angeles FC vs Houston Dynamo", link: "https://streamx550.com/global2.php?channel=mls3" },
-  { time: "22:15", match: "Liga MX: Pumas UNAM vs América", link: "https://streamx550.com/global2.php?channel=tudnus" },
-  { time: "22:15", match: "Liga MX: Pumas UNAM vs América", link: "https://streamx550.com/global2.php?channel=tudnmx" },
-  { time: "22:15", match: "Liga MX: Pumas UNAM vs América", link: "https://streamx550.com/global2.php?channel=canal5mx" }
-];
+const eventsData = [];
 
 const leagueMap = {
   'Super Lig': 'Super Lig', 'UEFA Champions League': 'UCL', 'UEFA Europa League': 'UEL',
