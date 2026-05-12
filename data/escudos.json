@@ -1,1 +1,77 @@
-[]
+[
+  {
+    "match": "Celta de Vigo vs Levante",
+    "homeLogo": "https://static.flashscore.com/res/image/data/O2htOWDa-SOY3p1Si.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/25Tx45il-QqzX7amJ.png"
+  },
+  {
+    "match": "Real Betis vs Elche",
+    "homeLogo": "https://static.flashscore.com/res/image/data/hvyaw5HG-zkU5wiAr.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/UcRA5fil-YmCZKGcR.png"
+  },
+  {
+    "match": "Al Nassr vs Al Hilal",
+    "homeLogo": "https://static.flashscore.com/res/image/data/GfvgLjwS-dr3R7wGl.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/8YrWgbEG-joUWHZ1t.png"
+  },
+  {
+    "match": "Southampton vs Middlesbrough",
+    "homeLogo": "https://static.flashscore.com/res/image/data/fmA9gnyB-raLYxovi.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/Ongu1qAr-vcNAdtF9.png"
+  },
+  {
+    "match": "Osasuna vs Atlético Madrid",
+    "homeLogo": "https://static.flashscore.com/res/image/data/84LOczeM-Yu8w588N.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/CjfjIsYg-GhHiNvXF.png"
+  },
+  {
+    "match": "Belgrano vs Unión Santa Fe",
+    "homeLogo": "https://static.flashscore.com/res/image/data/fVzQ4lxS-jXvNrLYt.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/YuZso7jl-OS9FbeGg.png"
+  },
+  {
+    "match": "Internacional vs Athletic Club",
+    "homeLogo": "https://static.flashscore.com/res/image/data/4EdoEoil-ALgHCh57.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/z3ZOESYA-AmIcMWyl.png"
+  },
+  {
+    "match": "Chicago Cubs vs Atlanta Braves",
+    "homeLogo": "https://static.flashscore.com/res/image/data/nFvRbjHG-MyFeHWzn.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/IPmhSoEa-hvtJM6zJ.png"
+  },
+  {
+    "match": "Atlético Nacional vs Inter Bogotá",
+    "homeLogo": "https://static.flashscore.com/res/image/data/EVh8vJcM-tnwDCzLD.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/xCeMUuZg-nouesssi.png"
+  },
+  {
+    "match": "Timberwolves vs Spurs",
+    "homeLogo": "https://static.flashscore.com/res/image/data/hv2nHleM-KbXk58wB.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/8f2WVCFG-SrHHDGUm.png"
+  },
+  {
+    "match": "Argentinos Juniors vs Huracán",
+    "homeLogo": "https://static.flashscore.com/res/image/data/xplqslf5-CUuaFAMD.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/vBUdlvf5-xxyFAG42.png"
+  },
+  {
+    "match": "Fluminense vs Operário PR",
+    "homeLogo": "https://static.flashscore.com/res/image/data/WlxJgSdM-WUfDDYk1.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/IBwiT7Da-vm8qH06L.png"
+  },
+  {
+    "match": "Cruzeiro vs Goiás",
+    "homeLogo": "https://static.flashscore.com/res/image/data/lCWrxmg5-SjJmyx86.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/xd3edbeM-G2OQQubE.png"
+  },
+  {
+    "match": "Santa Fe vs América de Cali",
+    "homeLogo": "https://static.flashscore.com/res/image/data/dlONm5jl-AaS9a4Ho.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/fySikCAr-hSZHTo4B.png"
+  },
+  {
+    "match": "San Francisco Giants vs Los Angeles Dodgers",
+    "homeLogo": "https://static.flashscore.com/res/image/data/faj1OHdM-0nhPzxiE.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/YeWStKhl-xUjXmOIP.png"
+  }
+]
