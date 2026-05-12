@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ToonCloud Deportes</title>
-<!-- Build: 2026-05-11 13:48 -->
+<!-- Build: 2026-05-12 08:33 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -954,65 +954,12 @@ header {
 // El formato es: { match: "Equipo Local vs Equipo Visitante", homeLogo: "URL_ESCUDO_LOCAL", awayLogo: "URL_ESCUDO_VISITANTE" }
 // Si no quieres escudo para un equipo, deja el campo vac&iacute;o: ""
 
-const matchesLogos = [
-  { match: "Al Taawon vs Al-Ahli", homeLogo: "https://static.flashscore.com/res/image/data/xQvLINXg-zwr48VYG.png", awayLogo: "https://static.flashscore.com/res/image/data/rkvFdlDa-tjD2oGGi.png" },
-  { match: "Deportivo Garcilaso vs Alianza Atlético", homeLogo: "https://static.flashscore.com/res/image/data/hQp9ywwS-rV5EZZh1.png", awayLogo: "https://static.flashscore.com/res/image/data/Miy4LAeM-z942qmGf.png" },
-  { match: "Huesca vs Real Sociedad II", homeLogo: "https://static.flashscore.com/res/image/data/UwzkXAxS-EkA5g8Rs.png", awayLogo: "https://static.flashscore.com/res/image/data/d0CDHeh5-U144u08h.png" },
-  { match: "Napoli vs Bologna", homeLogo: "https://static.flashscore.com/res/image/data/lhPsgJWg-Stb48WaO.png", awayLogo: "https://static.flashscore.com/res/image/data/j3Tyh1GG-McvX4bye.png" },
-  { match: "Millwall vs Hull City", homeLogo: "https://static.flashscore.com/res/image/data/C8aMqcXg-4UX5t7jk.png", awayLogo: "https://static.flashscore.com/res/image/data/jL2Nk4Fa-bJFnYpTt.png" },
-  { match: "Tottenham Hotspur vs Leeds United", homeLogo: "https://static.flashscore.com/res/image/data/ARC62UAr-Ig5FKJZ5.png", awayLogo: "https://static.flashscore.com/res/image/data/rsvCPOh5-MTp25XgE.png" },
-  { match: "Rayo Vallecano vs Girona", homeLogo: "https://static.flashscore.com/res/image/data/jqaha0f5-EPWyZtpb.png", awayLogo: "https://static.flashscore.com/res/image/data/xGkOqFDa-vPm0hQMN.png" },
-  { match: "Benfica vs Sporting Braga", homeLogo: "https://static.flashscore.com/res/image/data/AZHdTBf5-GEKimEim.png", awayLogo: "https://static.flashscore.com/res/image/data/hrorkWVg-6JDIcK05.png" },
-  { match: "Deportivo Maldonado vs Boston River", homeLogo: "https://static.flashscore.com/res/image/data/KULuUkCr-xvp8ggnJ.png", awayLogo: "https://static.flashscore.com/res/image/data/lvnKywHG-pOoSyvxr.png" },
-  { match: "Sportivo Ameliano vs Deportivo Recoleta", homeLogo: "https://static.flashscore.com/res/image/data/ruDjw6fM-zLKsTEF7.png", awayLogo: "https://static.flashscore.com/res/image/data/fLgiVph5-WpTP4Ior.png" },
-  { match: "Cerro Porteño vs Guaraní", homeLogo: "https://static.flashscore.com/res/image/data/Ovlb3hBr-0fSZKKz2.png", awayLogo: "https://static.flashscore.com/res/image/data/Gpc7WAil-G0qum5Ko.png" },
-  { match: "Deportivo Cali vs Atlético Bucaramanga", homeLogo: "https://static.flashscore.com/res/image/data/O2O10jHG-IHPA1GDt.png", awayLogo: "https://static.flashscore.com/res/image/data/Eovph8GG-0xyt4W2g.png" },
-  { match: "Cerro Largo vs Peñarol", homeLogo: "https://static.flashscore.com/res/image/data/bmaSNUil-2c38J1pB.png", awayLogo: "https://static.flashscore.com/res/image/data/8rkcbrGG-nqhLBCKD.png" },
-  { match: "Palestino vs Deportes Limache", homeLogo: "https://static.flashscore.com/res/image/data/GxmUk4dM-Mofbp184.png", awayLogo: "https://static.flashscore.com/res/image/data/MZL6fsDr-EawjMZXB.png" },
-  { match: "Pistons vs Cavaliers", homeLogo: "https://static.flashscore.com/res/image/data/MoYJBde5-xrW85HXg.png", awayLogo: "https://static.flashscore.com/res/image/data/AqYiLvHG-6ZJgih6O.png" },
-  { match: "Millonarios vs Llaneros", homeLogo: "https://static.flashscore.com/res/image/data/QwcCZWZA-GEQO63tP.png", awayLogo: "https://static.flashscore.com/res/image/data/6Tz19Uf5-hjn5AE5Q.png" },
-  { match: "Sport Boys vs Universitario", homeLogo: "https://static.flashscore.com/res/image/data/bLzfZKZA-fFhdpXur.png", awayLogo: "https://static.flashscore.com/res/image/data/QNQhOVBr-pzbJPTLS.png" },
-  { match: "Thunder vs Lakers", homeLogo: "https://static.flashscore.com/res/image/data/bFgddNh5-4zc22IQb.png", awayLogo: "https://static.flashscore.com/res/image/data/06fGDMdM-6y7aqqwb.png" }
-];
+const matchesLogos = [];
 
 // =====================================================
 // DATOS DE EVENTOS
 // =====================================================
-const eventsData = [
-  { time: "15:00", match: "Liga Profesional Saudí: Al Taawon vs Al-Ahli", link: "https://streamx550.com/global2.php?channel=sportv1" },
-  { time: "15:00", match: "Liga Profesional Saudí: Al Taawon vs Al-Ahli", link: "https://streamx550.com/global2.php?channel=fox2usa" },
-  { time: "15:00", match: "Liga 1: Deportivo Garcilaso vs Alianza Atlético", link: "https://streamx550.com/global2.php?channel=liga1max" },
-  { time: "15:00", match: "Liga 1: Deportivo Garcilaso vs Alianza Atlético", link: "https://streamx550.com/global2.php?channel=fanatiz1" },
-  { time: "15:30", match: "LaLiga 2: Huesca vs Real Sociedad II", link: "https://streamx550.com/global2.php?channel=hyper1" },
-  { time: "15:45", match: "Serie A: Napoli vs Bologna", link: "https://streamx550.com/global2.php?channel=disney1" },
-  { time: "15:45", match: "Serie A: Napoli vs Bologna", link: "https://streamx550.com/global2.php?channel=espn2" },
-  { time: "15:45", match: "Serie A: Napoli vs Bologna", link: "https://streamx550.com/global2.php?channel=espn4mx" },
-  { time: "15:45", match: "Serie A: Napoli vs Bologna", link: "https://streamx550.com/global2.php?channel=foxdeportes" },
-  { time: "16:00", match: "Premier League: Tottenham Hotspur vs Leeds United", link: "https://streamx550.com/global2.php?channel=disney2" },
-  { time: "16:00", match: "Premier League: Tottenham Hotspur vs Leeds United", link: "https://streamx550.com/global2.php?channel=espn" },
-  { time: "16:00", match: "Premier League: Tottenham Hotspur vs Leeds United", link: "https://streamx550.com/global2.php?channel=foxone1" },
-  { time: "16:00", match: "Premier League: Tottenham Hotspur vs Leeds United", link: "https://streamx550.com/global2.php?channel=universo" },
-  { time: "16:00", match: "Championship: Millwall vs Hull City", link: "https://streamx550.com/global2.php?channel=espn5" },
-  { time: "16:00", match: "LaLiga: Rayo Vallecano vs Girona", link: "https://streamx550.com/global2.php?channel=disney3" },
-  { time: "16:00", match: "LaLiga: Rayo Vallecano vs Girona", link: "https://streamx550.com/global2.php?channel=espn3" },
-  { time: "16:00", match: "LaLiga: Rayo Vallecano vs Girona", link: "https://streamx550.com/global2.php?channel=espnplus1" },
-  { time: "16:00", match: "LaLiga: Rayo Vallecano vs Girona", link: "https://streamx550.com/global2.php?channel=espndeportes" },
-  { time: "16:15", match: "Primeira Liga: Benfica vs Sporting Braga", link: "https://streamx550.com/global2.php?channel=sportdigital" },
-  { time: "17:00", match: "Primera División: Deportivo Maldonado vs Boston River", link: "https://streamx550.com/global2.php?channel=disney4" },
-  { time: "17:45", match: "Copa de Primera: Sportivo Ameliano vs Deportivo Recoleta", link: "https://streamx550.com/global2.php?channel=fanatiz2" },
-  { time: "20:00", match: "Copa de Primera: Cerro Porteño vs Guaraní", link: "https://streamx550.com/global2.php?channel=fanatiz3" },
-  { time: "20:00", match: "Copa Colombia: Deportivo Cali vs Atlético Bucaramanga", link: "https://streamx550.com/global2.php?channel=winplus" },
-  { time: "20:00", match: "Copa Colombia: Deportivo Cali vs Atlético Bucaramanga", link: "https://streamx550.com/global2.php?channel=winplus2" },
-  { time: "20:30", match: "Primera División: Cerro Largo vs Peñarol", link: "https://streamx550.com/global2.php?channel=disney1" },
-  { time: "21:00", match: "Copa de la Liga: Palestino vs Deportes Limache", link: "https://streamx550.com/global2.php?channel=max1" },
-  { time: "21:00", match: "NBA: Pistons vs Cavaliers", link: "https://streamx550.com/global2.php?channel=espnmx" },
-  { time: "21:00", match: "NBA: Pistons vs Cavaliers", link: "https://streamx550.com/global2.php?channel=tntar" },
-  { time: "22:00", match: "Copa Colombia: Millonarios vs Llaneros", link: "https://streamx550.com/global2.php?channel=winplus" },
-  { time: "22:00", match: "Copa Colombia: Millonarios vs Llaneros", link: "https://streamx550.com/global2.php?channel=winplus2" },
-  { time: "22:30", match: "Liga 1: Sport Boys vs Universitario", link: "https://streamx550.com/global2.php?channel=liga1max" },
-  { time: "22:30", match: "Liga 1: Sport Boys vs Universitario", link: "https://streamx550.com/global2.php?channel=fanatiz4" },
-  { time: "23:30", match: "NBA: Thunder vs Lakers", link: "https://streamx550.com/global2.php?channel=amazon1" }
-];
+const eventsData = [];
 
 const leagueMap = {
   'Super Lig': 'Super Lig', 'UEFA Champions League': 'UCL', 'UEFA Europa League': 'UEL',
