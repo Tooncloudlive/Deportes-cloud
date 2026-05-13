@@ -751,10 +751,9 @@ header {
 }
 
 .channel-dropdown {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  top: calc(100% + 6px);
+  position: fixed;
+  left: 0;
+  top: 0;
   min-width: 170px;
   background: rgba(40, 40, 44, 0.95);
   backdrop-filter: blur(30px) saturate(200%);
@@ -762,7 +761,7 @@ header {
   border: 0.5px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--radius-md);
   padding: 6px;
-  z-index: 50;
+  z-index: 9999;
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
   animation: dropdown-enter 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -1107,6 +1106,7 @@ header {
   }
 }
 </style>
+<base target="_blank">
 <base target="_blank">
 </head>
 
@@ -1558,6 +1558,27 @@ function updateStats(list) {
   document.getElementById("upcoming-count").textContent = `${upcoming} PROXIMOS`;
 }
 
+function positionDropdown(matchId) {
+  const dropdown = document.getElementById(`dropdown-${matchId}`);
+  const btn = document.getElementById(`channel-btn-${matchId}`);
+  if (!dropdown || !btn) return;
+  const rect = btn.getBoundingClientRect();
+  const dropHeight = dropdown.offsetHeight || 160;
+  const dropWidth = dropdown.offsetWidth || 170;
+  let top = rect.bottom + 6;
+  let left = rect.left + rect.width / 2;
+  // Prevent overflow bottom
+  if (top + dropHeight > window.innerHeight - 10) {
+    top = rect.top - dropHeight - 6;
+  }
+  // Prevent overflow left/right
+  if (left - dropWidth / 2 < 10) left = dropWidth / 2 + 10;
+  if (left + dropWidth / 2 > window.innerWidth - 10) left = window.innerWidth - dropWidth / 2 - 10;
+  dropdown.style.top = top + 'px';
+  dropdown.style.left = left + 'px';
+  dropdown.style.transform = 'translateX(-50%)';
+}
+
 function toggleDropdown(matchId) {
   const dropdown = document.getElementById(`dropdown-${matchId}`);
   const chevron = document.getElementById(`chevron-${matchId}`);
@@ -1574,6 +1595,7 @@ function toggleDropdown(matchId) {
     dropdown.classList.remove('hidden');
     chevron.classList.add('open');
     openDropdowns.add(matchId);
+    positionDropdown(matchId);
   } else {
     dropdown.classList.add('hidden');
     chevron.classList.remove('open');
@@ -1803,6 +1825,15 @@ document.addEventListener('click', (e) => {
 
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') closePlayer();
+});
+
+// Reposition open dropdowns on scroll/resize
+window.addEventListener('scroll', () => {
+  openDropdowns.forEach(id => positionDropdown(id));
+}, { passive: true });
+
+window.addEventListener('resize', () => {
+  openDropdowns.forEach(id => positionDropdown(id));
 });
 
 // Inicializar
