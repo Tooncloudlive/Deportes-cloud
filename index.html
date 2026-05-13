@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>ToonCloud Deportes</title>
-<!-- Build: 2026-05-13 21:33 | Events: 52 | Logos: 29 -->
+<!-- Build: 2026-05-13 22:01 | Events: 43 | Logos: 25 -->
 <meta name="theme-color" content="#000000">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -423,12 +423,17 @@ header {
   border-radius: var(--radius-lg);
   margin-bottom: 10px;
   transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  overflow: hidden;
+  overflow: visible;
   animation: card-enter 0.45s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   opacity: 0;
   cursor: default;
   user-select: none;
   -webkit-user-select: none;
+  z-index: 1;
+}
+
+.glass-card.dropdown-open {
+  z-index: 10;
 }
 
 /* Liquid Glass Base Layer */
@@ -521,6 +526,7 @@ header {
 /* Card removal animation */
 .glass-card.removing {
   animation: card-exit 0.4s cubic-bezier(0.4, 0, 1, 1) forwards;
+  overflow: hidden;
 }
 
 @keyframes card-enter {
@@ -751,9 +757,10 @@ header {
 }
 
 .channel-dropdown {
-  position: fixed;
-  left: 0;
-  top: 0;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: calc(100% + 6px);
   min-width: 170px;
   background: rgba(40, 40, 44, 0.95);
   backdrop-filter: blur(30px) saturate(200%);
@@ -761,7 +768,7 @@ header {
   border: 0.5px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--radius-md);
   padding: 6px;
-  z-index: 9999;
+  z-index: 50;
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
   animation: dropdown-enter 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -1107,7 +1114,6 @@ header {
 }
 </style>
 <base target="_blank">
-<base target="_blank">
 </head>
 
 <body>
@@ -1198,21 +1204,19 @@ header {
 // Si no quieres escudo para un equipo, deja el campo vacio: ""
 
 const matchesLogos = [
-  { match: "Deportivo Alavés vs Barcelona", homeLogo: "https://livesport-ott-images.ssl.cdn.cra.cz/r900xfq60/b88f53d6-91ad-42e1-9b95-a98fcfce78c7.avif", awayLogo: "https://cdn.cookielaw.org/logos/static/ot_company_logo.png" },
-  { match: "Getafe vs Mallorca", homeLogo: "https://static.flashscore.com/res/image/data/OjieMlGG-YmCZKGcR.png", awayLogo: "https://static.flashscore.com/res/image/data/pSBNl3eM-rmDEjevK.png" },
   { match: "Rosario Central vs Racing Club", homeLogo: "https://static.flashscore.com/res/image/data/hKqVGwgl-vuxu02Jt.png", awayLogo: "https://static.flashscore.com/res/image/data/6T5YTkZA-OCiVKiPK.png" },
   { match: "Juventude vs São Paulo", homeLogo: "https://static.flashscore.com/res/image/data/CA0V6qXg-v5wBaFPD.png", awayLogo: "https://static.flashscore.com/res/image/data/YgK3qNCa-AkTesf41.png" },
   { match: "Vasco da Gama vs Paysandu", homeLogo: "https://static.flashscore.com/res/image/data/d2irXNjl-bam8o1Nj.png", awayLogo: "https://static.flashscore.com/res/image/data/OY3H2Kf5-zysCBcpf.png" },
   { match: "Coritiba vs Santos", homeLogo: "https://static.flashscore.com/res/image/data/xKm8lie5-bwYqIWsq.png", awayLogo: "https://static.flashscore.com/res/image/data/rJGaKUhl-hv442jSk.png" },
-  { match: "Deportivo Pasto vs Deportes Tolima", homeLogo: "https://static.flashscore.com/res/image/data/tzeFxcCa-hjn5AE5Q.png", awayLogo: "https://static.flashscore.com/res/image/data/AwBgBUBr-fTosBye7.png" },
+  { match: "Deportivo Pasto vs Deportes Tolima", homeLogo: "https://static.flashscore.com/res/image/data/rPpVBxZg-hjn5AE5Q.png", awayLogo: "https://static.flashscore.com/res/image/data/ngiuiwYg-bXlV9lJE.png" },
   { match: "Charlotte vs New York City", homeLogo: "https://static.flashscore.com/res/image/data/zThr1XYg-bePDAcBO.png", awayLogo: "https://static.flashscore.com/res/image/data/8QMM9XcM-GxTXAzv3.png" },
   { match: "Cincinnati vs Inter Miami", homeLogo: "https://static.flashscore.com/res/image/data/nqEwF6GG-hfMSf4LN.png", awayLogo: "https://static.flashscore.com/res/image/data/SbujguWg-UwKTVGeG.png" },
   { match: "DC United vs Chicago Fire", homeLogo: "https://static.flashscore.com/res/image/data/MuhwhtwS-M1jIRGkS.png", awayLogo: "https://static.flashscore.com/res/image/data/2k9tZ9EG-0lw00xPr.png" },
   { match: "Orlando City SC vs Philadelphia Union", homeLogo: "https://static.flashscore.com/res/image/data/0WseRhDa-AFpqya1j.png", awayLogo: "https://static.flashscore.com/res/image/data/WhcH7sZg-juuH5vx4.png" },
-  { match: "New York RB vs Columbus Crew", homeLogo: "https://static.flashscore.com/res/image/data/d6K4IsyB-IP5syE99.png", awayLogo: "https://static.flashscore.com/res/image/data/prKcmWFG-WG3amigs.png" },
+  { match: "New York RB vs Columbus Crew", homeLogo: "https://static.flashscore.com/res/image/data/8GFWV3dM-KEuupwHt.png", awayLogo: "https://static.flashscore.com/res/image/data/bB12gedM-EgOLyoyn.png" },
   { match: "New England vs Nashville SC", homeLogo: "https://static.flashscore.com/res/image/data/EkWFIcAr-KI53uaQC.png", awayLogo: "https://static.flashscore.com/res/image/data/Y7Y3g4Da-6JqXhTSA.png" },
   { match: "CF Montréal vs Portland Timbers", homeLogo: "https://static.flashscore.com/res/image/data/6Ve48IyS-APghxIAJ.png", awayLogo: "https://static.flashscore.com/res/image/data/CEuiHggl-xf2WUeO1.png" },
-  { match: "Mirassol vs RB Bragantino", homeLogo: "https://static.flashscore.com/res/image/data/SUmYTyAr-fVnYQB8j.png", awayLogo: "https://static.flashscore.com/res/image/data/llnonZDa-UkMF8Udb.png" },
+  { match: "Mirassol vs RB Bragantino", homeLogo: "https://static.flashscore.com/res/image/data/C8fyvKXg-00ap035Q.png", awayLogo: "https://static.flashscore.com/res/image/data/xxm5TNfM-zV7mJUhj.png" },
   { match: "Pistons vs Cavaliers", homeLogo: "https://static.flashscore.com/res/image/data/MoYJBde5-xrW85HXg.png", awayLogo: "https://static.flashscore.com/res/image/data/AqYiLvHG-6ZJgih6O.png" },
   { match: "River Plate vs Gimnasia La Plata", homeLogo: "https://static.flashscore.com/res/image/data/Ic4xH0Yg-nqhLBCKD.png", awayLogo: "https://static.flashscore.com/res/image/data/GzWhXUfM-OSVEHifC.png" },
   { match: "Ceará vs Atlético Mineiro", homeLogo: "https://static.flashscore.com/res/image/data/lO0NK6f5-GxV9h1lf.png", awayLogo: "https://static.flashscore.com/res/image/data/WbSJHDh5-UHhQ6Y1N.png" },
@@ -1220,12 +1224,10 @@ const matchesLogos = [
   { match: "Remo vs Bahia", homeLogo: "https://static.flashscore.com/res/image/data/dWTc9iBr-vsDPUWUH.png", awayLogo: "https://static.flashscore.com/res/image/data/f5V5z1Cr-dKUmd286.png" },
   { match: "Dallas vs Vancouver Whitecaps", homeLogo: "https://static.flashscore.com/res/image/data/IPVa0Qhl-08eoEXKh.png", awayLogo: "https://static.flashscore.com/res/image/data/nXTMece5-nJrkMuTE.png" },
   { match: "Minnesota United vs Colorado Rapids", homeLogo: "https://static.flashscore.com/res/image/data/fXYygQfM-Y5BuxdGt.png", awayLogo: "https://static.flashscore.com/res/image/data/OOiHXVAr-fyzFgPy8.png" },
-  { match: "Sporting KC vs LA Galaxy", homeLogo: "", awayLogo: "https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg" },
-  { match: "St. Louis City vs Los Angeles FC", homeLogo: "https://static.flashscore.com/res/image/data/8A6xQCEa-UwKTVGeG.png", awayLogo: "https://static.flashscore.com/res/image/data/U1jW4M9r-IqCt8nYD.png" },
-  { match: "Junior vs Once Caldas", homeLogo: "https://static.flashscore.com/res/image/data/Kz2UFMh5-G2820wU0.png", awayLogo: "https://static.flashscore.com/res/image/data/2JsUqijl-Q1uF3vzi.png" },
+  { match: "St. Louis City vs Los Angeles FC", homeLogo: "https://static.flashscore.com/res/image/data/fZQ24ABr-jmLPWdtA.png", awayLogo: "https://static.flashscore.com/res/image/data/bPW7CeZg-h6S6xFbF.png" },
+  { match: "Junior vs Once Caldas", homeLogo: "https://static.flashscore.com/res/image/data/beszd7EG-UeTqQWzh.png", awayLogo: "https://static.flashscore.com/res/image/data/lbR6GxBr-faOifw18.png" },
   { match: "Real Salt Lake vs Houston Dynamo", homeLogo: "https://static.flashscore.com/res/image/data/OxGZ7ve5-vgy39tSd.png", awayLogo: "https://static.flashscore.com/res/image/data/Sp63uSDa-YLT3ZeZm.png" },
   { match: "San Diego vs Austin", homeLogo: "https://static.flashscore.com/res/image/data/pQjpOMWg-b7NYdTs6.png", awayLogo: "https://static.flashscore.com/res/image/data/CEZPnWh5-AP3GsSz8.png" },
-  { match: "Seattle Sounders FC vs SJ Earthquakes", homeLogo: "https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg", awayLogo: "https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg" },
   { match: "Cruz Azul vs Guadalajara", homeLogo: "https://static.flashscore.com/res/image/data/juUdUvvS-4UD5BJKp.png", awayLogo: "https://static.flashscore.com/res/image/data/ro844CyS-lEs0thDm.png" }
 ];
 
@@ -1233,15 +1235,6 @@ const matchesLogos = [
 // DATOS DE EVENTOS
 // =====================================================
 const eventsData = [
-  { time: "16:30", match: "LaLiga: Deportivo Alavés vs Barcelona", link: "https://streamx550.com/global2.php?channel=disney5" },
-  { time: "16:30", match: "LaLiga: Deportivo Alavés vs Barcelona", link: "https://streamx550.com/global2.php?channel=espn2" },
-  { time: "16:30", match: "LaLiga: Deportivo Alavés vs Barcelona", link: "https://streamx550.com/global2.php?channel=espnplus5" },
-  { time: "16:30", match: "LaLiga: Deportivo Alavés vs Barcelona", link: "https://streamx550.com/global2.php?channel=espnplus6" },
-  { time: "16:30", match: "LaLiga: Deportivo Alavés vs Barcelona", link: "https://streamx550.com/global2.php?channel=espndeportes" },
-  { time: "16:30", match: "LaLiga: Getafe vs Mallorca", link: "https://streamx550.com/global2.php?channel=disney6" },
-  { time: "16:30", match: "LaLiga: Getafe vs Mallorca", link: "https://streamx550.com/global2.php?channel=espn3" },
-  { time: "16:30", match: "LaLiga: Getafe vs Mallorca", link: "https://streamx550.com/global2.php?channel=espnplus1" },
-  { time: "16:30", match: "LaLiga: Getafe vs Mallorca", link: "https://streamx550.com/global2.php?channel=espnplus2" },
   { time: "19:00", match: "Liga Profesional: Rosario Central vs Racing Club", link: "https://streamx550.com/global2.php?channel=fanatiz1" },
   { time: "19:00", match: "Liga Profesional: Rosario Central vs Racing Club", link: "https://streamx550.com/global2.php?channel=disney1" },
   { time: "19:00", match: "Liga Profesional: Rosario Central vs Racing Club", link: "https://streamx550.com/global2.php?channel=tntar" },
@@ -1639,47 +1632,33 @@ function updateStats(list) {
   document.getElementById("upcoming-count").textContent = `${upcoming} PROXIMOS`;
 }
 
-function positionDropdown(matchId) {
-  const dropdown = document.getElementById(`dropdown-${matchId}`);
-  const btn = document.getElementById(`channel-btn-${matchId}`);
-  if (!dropdown || !btn) return;
-  const rect = btn.getBoundingClientRect();
-  const dropHeight = dropdown.offsetHeight || 160;
-  const dropWidth = dropdown.offsetWidth || 170;
-  let top = rect.bottom + 6;
-  let left = rect.left + rect.width / 2;
-  // Prevent overflow bottom
-  if (top + dropHeight > window.innerHeight - 10) {
-    top = rect.top - dropHeight - 6;
-  }
-  // Prevent overflow left/right
-  if (left - dropWidth / 2 < 10) left = dropWidth / 2 + 10;
-  if (left + dropWidth / 2 > window.innerWidth - 10) left = window.innerWidth - dropWidth / 2 - 10;
-  dropdown.style.top = top + 'px';
-  dropdown.style.left = left + 'px';
-  dropdown.style.transform = 'translateX(-50%)';
-}
-
 function toggleDropdown(matchId) {
   const dropdown = document.getElementById(`dropdown-${matchId}`);
   const chevron = document.getElementById(`chevron-${matchId}`);
+  const card = document.querySelector(`[data-match-id="${matchId}"]`);
+
+  // Close other dropdowns and remove their dropdown-open class
   openDropdowns.forEach(id => {
     if (id !== matchId) {
       const otherDropdown = document.getElementById(`dropdown-${id}`);
       const otherChevron = document.getElementById(`chevron-${id}`);
+      const otherCard = document.querySelector(`[data-match-id="${id}"]`);
       if (otherDropdown) otherDropdown.classList.add('hidden');
       if (otherChevron) otherChevron.classList.remove('open');
+      if (otherCard) otherCard.classList.remove('dropdown-open');
     }
   });
   openDropdowns.clear();
+
   if (dropdown.classList.contains('hidden')) {
     dropdown.classList.remove('hidden');
     chevron.classList.add('open');
+    if (card) card.classList.add('dropdown-open');
     openDropdowns.add(matchId);
-    positionDropdown(matchId);
   } else {
     dropdown.classList.add('hidden');
     chevron.classList.remove('open');
+    if (card) card.classList.remove('dropdown-open');
   }
 }
 
@@ -1689,6 +1668,7 @@ function selectChannel(matchId, link, name) {
   const btn = document.getElementById(`channel-btn-${matchId}`);
   btn.innerHTML = `<span>${name}</span><span class="chevron" id="chevron-${matchId}">&#9660;</span>`;
   document.getElementById(`dropdown-${matchId}`).classList.add('hidden');
+  card.classList.remove('dropdown-open');
   openDropdowns.delete(matchId);
 }
 
@@ -1897,8 +1877,10 @@ document.addEventListener('click', (e) => {
     openDropdowns.forEach(id => {
       const dropdown = document.getElementById(`dropdown-${id}`);
       const chevron = document.getElementById(`chevron-${id}`);
+      const card = document.querySelector(`[data-match-id="${id}"]`);
       if (dropdown) dropdown.classList.add('hidden');
       if (chevron) chevron.classList.remove('open');
+      if (card) card.classList.remove('dropdown-open');
     });
     openDropdowns.clear();
   }
@@ -1906,15 +1888,6 @@ document.addEventListener('click', (e) => {
 
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') closePlayer();
-});
-
-// Reposition open dropdowns on scroll/resize
-window.addEventListener('scroll', () => {
-  openDropdowns.forEach(id => positionDropdown(id));
-}, { passive: true });
-
-window.addEventListener('resize', () => {
-  openDropdowns.forEach(id => positionDropdown(id));
 });
 
 // Inicializar
