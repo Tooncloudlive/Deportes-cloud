@@ -423,12 +423,17 @@ header {
   border-radius: var(--radius-lg);
   margin-bottom: 10px;
   transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  overflow: hidden;
+  overflow: visible;
   animation: card-enter 0.45s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   opacity: 0;
   cursor: default;
   user-select: none;
   -webkit-user-select: none;
+  z-index: 1;
+}
+
+.glass-card.dropdown-open {
+  z-index: 10;
 }
 
 /* Liquid Glass Base Layer */
@@ -521,6 +526,7 @@ header {
 /* Card removal animation */
 .glass-card.removing {
   animation: card-exit 0.4s cubic-bezier(0.4, 0, 1, 1) forwards;
+  overflow: hidden;
 }
 
 @keyframes card-enter {
@@ -751,9 +757,10 @@ header {
 }
 
 .channel-dropdown {
-  position: fixed;
-  left: 0;
-  top: 0;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: calc(100% + 6px);
   min-width: 170px;
   background: rgba(40, 40, 44, 0.95);
   backdrop-filter: blur(30px) saturate(200%);
@@ -761,7 +768,7 @@ header {
   border: 0.5px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--radius-md);
   padding: 6px;
-  z-index: 9999;
+  z-index: 50;
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
   animation: dropdown-enter 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -1106,7 +1113,6 @@ header {
   }
 }
 </style>
-<base target="_blank">
 <base target="_blank">
 </head>
 
@@ -1558,47 +1564,33 @@ function updateStats(list) {
   document.getElementById("upcoming-count").textContent = `${upcoming} PROXIMOS`;
 }
 
-function positionDropdown(matchId) {
-  const dropdown = document.getElementById(`dropdown-${matchId}`);
-  const btn = document.getElementById(`channel-btn-${matchId}`);
-  if (!dropdown || !btn) return;
-  const rect = btn.getBoundingClientRect();
-  const dropHeight = dropdown.offsetHeight || 160;
-  const dropWidth = dropdown.offsetWidth || 170;
-  let top = rect.bottom + 6;
-  let left = rect.left + rect.width / 2;
-  // Prevent overflow bottom
-  if (top + dropHeight > window.innerHeight - 10) {
-    top = rect.top - dropHeight - 6;
-  }
-  // Prevent overflow left/right
-  if (left - dropWidth / 2 < 10) left = dropWidth / 2 + 10;
-  if (left + dropWidth / 2 > window.innerWidth - 10) left = window.innerWidth - dropWidth / 2 - 10;
-  dropdown.style.top = top + 'px';
-  dropdown.style.left = left + 'px';
-  dropdown.style.transform = 'translateX(-50%)';
-}
-
 function toggleDropdown(matchId) {
   const dropdown = document.getElementById(`dropdown-${matchId}`);
   const chevron = document.getElementById(`chevron-${matchId}`);
+  const card = document.querySelector(`[data-match-id="${matchId}"]`);
+
+  // Close other dropdowns and remove their dropdown-open class
   openDropdowns.forEach(id => {
     if (id !== matchId) {
       const otherDropdown = document.getElementById(`dropdown-${id}`);
       const otherChevron = document.getElementById(`chevron-${id}`);
+      const otherCard = document.querySelector(`[data-match-id="${id}"]`);
       if (otherDropdown) otherDropdown.classList.add('hidden');
       if (otherChevron) otherChevron.classList.remove('open');
+      if (otherCard) otherCard.classList.remove('dropdown-open');
     }
   });
   openDropdowns.clear();
+
   if (dropdown.classList.contains('hidden')) {
     dropdown.classList.remove('hidden');
     chevron.classList.add('open');
+    if (card) card.classList.add('dropdown-open');
     openDropdowns.add(matchId);
-    positionDropdown(matchId);
   } else {
     dropdown.classList.add('hidden');
     chevron.classList.remove('open');
+    if (card) card.classList.remove('dropdown-open');
   }
 }
 
@@ -1608,6 +1600,7 @@ function selectChannel(matchId, link, name) {
   const btn = document.getElementById(`channel-btn-${matchId}`);
   btn.innerHTML = `<span>${name}</span><span class="chevron" id="chevron-${matchId}">&#9660;</span>`;
   document.getElementById(`dropdown-${matchId}`).classList.add('hidden');
+  card.classList.remove('dropdown-open');
   openDropdowns.delete(matchId);
 }
 
@@ -1816,8 +1809,10 @@ document.addEventListener('click', (e) => {
     openDropdowns.forEach(id => {
       const dropdown = document.getElementById(`dropdown-${id}`);
       const chevron = document.getElementById(`chevron-${id}`);
+      const card = document.querySelector(`[data-match-id="${id}"]`);
       if (dropdown) dropdown.classList.add('hidden');
       if (chevron) chevron.classList.remove('open');
+      if (card) card.classList.remove('dropdown-open');
     });
     openDropdowns.clear();
   }
@@ -1825,15 +1820,6 @@ document.addEventListener('click', (e) => {
 
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') closePlayer();
-});
-
-// Reposition open dropdowns on scroll/resize
-window.addEventListener('scroll', () => {
-  openDropdowns.forEach(id => positionDropdown(id));
-}, { passive: true });
-
-window.addEventListener('resize', () => {
-  openDropdowns.forEach(id => positionDropdown(id));
 });
 
 // Inicializar
