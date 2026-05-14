@@ -1114,6 +1114,7 @@ header {
 }
 </style>
 <base target="_blank">
+<base target="_blank">
 </head>
 
 <body>
@@ -1212,16 +1213,19 @@ const matchesLogos = [];
 // {{EVENTS_DATA}}
 const eventsData = [];
 
-const leagueMap = {
-  'Super Lig': 'Super Lig', 'UEFA Champions League': 'UCL', 'UEFA Europa League': 'UEL',
-  'Liga BetPlay': 'BetPlay', 'Copa de Primera': 'Primera', 'Liga Profesional': 'LPF',
-  'CONCACAF Champions Cup': 'Concacaf', 'Brasileirao': 'Brasil', 'Brasileir&atilde;o': 'Brasil',
-  'Copa del Rey de Arabia': 'Arabia', 'Liga MX': 'Liga MX', 'Amistoso Internacional': 'Amistoso',
-  'Copa Argentina': 'Copa Arg', 'F1 | GP de Japon': 'F1', 'LaLiga': 'LaLiga', 'Championship': 'Championship',
-  'Premier League': 'Premier', 'Serie A': 'Serie A', 'Bundesliga': 'Bundesliga', 'Ligue 1': 'Ligue 1',
-  'MLS': 'MLS', 'NWSL': 'NWSL', 'NCAAM': 'NCAAM', 'NBA': 'NBA', 'NHL': 'NHL', 'MLB': 'MLB',
-  'Copa Libertadores': 'Libertadores', 'Copa Sudamericana': 'Sudamericana',
-  'Primera Division': 'Primera', 'Liga de Expansion': 'Expansion', 'Liga de Naciones': 'Naciones'
+// =====================================================
+// DICCIONARIO DE MAPEO DE LIGAS
+// =====================================================
+// Agrega o edita entradas para renombrar ligas.
+// El formato es: "Nombre exacto extraido del campo match": "Nombre a mostrar"
+// Si una liga no esta en este diccionario, se mostrara su nombre original.
+
+const leagueMapping = {
+    "Liga Profesional": "Liga Profesional Argentina",
+    "Copa do Brasil": "Copa de Brasil",
+    "MLS": "Major League Soccer",
+    "NBA": "National Basketball Association"
+    // Agrega mas ligas aqui segun necesites
 };
 
 const channelNameMap = {
@@ -1480,10 +1484,15 @@ function generateMatchHTML(matchText, cardElement) {
 // =====================================================
 
 function getLeague(match) {
-  for (const [key, value] of Object.entries(leagueMap)) {
-    if (match.includes(key)) return value;
-  }
-  return 'PARTIDO';
+  // Extraer el nombre de la liga: todo el texto que precede al primer ":"
+  const colonIndex = match.indexOf(':');
+  if (colonIndex === -1) return 'PARTIDO';
+  
+  const leagueName = match.substring(0, colonIndex).trim();
+  
+  // Verificar si existe en el diccionario de mapeo
+  // Si existe, devolver el nombre personalizado; si no, el nombre original
+  return leagueMapping[leagueName] || leagueName;
 }
 
 function getChannelFromLink(link) {
