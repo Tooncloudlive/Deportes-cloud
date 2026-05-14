@@ -1,45 +1,5 @@
 [
   {
-    "time": "19:00",
-    "match": "Liga Profesional: Rosario Central vs Racing Club",
-    "link": "https://streamx550.com/global2.php?channel=fanatiz1"
-  },
-  {
-    "time": "19:00",
-    "match": "Liga Profesional: Rosario Central vs Racing Club",
-    "link": "https://streamx550.com/global2.php?channel=disney1"
-  },
-  {
-    "time": "19:00",
-    "match": "Liga Profesional: Rosario Central vs Racing Club",
-    "link": "https://streamx550.com/global2.php?channel=tntar"
-  },
-  {
-    "time": "19:00",
-    "match": "Liga Profesional: Rosario Central vs Racing Club",
-    "link": "https://streamx550.com/global2.php?channel=espnpremium"
-  },
-  {
-    "time": "19:00",
-    "match": "Copa do Brasil: Juventude vs São Paulo",
-    "link": "https://streamx550.com/global2.php?channel=premiere1"
-  },
-  {
-    "time": "19:00",
-    "match": "Copa do Brasil: Juventude vs São Paulo",
-    "link": "https://streamx550.com/global2.php?channel=sportv1"
-  },
-  {
-    "time": "19:00",
-    "match": "Copa do Brasil: Vasco da Gama vs Paysandu",
-    "link": "https://streamx550.com/global2.php?channel=premiere2"
-  },
-  {
-    "time": "19:00",
-    "match": "Copa do Brasil: Vasco da Gama vs Paysandu",
-    "link": "https://streamx550.com/global2.php?channel=sportv2"
-  },
-  {
     "time": "19:30",
     "match": "Copa do Brasil: Coritiba vs Santos",
     "link": "https://streamx550.com/global2.php?channel=amazon1"
@@ -53,6 +13,11 @@
     "time": "20:00",
     "match": "Liga BetPlay: Deportivo Pasto vs Deportes Tolima",
     "link": "https://streamx550.com/global2.php?channel=winplus2"
+  },
+  {
+    "time": "20:00",
+    "match": "Copa de la Liga: Coquimbo vs Colo Colo",
+    "link": "https://streamx550.com/global2.php?channel=max2"
   },
   {
     "time": "20:15",

@@ -1,28 +1,18 @@
 [
   {
-    "match": "Rosario Central vs Racing Club",
-    "homeLogo": "https://static.flashscore.com/res/image/data/hKqVGwgl-vuxu02Jt.png",
-    "awayLogo": "https://static.flashscore.com/res/image/data/6T5YTkZA-OCiVKiPK.png"
-  },
-  {
-    "match": "Juventude vs São Paulo",
-    "homeLogo": "https://static.flashscore.com/res/image/data/CA0V6qXg-v5wBaFPD.png",
-    "awayLogo": "https://static.flashscore.com/res/image/data/YgK3qNCa-AkTesf41.png"
-  },
-  {
-    "match": "Vasco da Gama vs Paysandu",
-    "homeLogo": "https://static.flashscore.com/res/image/data/d2irXNjl-bam8o1Nj.png",
-    "awayLogo": "https://static.flashscore.com/res/image/data/OY3H2Kf5-zysCBcpf.png"
-  },
-  {
     "match": "Coritiba vs Santos",
-    "homeLogo": "https://static.flashscore.com/res/image/data/xKm8lie5-bwYqIWsq.png",
-    "awayLogo": "https://static.flashscore.com/res/image/data/rJGaKUhl-hv442jSk.png"
+    "homeLogo": "https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg",
+    "awayLogo": "https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg"
   },
   {
     "match": "Deportivo Pasto vs Deportes Tolima",
     "homeLogo": "https://static.flashscore.com/res/image/data/rPpVBxZg-hjn5AE5Q.png",
     "awayLogo": "https://static.flashscore.com/res/image/data/ngiuiwYg-bXlV9lJE.png"
+  },
+  {
+    "match": "Coquimbo vs Colo Colo",
+    "homeLogo": "https://static.flashscore.com/res/image/data/O40oH8h5-hMng3olL.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/CMCTeMxS-tnwDCzLD.png"
   },
   {
     "match": "Charlotte vs New York City",
@@ -61,8 +51,8 @@
   },
   {
     "match": "Mirassol vs RB Bragantino",
-    "homeLogo": "https://static.flashscore.com/res/image/data/C8fyvKXg-00ap035Q.png",
-    "awayLogo": "https://static.flashscore.com/res/image/data/xxm5TNfM-zV7mJUhj.png"
+    "homeLogo": "https://static.flashscore.com/res/image/data/SUmYTyAr-fVnYQB8j.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/llnonZDa-UkMF8Udb.png"
   },
   {
     "match": "Pistons vs Cavaliers",
@@ -96,8 +86,13 @@
   },
   {
     "match": "Minnesota United vs Colorado Rapids",
-    "homeLogo": "https://static.flashscore.com/res/image/data/fXYygQfM-Y5BuxdGt.png",
-    "awayLogo": "https://static.flashscore.com/res/image/data/OOiHXVAr-fyzFgPy8.png"
+    "homeLogo": "https://static.flashscore.com/res/image/data/CAmQ2QXg-63scElQr.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/pYKt7kAr-pft1D8uk.png"
+  },
+  {
+    "match": "Sporting KC vs LA Galaxy",
+    "homeLogo": "",
+    "awayLogo": "https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg"
   },
   {
     "match": "St. Louis City vs Los Angeles FC",
@@ -106,8 +101,8 @@
   },
   {
     "match": "Junior vs Once Caldas",
-    "homeLogo": "https://static.flashscore.com/res/image/data/beszd7EG-UeTqQWzh.png",
-    "awayLogo": "https://static.flashscore.com/res/image/data/lbR6GxBr-faOifw18.png"
+    "homeLogo": "https://static.flashscore.com/res/image/data/Kz2UFMh5-G2820wU0.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/2JsUqijl-Q1uF3vzi.png"
   },
   {
     "match": "Real Salt Lake vs Houston Dynamo",
@@ -118,6 +113,11 @@
     "match": "San Diego vs Austin",
     "homeLogo": "https://static.flashscore.com/res/image/data/pQjpOMWg-b7NYdTs6.png",
     "awayLogo": "https://static.flashscore.com/res/image/data/CEZPnWh5-AP3GsSz8.png"
+  },
+  {
+    "match": "Seattle Sounders FC vs SJ Earthquakes",
+    "homeLogo": "https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg",
+    "awayLogo": "https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg"
   },
   {
     "match": "Cruz Azul vs Guadalajara",
