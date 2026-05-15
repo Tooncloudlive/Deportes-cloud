@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>ToonCloud Deportes</title>
-<!-- Build: 2026-05-15 08:44 | Events: 0 | Logos: 0 -->
+<!-- Build: 2026-05-15 17:41 | Events: 23 | Logos: 14 -->
 <meta name="theme-color" content="#000000">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -1204,12 +1204,51 @@ header {
 // El formato es: { match: "Equipo Local vs Equipo Visitante", homeLogo: "URL_ESCUDO_LOCAL", awayLogo: "URL_ESCUDO_VISITANTE" }
 // Si no quieres escudo para un equipo, deja el campo vacio: ""
 
-const matchesLogos = [];
+const matchesLogos = [
+  { match: "CD Castellon vs Cádiz", homeLogo: "https://livesport-ott-images.ssl.cdn.cra.cz/r900xfq60/f1a099e1-b4b8-446c-bba2-32d9e8ffd1c5.avif", awayLogo: "https://static.flashscore.com/res/image/data/0Q4qMJeM-EPWyZtpb.png" },
+  { match: "Córdoba vs Albacete", homeLogo: "https://static.flashscore.com/res/image/data/SvAe0DxS-4YF9PAyB.png", awayLogo: "https://static.flashscore.com/res/image/data/M9tNPVfM-4297a0ys.png" },
+  { match: "Aston Villa vs Liverpool", homeLogo: "https://static.flashscore.com/res/image/data/QsnteKXg-jwz95gs0.png", awayLogo: "https://static.flashscore.com/res/image/data/Gr0cGteM-KCp4zq5F.png" },
+  { match: "FC Cajamarca vs Sporting Cristal", homeLogo: "https://static.flashscore.com/res/image/data/txvKJLh5-vJhlopip.png", awayLogo: "https://static.flashscore.com/res/image/data/bT8P90Ar-Em9Gxj8O.png" },
+  { match: "Sportivo Trinidense vs Cerro Porteño", homeLogo: "https://static.flashscore.com/res/image/data/h0WsLVGG-hpyVjm6H.png", awayLogo: "https://static.flashscore.com/res/image/data/MaeXwaEG-dIe0DKF9.png" },
+  { match: "Rubio Ñú vs Nacional Asunción", homeLogo: "https://static.flashscore.com/res/image/data/SYOSI3Ea-naCm8i0g.png", awayLogo: "https://static.flashscore.com/res/image/data/WIKARXhl-6PG8meHs.png" },
+  { match: "Boca Juniors de Cali vs Deportivo Cali", homeLogo: "https://static.flashscore.com/res/image/data/KtChAhe5-YkXz5hTm.png", awayLogo: "https://static.flashscore.com/res/image/data/O2O10jHG-IHPA1GDt.png" },
+  { match: "Patriotas Boyacá vs Millonarios", homeLogo: "https://static.flashscore.com/res/image/data/2JepZwg5-vPkIlTrP.png", awayLogo: "https://static.flashscore.com/res/image/data/COAjhCg5-6kduDy6P.png" },
+  { match: "Torque vs Nacional", homeLogo: "https://cdn.cookielaw.org/logos/static/ot_company_logo.png", awayLogo: "https://static.flashscore.com/res/image/data/WUIDNjFa-xErFNzEn.png" },
+  { match: "Cavaliers vs Pistons", homeLogo: "https://static.flashscore.com/res/image/data/AqYiLvHG-6ZJgih6O.png", awayLogo: "https://static.flashscore.com/res/image/data/MoYJBde5-xrW85HXg.png" },
+  { match: "Palestino vs La Serena", homeLogo: "https://static.flashscore.com/res/image/data/GxmUk4dM-Mofbp184.png", awayLogo: "https://static.flashscore.com/res/image/data/YDcd9wDa-Mkzo6oBm.png" },
+  { match: "Universitario vs Atlético Grau", homeLogo: "https://cdn.cookielaw.org/logos/static/ot_company_logo.png", awayLogo: "https://static.flashscore.com/res/image/data/l6DT03h5-OIQgs2YQ.png" },
+  { match: "Orsomarso vs Medellín", homeLogo: "https://static.flashscore.com/res/image/data/KEu2pFDa-OQvTHdKn.png", awayLogo: "https://static.flashscore.com/res/image/data/lMyrsdhl-plopiAtN.png" },
+  { match: "Timberwolves vs Spurs", homeLogo: "https://static.flashscore.com/res/image/data/hv2nHleM-KbXk58wB.png", awayLogo: "https://static.flashscore.com/res/image/data/8f2WVCFG-SrHHDGUm.png" }
+];
 
 // =====================================================
 // DATOS DE EVENTOS
 // =====================================================
-const eventsData = [];
+const eventsData = [
+  { time: "14:00", match: "Super Lig: Rizespor vs Beşiktaş", link: "https://streamx550.com/global2.php?channel=espn5" },
+  { time: "15:30", match: "LaLiga 2: CD Castellon vs Cádiz", link: "https://streamx550.com/global2.php?channel=hyper1" },
+  { time: "16:00", match: "LaLiga 2: Córdoba vs Albacete", link: "https://streamx550.com/global2.php?channel=hyper2" },
+  { time: "16:00", match: "Premier League: Aston Villa vs Liverpool", link: "https://streamx550.com/global2.php?channel=disney1" },
+  { time: "16:00", match: "Premier League: Aston Villa vs Liverpool", link: "https://streamx550.com/global2.php?channel=espn" },
+  { time: "16:00", match: "Premier League: Aston Villa vs Liverpool", link: "https://streamx550.com/global2.php?channel=foxone1" },
+  { time: "17:00", match: "Liga 1: FC Cajamarca vs Sporting Cristal", link: "https://streamx550.com/global2.php?channel=liga1max" },
+  { time: "17:00", match: "Liga 1: FC Cajamarca vs Sporting Cristal", link: "https://streamx550.com/global2.php?channel=fanatiz1" },
+  { time: "17:00", match: "Copa de Primera: Sportivo Trinidense vs Cerro Porteño", link: "https://streamx550.com/global2.php?channel=fanatiz2" },
+  { time: "17:00", match: "Copa de Primera: Rubio Ñú vs Nacional Asunción", link: "https://streamx550.com/global2.php?channel=fanatiz3" },
+  { time: "18:00", match: "Copa Colombia: Boca Juniors de Cali vs Deportivo Cali", link: "https://streamx550.com/global2.php?channel=winplus" },
+  { time: "18:00", match: "Copa Colombia: Boca Juniors de Cali vs Deportivo Cali", link: "https://streamx550.com/global2.php?channel=winplus2" },
+  { time: "20:00", match: "Copa Colombia: Patriotas Boyacá vs Millonarios", link: "https://streamx550.com/global2.php?channel=winplus" },
+  { time: "20:00", match: "Copa Colombia: Patriotas Boyacá vs Millonarios", link: "https://streamx550.com/global2.php?channel=winplus2" },
+  { time: "20:00", match: "Primera División: Torque vs Nacional", link: "https://streamx550.com/global2.php?channel=disney1" },
+  { time: "20:00", match: "NBA: Cavaliers vs Pistons", link: "https://streamx550.com/global2.php?channel=amazon1" },
+  { time: "21:00", match: "Liga de Primera: Palestino vs La Serena", link: "https://streamx550.com/global2.php?channel=max1" },
+  { time: "21:00", match: "Liga de Primera: Coquimbo Unido vs Audax Italiano", link: "https://streamx550.com/global2.php?channel=max2" },
+  { time: "22:00", match: "Liga 1: Universitario vs Atlético Grau", link: "https://streamx550.com/global2.php?channel=liga1max" },
+  { time: "22:00", match: "Liga 1: Universitario vs Atlético Grau", link: "https://streamx550.com/global2.php?channel=fanatiz1" },
+  { time: "22:00", match: "Copa Colombia: Orsomarso vs Medellín", link: "https://streamx550.com/global2.php?channel=winplus" },
+  { time: "22:00", match: "Copa Colombia: Orsomarso vs Medellín", link: "https://streamx550.com/global2.php?channel=winplus2" },
+  { time: "22:30", match: "NBA: Timberwolves vs Spurs", link: "https://streamx550.com/global2.php?channel=amazon2" }
+];
 
 // =====================================================
 // DICCIONARIO DE MAPEO DE LIGAS
