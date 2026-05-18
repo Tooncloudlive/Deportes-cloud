@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>ToonCloud Deportes</title>
-<!-- Build: 2026-05-18 09:52 | Events: 0 | Logos: 0 -->
+<!-- Build: 2026-05-18 13:35 | Events: 11 | Logos: 5 -->
 <meta name="theme-color" content="#000000">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -1204,12 +1204,30 @@ header {
 // El formato es: { match: "Equipo Local vs Equipo Visitante", homeLogo: "URL_ESCUDO_LOCAL", awayLogo: "URL_ESCUDO_VISITANTE" }
 // Si no quieres escudo para un equipo, deja el campo vacio: ""
 
-const matchesLogos = [];
+const matchesLogos = [
+  { match: "Leganés vs Huesca", homeLogo: "https://static.flashscore.com/res/image/data/IqhNyYjl-Q3zX1dyT.png", awayLogo: "https://static.flashscore.com/res/image/data/UwzkXAxS-EkA5g8Rs.png" },
+  { match: "Thunder vs Spurs", homeLogo: "https://static.flashscore.com/res/image/data/bFgddNh5-4zc22IQb.png", awayLogo: "https://static.flashscore.com/res/image/data/8f2WVCFG-SrHHDGUm.png" },
+  { match: "Dodgers vs Padres", homeLogo: "https://static.flashscore.com/res/image/data/YeWStKhl-xUjXmOIP.png", awayLogo: "https://static.flashscore.com/res/image/data/YsFz7vWg-plL3Lm41.png" },
+  { match: "White Sox vs Mariners", homeLogo: "https://static.flashscore.com/res/image/data/rHrt6LAr-MFkjl69i.png", awayLogo: "https://static.flashscore.com/res/image/data/YPyyksFG-CrchK1NQ.png" },
+  { match: "Real España vs Marathón", homeLogo: "https://static.flashscore.com/res/image/data/QPHZHyg5-dQeZ4aH3.png", awayLogo: "https://static.flashscore.com/res/image/data/MVfV9cGG-IJKf4CSg.png" }
+];
 
 // =====================================================
 // DATOS DE EVENTOS
 // =====================================================
-const eventsData = [];
+const eventsData = [
+  { time: "15:30", match: "LaLiga 2: Leganés vs Huesca", link: "https://streamx550.com/global2.php?channel=hyper1" },
+  { time: "16:00", match: "Premier League: Arsenal vs Burnley", link: "https://streamx550.com/global2.php?channel=disney1" },
+  { time: "16:00", match: "Premier League: Arsenal vs Burnley", link: "https://streamx550.com/global2.php?channel=espn" },
+  { time: "16:00", match: "Premier League: Arsenal vs Burnley", link: "https://streamx550.com/global2.php?channel=max1" },
+  { time: "16:00", match: "Premier League: Arsenal vs Burnley", link: "https://streamx550.com/global2.php?channel=universo" },
+  { time: "18:30", match: "Primera División: Deportivo Maldonado vs Danubio", link: "https://streamx550.com/global2.php?channel=disney2" },
+  { time: "21:30", match: "NBA: Thunder vs Spurs", link: "https://streamx550.com/global2.php?channel=max2" },
+  { time: "22:40", match: "MLB: Dodgers vs Padres", link: "https://streamx550.com/global2.php?channel=espn3" },
+  { time: "22:40", match: "MLB: Dodgers vs Padres", link: "https://streamx550.com/global2.php?channel=espn2mx" },
+  { time: "22:40", match: "MLB: White Sox vs Mariners", link: "https://streamx550.com/global2.php?channel=espn5" },
+  { time: "23:15", match: "Liga Nacional: Real España vs Marathón", link: "https://streamx550.com/global2.php?channel=foxdeportes" }
+];
 
 // =====================================================
 // DICCIONARIO DE MAPEO DE LIGAS
