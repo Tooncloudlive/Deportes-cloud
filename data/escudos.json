@@ -1,1 +1,77 @@
-[]
+[
+  {
+    "match": "Coquimbo Unido vs Deportes Tolima",
+    "homeLogo": "https://static.flashscore.com/res/image/data/O40oH8h5-hMng3olL.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/ngiuiwYg-bXlV9lJE.png"
+  },
+  {
+    "match": "Rosario Central vs UCV",
+    "homeLogo": "https://static.flashscore.com/res/image/data/hKqVGwgl-vuxu02Jt.png",
+    "awayLogo": "https://cdn.cookielaw.org/logos/static/ot_company_logo.png"
+  },
+  {
+    "match": "Fluminense vs Bolívar",
+    "homeLogo": "https://static.flashscore.com/res/image/data/WlxJgSdM-WUfDDYk1.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/GENsXszB-ULrHhAjS.png"
+  },
+  {
+    "match": "Audax Italiano vs Barracas Central",
+    "homeLogo": "https://static.flashscore.com/res/image/data/fZSe86hl-6kEqxN0C.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/EkKbKgXg-KxCl9RDG.png"
+  },
+  {
+    "match": "Torque vs Deportivo Riestra",
+    "homeLogo": "https://cdn.cookielaw.org/logos/static/ot_company_logo.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/Wr1x3UWg-rRNfwvij.png"
+  },
+  {
+    "match": "Toronto Blue Jays vs New York Yankees",
+    "homeLogo": "https://static.flashscore.com/res/image/data/ncOoVXBr-8Gs6bSZh.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/plT1Aqil-OpJ5uAOg.png"
+  },
+  {
+    "match": "Santa Fe vs Platense",
+    "homeLogo": "https://static.flashscore.com/res/image/data/dlONm5jl-AaS9a4Ho.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/4CaR1bHG-pAQm6KvU.png"
+  },
+  {
+    "match": "Always Ready vs Mirassol",
+    "homeLogo": "https://static.flashscore.com/res/image/data/h2zsNpg5-Ycu4vmIa.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/SUmYTyAr-fVnYQB8j.png"
+  },
+  {
+    "match": "Cavaliers vs Knicks",
+    "homeLogo": "https://static.flashscore.com/res/image/data/AqYiLvHG-6ZJgih6O.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/UBTxFpcM-I30Q0K9l.png"
+  },
+  {
+    "match": "Boca Juniors vs Cruzeiro",
+    "homeLogo": "https://static.flashscore.com/res/image/data/h4UwH8Cr-pGZDw8HC.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/lCWrxmg5-SjJmyx86.png"
+  },
+  {
+    "match": "São Paulo vs Millonarios",
+    "homeLogo": "https://static.flashscore.com/res/image/data/YgK3qNCa-AkTesf41.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/COAjhCg5-6kduDy6P.png"
+  },
+  {
+    "match": "Los Angeles Dodgers vs San Diego Padres",
+    "homeLogo": "https://static.flashscore.com/res/image/data/YeWStKhl-xUjXmOIP.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/YsFz7vWg-plL3Lm41.png"
+  },
+  {
+    "match": "San Francisco Giants vs Arizona Diamondbacks",
+    "homeLogo": "https://static.flashscore.com/res/image/data/faj1OHdM-0nhPzxiE.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/Yg133Fg5-pnn58dSo.png"
+  },
+  {
+    "match": "Independiente del Valle vs Libertad",
+    "homeLogo": "https://static.flashscore.com/res/image/data/t8nwTpe5-OnCKiY2r.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/ln1XQ9Ar-UwvYANk9.png"
+  },
+  {
+    "match": "América de Cali vs Tigre",
+    "homeLogo": "https://static.flashscore.com/res/image/data/fySikCAr-hSZHTo4B.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/rstsF9FG-r7qn5qKU.png"
+  }
+]
