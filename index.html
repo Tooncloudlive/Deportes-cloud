@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>ToonCloud Deportes</title>
-<!-- Build: 2026-05-22 08:55 | Events: 26 | Logos: 9 -->
+<!-- Build: 2026-05-23 08:11 | Events: 0 | Logos: 0 -->
 <meta name="theme-color" content="#000000">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -1204,49 +1204,12 @@ header {
 // El formato es: { match: "Equipo Local vs Equipo Visitante", homeLogo: "URL_ESCUDO_LOCAL", awayLogo: "URL_ESCUDO_VISITANTE" }
 // Si no quieres escudo para un equipo, deja el campo vacio: ""
 
-const matchesLogos = [
-  { match: "Fiorentina vs Atalanta", homeLogo: "https://static.flashscore.com/res/image/data/nPTphRh5-6XKdgOM6.png", awayLogo: "https://static.flashscore.com/res/image/data/xASUZ6il-rg6usZns.png" },
-  { match: "Lens vs Nice", homeLogo: "https://static.flashscore.com/res/image/data/jqg52CDa-rTEFAmVL.png", awayLogo: "https://static.flashscore.com/res/image/data/boyRUvyB-00sqJmg8.png" },
-  { match: "Juan Pablo II College vs Melgar", homeLogo: "https://static.flashscore.com/res/image/data/YRQE9BFG-CrkK62Mu.png", awayLogo: "https://static.flashscore.com/res/image/data/fmdls5HG-dl2Dbcr1.png" },
-  { match: "2 de Mayo vs Sportivo San Lorenzo", homeLogo: "https://static.flashscore.com/res/image/data/prv1MFxS-0fWrlsjA.png", awayLogo: "https://static.flashscore.com/res/image/data/OEgPhXYA-jwW2wgsf.png" },
-  { match: "Liverpool vs Racing", homeLogo: "https://static.flashscore.com/res/image/data/pG3ecDhl-ziBT4qwJ.png", awayLogo: "https://static.flashscore.com/res/image/data/v12aAjil-YRdHXM28.png" },
-  { match: "Unión Santa Fe vs Independiente", homeLogo: "https://static.flashscore.com/res/image/data/YuZso7jl-OS9FbeGg.png", awayLogo: "https://static.flashscore.com/res/image/data/MqbBGgxS-ALgHCh57.png" },
-  { match: "Everton vs Coquimbo Unido", homeLogo: "https://static.flashscore.com/res/image/data/IaM72BCr-futBA1p8.png", awayLogo: "https://static.flashscore.com/res/image/data/O40oH8h5-hMng3olL.png" },
-  { match: "Thunder vs Spurs", homeLogo: "https://static.flashscore.com/res/image/data/bFgddNh5-4zc22IQb.png", awayLogo: "https://static.flashscore.com/res/image/data/8f2WVCFG-SrHHDGUm.png" },
-  { match: "México vs Ghana", homeLogo: "https://static.flashscore.com/res/image/data/Au0DMMCa-IPF97VQ3.png", awayLogo: "https://static.flashscore.com/res/image/data/xr80n8zB-8vfTQDSH.png" }
-];
+const matchesLogos = [];
 
 // =====================================================
 // DATOS DE EVENTOS
 // =====================================================
-const eventsData = [
-  { time: "13:30", match: "F1: GP de Canadá - Entrenamientos #1", link: "https://streamx550.com/global2.php?channel=disney1" },
-  { time: "13:30", match: "F1: GP de Canadá - Entrenamientos #1", link: "https://streamx550.com/global2.php?channel=daznf1" },
-  { time: "13:30", match: "F1: GP de Canadá - Entrenamientos #1", link: "https://streamx550.com/global2.php?channel=espn2" },
-  { time: "13:30", match: "F1: GP de Canadá - Entrenamientos #1", link: "https://streamx550.com/global2.php?channel=fox1ar" },
-  { time: "15:45", match: "Serie A: Fiorentina vs Atalanta", link: "https://streamx550.com/global2.php?channel=disney2" },
-  { time: "15:45", match: "Serie A: Fiorentina vs Atalanta", link: "https://streamx550.com/global2.php?channel=espn3" },
-  { time: "16:00", match: "Copa de Francia: Lens vs Nice", link: "https://streamx550.com/global2.php?channel=tvc" },
-  { time: "16:00", match: "Copa de Francia: Lens vs Nice", link: "https://streamx550.com/global2.php?channel=foxdeportes" },
-  { time: "17:00", match: "Liga 1: Juan Pablo II College vs Melgar", link: "https://streamx550.com/global2.php?channel=liga1max" },
-  { time: "17:00", match: "Liga 1: Juan Pablo II College vs Melgar", link: "https://streamx550.com/global2.php?channel=fanatiz1" },
-  { time: "17:30", match: "F1: GP de Canadá - Clasificación Sprint", link: "https://streamx550.com/global2.php?channel=disney3" },
-  { time: "17:30", match: "F1: GP de Canadá - Clasificación Sprint", link: "https://streamx550.com/global2.php?channel=daznf1" },
-  { time: "17:30", match: "F1: GP de Canadá - Clasificación Sprint", link: "https://streamx550.com/global2.php?channel=espn2" },
-  { time: "17:30", match: "F1: GP de Canadá - Clasificación Sprint", link: "https://streamx550.com/global2.php?channel=fox1ar" },
-  { time: "18:00", match: "Copa de Primera: 2 de Mayo vs Sportivo San Lorenzo", link: "https://streamx550.com/global2.php?channel=fanatiz2" },
-  { time: "19:00", match: "Primera División: Liverpool vs Racing", link: "https://streamx550.com/global2.php?channel=disney4" },
-  { time: "20:00", match: "Copa Argentina: Unión Santa Fe vs Independiente", link: "https://streamx550.com/global2.php?channel=tyc" },
-  { time: "20:00", match: "Copa Argentina: Unión Santa Fe vs Independiente", link: "https://streamx550.com/global2.php?channel=tycint" },
-  { time: "21:00", match: "Liga de Primera: Everton vs Coquimbo Unido", link: "https://streamx550.com/global2.php?channel=max1" },
-  { time: "21:30", match: "NBA: Thunder vs Spurs", link: "https://streamx550.com/global2.php?channel=amazon1" },
-  { time: "21:30", match: "NBA: Thunder vs Spurs", link: "https://streamx550.com/global2.php?channel=tntar" },
-  { time: "23:00", match: "Amistoso Internacional: México vs Ghana", link: "https://streamx550.com/global2.php?channel=tudnmx" },
-  { time: "23:00", match: "Amistoso Internacional: México vs Ghana", link: "https://streamx550.com/global2.php?channel=tudnus" },
-  { time: "23:00", match: "Amistoso Internacional: México vs Ghana", link: "https://streamx550.com/global2.php?channel=foxdeportes" },
-  { time: "23:00", match: "Amistoso Internacional: México vs Ghana", link: "https://streamx550.com/global2.php?channel=azteca7" },
-  { time: "23:00", match: "Amistoso Internacional: México vs Ghana", link: "https://streamx550.com/global2.php?channel=canal5mx" }
-];
+const eventsData = [];
 
 // =====================================================
 // DICCIONARIO DE MAPEO DE LIGAS
