@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>ToonCloud Deportes</title>
-<!-- Build: 2026-05-24 08:30 | Events: 101 | Logos: 45 -->
+<!-- Build: 2026-05-24 16:33 | Events: 80 | Logos: 39 -->
 <meta name="theme-color" content="#000000">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -1205,9 +1205,6 @@ header {
 // Si no quieres escudo para un equipo, deja el campo vacio: ""
 
 const matchesLogos = [
-  { match: "Parma vs Sassuolo", homeLogo: "https://static.flashscore.com/res/image/data/YcrE7ae5-fydXzLY6.png", awayLogo: "https://static.flashscore.com/res/image/data/IFKEHRGG-6ZDR6zEL.png" },
-  { match: "Albacete vs Real Sociedad II", homeLogo: "https://static.flashscore.com/res/image/data/M9tNPVfM-4297a0ys.png", awayLogo: "https://static.flashscore.com/res/image/data/d0CDHeh5-U144u08h.png" },
-  { match: "FC Andorra vs Ceuta", homeLogo: "https://static.flashscore.com/res/image/data/AqQKdNHG-p6WBruc4.png", awayLogo: "https://static.flashscore.com/res/image/data/xIxIQ3f5-xpqBFn5c.png" },
   { match: "Crystal Palace vs Arsenal", homeLogo: "https://static.flashscore.com/res/image/data/AFNlsDzS-drybTCiH.png", awayLogo: "https://static.flashscore.com/res/image/data/pfchdCg5-vcNAdtF9.png" },
   { match: "Manchester City vs Aston Villa", homeLogo: "https://static.flashscore.com/res/image/data/UXcqj7HG-lQuhqN8N.png", awayLogo: "https://static.flashscore.com/res/image/data/QsnteKXg-jwz95gs0.png" },
   { match: "Tottenham Hotspur vs Everton", homeLogo: "https://static.flashscore.com/res/image/data/ARC62UAr-Ig5FKJZ5.png", awayLogo: "https://static.flashscore.com/res/image/data/EwJqZUZA-bRmKmISE.png" },
@@ -1216,7 +1213,6 @@ const matchesLogos = [
   { match: "Sunderland vs Chelsea", homeLogo: "https://static.flashscore.com/res/image/data/ln86XXjl-0d34NJCO.png", awayLogo: "https://static.flashscore.com/res/image/data/GMmvDEdM-IROrZEJb.png" },
   { match: "Liverpool vs Brentford", homeLogo: "https://static.flashscore.com/res/image/data/Gr0cGteM-KCp4zq5F.png", awayLogo: "https://static.flashscore.com/res/image/data/bBj3NWfM-r9Mudk7j.png" },
   { match: "Fulham vs Newcastle United", homeLogo: "https://static.flashscore.com/res/image/data/naaAVOzB-ImMEe0UF.png", awayLogo: "https://static.flashscore.com/res/image/data/fojwJwZA-2Vnc5VQf.png" },
-  { match: "Ajax vs Utrecht", homeLogo: "https://static.flashscore.com/res/image/data/nHNpUPcM-bZZPiwAI.png", awayLogo: "https://static.flashscore.com/res/image/data/29zAb9f5-4vob7cTR.png" },
   { match: "Napoli vs Udinese", homeLogo: "https://cdn.cookielaw.org/logos/static/ot_company_logo.png", awayLogo: "https://static.flashscore.com/res/image/data/AZBQMaYA-SYw7EcY6.png" },
   { match: "Sporting Cristal vs ADT", homeLogo: "https://static.flashscore.com/res/image/data/bT8P90Ar-Em9Gxj8O.png", awayLogo: "https://cdn.cookielaw.org/logos/static/ot_company_logo.png" },
   { match: "Sporting CP vs Torreense - Final", homeLogo: "https://static.flashscore.com/res/image/data/OWbPc9il-zJml495h.png", awayLogo: "https://static.flashscore.com/res/image/data/6iuWmH9r-AsHGKEtR.png" },
@@ -1246,23 +1242,14 @@ const matchesLogos = [
   { match: "Defensor Sporting vs Peñarol", homeLogo: "https://static.flashscore.com/res/image/data/UgKB6TzS-vZdejfYC.png", awayLogo: "https://static.flashscore.com/res/image/data/8rkcbrGG-nqhLBCKD.png" },
   { match: "Corinthians vs Atlético Mineiro", homeLogo: "https://static.flashscore.com/res/image/data/lY91WW9r-6cpWH3kh.png", awayLogo: "https://static.flashscore.com/res/image/data/WbSJHDh5-UHhQ6Y1N.png" },
   { match: "Universidad Católica vs Colo-Colo", homeLogo: "https://static.flashscore.com/res/image/data/OvyAhfyB-nRWWeW7h.png", awayLogo: "https://static.flashscore.com/res/image/data/CMCTeMxS-tnwDCzLD.png" },
-  { match: "Inter Miami vs Philadelphia Union", homeLogo: "https://static.flashscore.com/res/image/data/SbujguWg-UwKTVGeG.png", awayLogo: "https://static.flashscore.com/res/image/data/WhcH7sZg-juuH5vx4.png" },
   { match: "Thunder vs Spurs", homeLogo: "https://static.flashscore.com/res/image/data/bFgddNh5-4zc22IQb.png", awayLogo: "https://static.flashscore.com/res/image/data/8f2WVCFG-SrHHDGUm.png" },
-  { match: "Pumas UNAM vs Cruz Azul - Final (2/2)", homeLogo: "https://static.flashscore.com/res/image/data/2mlyLKEG-pEQGCKC1.png", awayLogo: "https://static.flashscore.com/res/image/data/juUdUvvS-4UD5BJKp.png" },
-  { match: "Los Angeles FC vs Seattle Sounders FC", homeLogo: "https://static.flashscore.com/res/image/data/bPW7CeZg-h6S6xFbF.png", awayLogo: "https://static.flashscore.com/res/image/data/2NlXcSAr-Q7Ql2Qbi.png" }
+  { match: "Pumas UNAM vs Cruz Azul - Final (2/2)", homeLogo: "https://static.flashscore.com/res/image/data/2mlyLKEG-pEQGCKC1.png", awayLogo: "https://static.flashscore.com/res/image/data/juUdUvvS-4UD5BJKp.png" }
 ];
 
 // =====================================================
 // DATOS DE EVENTOS
 // =====================================================
 const eventsData = [
-  { time: "10:00", match: "Primera División: Cerro vs Central Español", link: "https://streamx741.com/global2.php?channel=disney1" },
-  { time: "10:00", match: "Serie A: Parma vs Sassuolo", link: "https://streamx741.com/global2.php?channel=disney2" },
-  { time: "10:00", match: "Serie A: Parma vs Sassuolo", link: "https://streamx741.com/global2.php?channel=espn3" },
-  { time: "10:00", match: "Serie A: Parma vs Sassuolo", link: "https://streamx741.com/global2.php?channel=espnmx" },
-  { time: "10:00", match: "Serie A: Parma vs Sassuolo", link: "https://streamx741.com/global2.php?channel=paramount1" },
-  { time: "11:15", match: "LaLiga 2: Albacete vs Real Sociedad II", link: "https://streamx741.com/global2.php?channel=hyper1" },
-  { time: "11:15", match: "LaLiga 2: FC Andorra vs Ceuta", link: "https://streamx741.com/global2.php?channel=hyper2" },
   { time: "12:00", match: "Premier League: Crystal Palace vs Arsenal", link: "https://streamx741.com/global2.php?channel=disney3" },
   { time: "12:00", match: "Premier League: Crystal Palace vs Arsenal", link: "https://streamx741.com/global2.php?channel=foxone1" },
   { time: "12:00", match: "Premier League: Crystal Palace vs Arsenal", link: "https://streamx741.com/global2.php?channel=espn" },
@@ -1289,15 +1276,9 @@ const eventsData = [
   { time: "12:00", match: "Premier League: Fulham vs Newcastle United", link: "https://streamx741.com/global2.php?channel=foxone5" },
   { time: "12:00", match: "Premier League: Burnley vs Wolverhampton Wanderers", link: "https://streamx741.com/global2.php?channel=disney12" },
   { time: "12:00", match: "Premier League: Burnley vs Wolverhampton Wanderers", link: "https://streamx741.com/global2.php?channel=max5" },
-  { time: "13:00", match: "Eredivisie: Ajax vs Utrecht", link: "https://streamx741.com/global2.php?channel=disney13" },
-  { time: "13:00", match: "Eredivisie: Ajax vs Utrecht", link: "https://streamx741.com/global2.php?channel=espnplus1" },
-  { time: "13:00", match: "Eredivisie: Ajax vs Utrecht", link: "https://streamx741.com/global2.php?channel=sportdigital" },
   { time: "13:00", match: "Serie A: Napoli vs Udinese", link: "https://streamx741.com/global2.php?channel=disney14" },
-  { time: "13:00", match: "Serie A: Napoli vs Udinese", link: "https://streamx741.com/global2.php?channel=paramount2" },
   { time: "13:00", match: "Liga 1: Sporting Cristal vs ADT", link: "https://streamx741.com/global2.php?channel=liga1max" },
   { time: "13:00", match: "Liga 1: Sporting Cristal vs ADT", link: "https://streamx741.com/global2.php?channel=fanatiz1" },
-  { time: "13:15", match: "Copa de Portugal: Sporting CP vs Torreense - Final", link: "https://streamx741.com/global2.php?channel=fanatiz2" },
-  { time: "13:15", match: "Copa de Portugal: Sporting CP vs Torreense - Final", link: "https://streamx741.com/global2.php?channel=nsports" },
   { time: "13:15", match: "Copa de Portugal: Sporting CP vs Torreense - Final", link: "https://streamx741.com/global2.php?channel=fox3ar" },
   { time: "13:30", match: "Liga de Primera: Deportes Concepción vs Huachipato", link: "https://streamx741.com/global2.php?channel=max6" },
   { time: "13:30", match: "LaLiga 2: Multigol", link: "https://streamx741.com/global2.php?channel=hyper1" },
@@ -1317,18 +1298,13 @@ const eventsData = [
   { time: "15:30", match: "Liga Profesional: River Plate vs Belgrano - Final", link: "https://streamx741.com/global2.php?channel=foxdeportes" },
   { time: "15:45", match: "Serie A: Torino vs Juventus", link: "https://streamx741.com/global2.php?channel=disney20" },
   { time: "15:45", match: "Serie A: Torino vs Juventus", link: "https://streamx741.com/global2.php?channel=espn3" },
-  { time: "15:45", match: "Serie A: Torino vs Juventus", link: "https://streamx741.com/global2.php?channel=paramount3" },
   { time: "15:45", match: "Serie A: Milan vs Cagliari", link: "https://streamx741.com/global2.php?channel=disney1" },
   { time: "15:45", match: "Serie A: Milan vs Cagliari", link: "https://streamx741.com/global2.php?channel=espn3mx" },
-  { time: "15:45", match: "Serie A: Milan vs Cagliari", link: "https://streamx741.com/global2.php?channel=paramount4" },
   { time: "15:45", match: "Serie A: Cremonese vs Como", link: "https://streamx741.com/global2.php?channel=disney2" },
   { time: "15:45", match: "Serie A: Cremonese vs Como", link: "https://streamx741.com/global2.php?channel=paramount5" },
   { time: "15:45", match: "Serie A: Lecce vs Genoa", link: "https://streamx741.com/global2.php?channel=disney3" },
-  { time: "15:45", match: "Serie A: Lecce vs Genoa", link: "https://streamx741.com/global2.php?channel=paramount1" },
   { time: "15:45", match: "Serie A: Verona vs Roma", link: "https://streamx741.com/global2.php?channel=disney4" },
-  { time: "15:45", match: "Serie A: Verona vs Roma", link: "https://streamx741.com/global2.php?channel=paramount2" },
   { time: "16:00", match: "LaLiga: Villarreal vs Atlético Madrid", link: "https://streamx741.com/global2.php?channel=dsports" },
-  { time: "16:00", match: "LaLiga: Villarreal vs Atlético Madrid", link: "https://streamx741.com/global2.php?channel=espnplus2" },
   { time: "16:00", match: "LaLiga: Villarreal vs Atlético Madrid", link: "https://streamx741.com/global2.php?channel=espndeportes" },
   { time: "16:00", match: "Liga de Primera: La Serena vs Deportes Limache", link: "https://streamx741.com/global2.php?channel=max1" },
   { time: "16:00", match: "Brasileirão: Cruzeiro vs Chapecoense", link: "https://streamx741.com/global2.php?channel=fanatiz5" },
@@ -1347,16 +1323,13 @@ const eventsData = [
   { time: "18:30", match: "Brasileirão: Corinthians vs Atlético Mineiro", link: "https://streamx741.com/global2.php?channel=fanatiz1" },
   { time: "18:30", match: "Brasileirão: Corinthians vs Atlético Mineiro", link: "https://streamx741.com/global2.php?channel=winsports" },
   { time: "19:00", match: "Liga de Primera: Universidad Católica vs Colo-Colo", link: "https://streamx741.com/global2.php?channel=max2" },
-  { time: "20:00", match: "MLS: Inter Miami vs Philadelphia Union", link: "https://streamx741.com/global2.php?channel=mls2" },
-  { time: "20:00", match: "MLS: Inter Miami vs Philadelphia Union", link: "https://streamx741.com/global2.php?channel=mls3" },
   { time: "20:30", match: "Brasileirão: Vasco da Gama vs RB Bragantino", link: "https://streamx741.com/global2.php?channel=fanatiz2" },
   { time: "21:00", match: "NBA: Thunder vs Spurs", link: "https://streamx741.com/global2.php?channel=amazon1" },
   { time: "21:00", match: "NBA: Thunder vs Spurs", link: "https://streamx741.com/global2.php?channel=max3" },
   { time: "22:00", match: "Liga MX: Pumas UNAM vs Cruz Azul - Final (2/2)", link: "https://streamx741.com/global2.php?channel=azteca7" },
   { time: "22:00", match: "Liga MX: Pumas UNAM vs Cruz Azul - Final (2/2)", link: "https://streamx741.com/global2.php?channel=tudnus" },
   { time: "22:00", match: "Liga MX: Pumas UNAM vs Cruz Azul - Final (2/2)", link: "https://streamx741.com/global2.php?channel=tudnmx" },
-  { time: "22:00", match: "Liga MX: Pumas UNAM vs Cruz Azul - Final (2/2)", link: "https://streamx741.com/global2.php?channel=canal5mx" },
-  { time: "22:00", match: "MLS: Los Angeles FC vs Seattle Sounders FC", link: "https://streamx741.com/global2.php?channel=mls4" }
+  { time: "22:00", match: "Liga MX: Pumas UNAM vs Cruz Azul - Final (2/2)", link: "https://streamx741.com/global2.php?channel=canal5mx" }
 ];
 
 // =====================================================

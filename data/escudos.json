@@ -1,20 +1,5 @@
 [
   {
-    "match": "Parma vs Sassuolo",
-    "homeLogo": "https://static.flashscore.com/res/image/data/YcrE7ae5-fydXzLY6.png",
-    "awayLogo": "https://static.flashscore.com/res/image/data/IFKEHRGG-6ZDR6zEL.png"
-  },
-  {
-    "match": "Albacete vs Real Sociedad II",
-    "homeLogo": "https://static.flashscore.com/res/image/data/M9tNPVfM-4297a0ys.png",
-    "awayLogo": "https://static.flashscore.com/res/image/data/d0CDHeh5-U144u08h.png"
-  },
-  {
-    "match": "FC Andorra vs Ceuta",
-    "homeLogo": "https://static.flashscore.com/res/image/data/AqQKdNHG-p6WBruc4.png",
-    "awayLogo": "https://static.flashscore.com/res/image/data/xIxIQ3f5-xpqBFn5c.png"
-  },
-  {
     "match": "Crystal Palace vs Arsenal",
     "homeLogo": "https://static.flashscore.com/res/image/data/AFNlsDzS-drybTCiH.png",
     "awayLogo": "https://static.flashscore.com/res/image/data/pfchdCg5-vcNAdtF9.png"
@@ -53,11 +38,6 @@
     "match": "Fulham vs Newcastle United",
     "homeLogo": "https://static.flashscore.com/res/image/data/naaAVOzB-ImMEe0UF.png",
     "awayLogo": "https://static.flashscore.com/res/image/data/fojwJwZA-2Vnc5VQf.png"
-  },
-  {
-    "match": "Ajax vs Utrecht",
-    "homeLogo": "https://static.flashscore.com/res/image/data/nHNpUPcM-bZZPiwAI.png",
-    "awayLogo": "https://static.flashscore.com/res/image/data/29zAb9f5-4vob7cTR.png"
   },
   {
     "match": "Napoli vs Udinese",
@@ -205,11 +185,6 @@
     "awayLogo": "https://static.flashscore.com/res/image/data/CMCTeMxS-tnwDCzLD.png"
   },
   {
-    "match": "Inter Miami vs Philadelphia Union",
-    "homeLogo": "https://static.flashscore.com/res/image/data/SbujguWg-UwKTVGeG.png",
-    "awayLogo": "https://static.flashscore.com/res/image/data/WhcH7sZg-juuH5vx4.png"
-  },
-  {
     "match": "Thunder vs Spurs",
     "homeLogo": "https://static.flashscore.com/res/image/data/bFgddNh5-4zc22IQb.png",
     "awayLogo": "https://static.flashscore.com/res/image/data/8f2WVCFG-SrHHDGUm.png"
@@ -218,10 +193,5 @@
     "match": "Pumas UNAM vs Cruz Azul - Final (2/2)",
     "homeLogo": "https://static.flashscore.com/res/image/data/2mlyLKEG-pEQGCKC1.png",
     "awayLogo": "https://static.flashscore.com/res/image/data/juUdUvvS-4UD5BJKp.png"
-  },
-  {
-    "match": "Los Angeles FC vs Seattle Sounders FC",
-    "homeLogo": "https://static.flashscore.com/res/image/data/bPW7CeZg-h6S6xFbF.png",
-    "awayLogo": "https://static.flashscore.com/res/image/data/2NlXcSAr-Q7Ql2Qbi.png"
   }
 ]
