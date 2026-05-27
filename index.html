@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>ToonCloud Deportes</title>
-<!-- Build: 2026-05-26 09:43 | Events: 0 | Logos: 0 -->
+<!-- Build: 2026-05-27 09:38 | Events: 51 | Logos: 15 -->
 <meta name="theme-color" content="#000000">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -1204,12 +1204,80 @@ header {
 // El formato es: { match: "Equipo Local vs Equipo Visitante", homeLogo: "URL_ESCUDO_LOCAL", awayLogo: "URL_ESCUDO_VISITANTE" }
 // Si no quieres escudo para un equipo, deja el campo vacio: ""
 
-const matchesLogos = [];
+const matchesLogos = [
+  { match: "Crystal Palace vs Rayo Vallecano - Final", homeLogo: "https://static.flashscore.com/res/image/data/AFNlsDzS-drybTCiH.png", awayLogo: "https://static.flashscore.com/res/image/data/jqaha0f5-EPWyZtpb.png" },
+  { match: "Independiente del Valle vs Rosario Central", homeLogo: "https://static.flashscore.com/res/image/data/t8nwTpe5-OnCKiY2r.png", awayLogo: "https://static.flashscore.com/res/image/data/hKqVGwgl-vuxu02Jt.png" },
+  { match: "Libertad vs UCV", homeLogo: "https://static.flashscore.com/res/image/data/ln1XQ9Ar-UwvYANk9.png", awayLogo: "https://cdn.cookielaw.org/logos/static/ot_company_logo.png" },
+  { match: "Atlético Mineiro vs Academia Puerto Cabello", homeLogo: "https://static.flashscore.com/res/image/data/WbSJHDh5-UHhQ6Y1N.png", awayLogo: "https://static.flashscore.com/res/image/data/lfTIg0Cr-bkCHmVIM.png" },
+  { match: "Vasco da Gama vs Barracas Central", homeLogo: "https://static.flashscore.com/res/image/data/d2irXNjl-bam8o1Nj.png", awayLogo: "https://static.flashscore.com/res/image/data/EkKbKgXg-KxCl9RDG.png" },
+  { match: "Olimpia vs Audax Italiano", homeLogo: "https://static.flashscore.com/res/image/data/fFjeTTwS-UPd1WAes.png", awayLogo: "https://static.flashscore.com/res/image/data/fZSe86hl-6kEqxN0C.png" },
+  { match: "Racing Club vs Independiente Petrolero", homeLogo: "https://static.flashscore.com/res/image/data/6T5YTkZA-OCiVKiPK.png", awayLogo: "https://static.flashscore.com/res/image/data/SSfGYpil-AwFyOU7M.png" },
+  { match: "Cienciano vs Juventud", homeLogo: "https://static.flashscore.com/res/image/data/dI31wDil-Mu345fFj.png", awayLogo: "https://static.flashscore.com/res/image/data/6XyukXjl-WIGOXbOL.png" },
+  { match: "Caracas vs Botafogo", homeLogo: "https://static.flashscore.com/res/image/data/hIuNHZFG-0nhENufQ.png", awayLogo: "https://static.flashscore.com/res/image/data/jBDSUABr-ldMpXQG1.png" },
+  { match: "Peñarol vs Santa Fe", homeLogo: "https://static.flashscore.com/res/image/data/8rkcbrGG-nqhLBCKD.png", awayLogo: "https://static.flashscore.com/res/image/data/dlONm5jl-AaS9a4Ho.png" },
+  { match: "Fluminense vs Deportivo La Guaira", homeLogo: "https://static.flashscore.com/res/image/data/WlxJgSdM-WUfDDYk1.png", awayLogo: "https://static.flashscore.com/res/image/data/GOqlq8zB-YXN7iZz4.png" },
+  { match: "Bolívar vs Independiente Rivadavia", homeLogo: "https://static.flashscore.com/res/image/data/GENsXszB-ULrHhAjS.png", awayLogo: "https://static.flashscore.com/res/image/data/MkO7nbDa-dMZHs4g0.png" },
+  { match: "Corinthians vs Platense", homeLogo: "https://static.flashscore.com/res/image/data/lY91WW9r-6cpWH3kh.png", awayLogo: "https://static.flashscore.com/res/image/data/4CaR1bHG-pAQm6KvU.png" },
+  { match: "River Plate vs Blooming", homeLogo: "https://static.flashscore.com/res/image/data/Ic4xH0Yg-nqhLBCKD.png", awayLogo: "https://static.flashscore.com/res/image/data/Y1JlKGdM-tA3m0WA0.png" },
+  { match: "RB Bragantino vs Carabobo", homeLogo: "https://static.flashscore.com/res/image/data/llnonZDa-UkMF8Udb.png", awayLogo: "https://static.flashscore.com/res/image/data/0vOQijWg-CtnfXRKE.png" }
+];
 
 // =====================================================
 // DATOS DE EVENTOS
 // =====================================================
-const eventsData = [];
+const eventsData = [
+  { time: "16:00", match: "UEFA Conference League: Crystal Palace vs Rayo Vallecano - Final", link: "https://streamx741.com/global2.php?channel=disney1" },
+  { time: "16:00", match: "UEFA Conference League: Crystal Palace vs Rayo Vallecano - Final", link: "https://streamx741.com/global2.php?channel=espn" },
+  { time: "16:00", match: "UEFA Conference League: Crystal Palace vs Rayo Vallecano - Final", link: "https://streamx550.com/global2.php?channel=espnmx" },
+  { time: "16:00", match: "UEFA Conference League: Crystal Palace vs Rayo Vallecano - Final", link: "https://streamx741.com/global2.php?channel=tudnus" },
+  { time: "16:00", match: "UEFA Conference League: Crystal Palace vs Rayo Vallecano - Final", link: "https://streamx741.com/global2.php?channel=tnt1uk" },
+  { time: "16:00", match: "UEFA Conference League: Crystal Palace vs Rayo Vallecano - Final", link: "https://streamx741.com/global2.php?channel=paramount1" },
+  { time: "19:00", match: "Copa Libertadores: Independiente del Valle vs Rosario Central", link: "https://streamx741.com/global2.php?channel=disney2" },
+  { time: "19:00", match: "Copa Libertadores: Independiente del Valle vs Rosario Central", link: "https://streamx741.com/global2.php?channel=fanatiz1" },
+  { time: "19:00", match: "Copa Libertadores: Independiente del Valle vs Rosario Central", link: "https://streamx741.com/global2.php?channel=fox1ar" },
+  { time: "19:00", match: "Copa Libertadores: Independiente del Valle vs Rosario Central", link: "https://streamx741.com/global2.php?channel=espn" },
+  { time: "19:00", match: "Copa Libertadores: Independiente del Valle vs Rosario Central", link: "https://streamx741.com/global2.php?channel=espn4mx" },
+  { time: "19:00", match: "Copa Libertadores: Libertad vs UCV", link: "https://streamx741.com/global2.php?channel=disney3" },
+  { time: "19:00", match: "Copa Libertadores: Libertad vs UCV", link: "https://streamx741.com/global2.php?channel=fanatiz2" },
+  { time: "19:00", match: "Copa Libertadores: Libertad vs UCV", link: "https://streamx741.com/global2.php?channel=espn7" },
+  { time: "19:00", match: "Copa Libertadores: Libertad vs UCV", link: "https://streamx741.com/global2.php?channel=fox2ar" },
+  { time: "19:00", match: "Copa Sudamericana: Atlético Mineiro vs Academia Puerto Cabello", link: "https://streamx741.com/global2.php?channel=disney4" },
+  { time: "19:00", match: "Copa Sudamericana: Atlético Mineiro vs Academia Puerto Cabello", link: "https://streamx741.com/global2.php?channel=fanatiz3" },
+  { time: "19:00", match: "Copa Sudamericana: Atlético Mineiro vs Academia Puerto Cabello", link: "https://streamx741.com/global2.php?channel=espn4" },
+  { time: "19:00", match: "Copa Sudamericana: Vasco da Gama vs Barracas Central", link: "https://streamx741.com/global2.php?channel=fanatiz4" },
+  { time: "19:00", match: "Copa Sudamericana: Olimpia vs Audax Italiano", link: "https://streamx741.com/global2.php?channel=disney5" },
+  { time: "19:00", match: "Copa Sudamericana: Olimpia vs Audax Italiano", link: "https://streamx741.com/global2.php?channel=fanatiz5" },
+  { time: "19:00", match: "Copa Sudamericana: Olimpia vs Audax Italiano", link: "https://streamx741.com/global2.php?channel=espn5" },
+  { time: "19:00", match: "Copa Sudamericana: Racing Club vs Independiente Petrolero", link: "https://streamx741.com/global2.php?channel=disney6" },
+  { time: "19:00", match: "Copa Sudamericana: Racing Club vs Independiente Petrolero", link: "https://streamx741.com/global2.php?channel=fanatiz6" },
+  { time: "19:00", match: "Copa Sudamericana: Racing Club vs Independiente Petrolero", link: "https://streamx741.com/global2.php?channel=espn3" },
+  { time: "19:00", match: "Copa Sudamericana: Cienciano vs Juventud", link: "https://streamx741.com/global2.php?channel=fanatiz7" },
+  { time: "19:00", match: "Copa Sudamericana: Cienciano vs Juventud", link: "https://streamx741.com/global2.php?channel=dsports" },
+  { time: "19:00", match: "Copa Sudamericana: Caracas vs Botafogo", link: "https://streamx741.com/global2.php?channel=fanatiz8" },
+  { time: "19:00", match: "Copa Sudamericana: Caracas vs Botafogo", link: "https://streamx741.com/global2.php?channel=dsportsplus" },
+  { time: "21:30", match: "Copa Libertadores: Peñarol vs Santa Fe", link: "https://streamx741.com/global2.php?channel=disney7" },
+  { time: "21:30", match: "Copa Libertadores: Peñarol vs Santa Fe", link: "https://streamx741.com/global2.php?channel=fanatiz9" },
+  { time: "21:30", match: "Copa Libertadores: Peñarol vs Santa Fe", link: "https://streamx741.com/global2.php?channel=espn" },
+  { time: "21:30", match: "Copa Libertadores: Peñarol vs Santa Fe", link: "https://streamx741.com/global2.php?channel=fox3ar" },
+  { time: "21:30", match: "Copa Libertadores: Fluminense vs Deportivo La Guaira", link: "https://streamx741.com/global2.php?channel=disney8" },
+  { time: "21:30", match: "Copa Libertadores: Fluminense vs Deportivo La Guaira", link: "https://streamx741.com/global2.php?channel=fanatiz10" },
+  { time: "21:30", match: "Copa Libertadores: Fluminense vs Deportivo La Guaira", link: "https://streamx741.com/global2.php?channel=espn5" },
+  { time: "21:30", match: "Copa Libertadores: Bolívar vs Independiente Rivadavia", link: "https://streamx741.com/global2.php?channel=disney9" },
+  { time: "21:30", match: "Copa Libertadores: Bolívar vs Independiente Rivadavia", link: "https://streamx741.com/global2.php?channel=fanatiz1" },
+  { time: "21:30", match: "Copa Libertadores: Bolívar vs Independiente Rivadavia", link: "https://streamx741.com/global2.php?channel=espn6" },
+  { time: "21:30", match: "Copa Libertadores: Bolívar vs Independiente Rivadavia", link: "https://streamx741.com/global2.php?channel=fox2ar" },
+  { time: "21:30", match: "Copa Libertadores: Corinthians vs Platense", link: "https://streamx741.com/global2.php?channel=disney10" },
+  { time: "21:30", match: "Copa Libertadores: Corinthians vs Platense", link: "https://streamx741.com/global2.php?channel=fanatiz2" },
+  { time: "21:30", match: "Copa Libertadores: Corinthians vs Platense", link: "https://streamx741.com/global2.php?channel=fox1ar" },
+  { time: "21:30", match: "Copa Libertadores: Corinthians vs Platense", link: "https://streamx741.com/global2.php?channel=espn7" },
+  { time: "21:30", match: "Copa Libertadores: Corinthians vs Platense", link: "https://streamx741.com/global2.php?channel=espn4mx" },
+  { time: "21:30", match: "Copa Sudamericana: River Plate vs Blooming", link: "https://streamx741.com/global2.php?channel=disney11" },
+  { time: "21:30", match: "Copa Sudamericana: River Plate vs Blooming", link: "https://streamx741.com/global2.php?channel=fanatiz3" },
+  { time: "21:30", match: "Copa Sudamericana: River Plate vs Blooming", link: "https://streamx741.com/global2.php?channel=espn2" },
+  { time: "21:30", match: "Copa Sudamericana: River Plate vs Blooming", link: "https://streamx741.com/global2.php?channel=dsportscl" },
+  { time: "21:30", match: "Copa Sudamericana: RB Bragantino vs Carabobo", link: "https://streamx741.com/global2.php?channel=fanatiz4" },
+  { time: "21:30", match: "Copa Sudamericana: RB Bragantino vs Carabobo", link: "https://streamx741.com/global2.php?channel=dsportsplus" }
+];
 
 // =====================================================
 // DICCIONARIO DE MAPEO DE LIGAS
