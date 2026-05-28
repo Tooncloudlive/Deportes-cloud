@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>ToonCloud Deportes</title>
-<!-- Build: 2026-05-28 09:53 | Events: 0 | Logos: 0 -->
+<!-- Build: 2026-05-28 22:24 | Events: 25 | Logos: 9 -->
 <meta name="theme-color" content="#000000">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -1204,12 +1204,48 @@ header {
 // El formato es: { match: "Equipo Local vs Equipo Visitante", homeLogo: "URL_ESCUDO_LOCAL", awayLogo: "URL_ESCUDO_VISITANTE" }
 // Si no quieres escudo para un equipo, deja el campo vacio: ""
 
-const matchesLogos = [];
+const matchesLogos = [
+  { match: "Palmeiras vs Junior", homeLogo: "https://static.flashscore.com/res/image/data/xCtpyPHG-ALgHCh57.png", awayLogo: "https://static.flashscore.com/res/image/data/Kz2UFMh5-G2820wU0.png" },
+  { match: "River Plate vs San Lorenzo", homeLogo: "https://static.flashscore.com/res/image/data/Ic4xH0Yg-nqhLBCKD.png", awayLogo: "https://static.flashscore.com/res/image/data/0xTdzwCr-YyppIBwT.png" },
+  { match: "Cerro Porteño vs Sporting Cristal", homeLogo: "https://static.flashscore.com/res/image/data/Ovlb3hBr-0fSZKKz2.png", awayLogo: "https://static.flashscore.com/res/image/data/bT8P90Ar-Em9Gxj8O.png" },
+  { match: "NHL Finales de Conferencia – Juego #5 – Vegas Golden Knights vs Colorado Avalanche", homeLogo: "https://static.flashscore.com/res/image/data/rcaaQKFG-MucFHXDq.png", awayLogo: "https://static.flashscore.com/res/image/data/hzAqe0zB-UkrSKu1K.png" },
+  { match: "Boca Juniors vs Universidad Católica", homeLogo: "https://static.flashscore.com/res/image/data/h4UwH8Cr-pGZDw8HC.png", awayLogo: "https://static.flashscore.com/res/image/data/OvyAhfyB-nRWWeW7h.png" },
+  { match: "Cruzeiro vs Barcelona", homeLogo: "https://static.flashscore.com/res/image/data/lCWrxmg5-SjJmyx86.png", awayLogo: "https://static.flashscore.com/res/image/data/nit9vJwS-WErjuywa.png" },
+  { match: "América de Cali vs Macará", homeLogo: "https://static.flashscore.com/res/image/data/fySikCAr-hSZHTo4B.png", awayLogo: "https://static.flashscore.com/res/image/data/4tKF7Wh5-0C12xtlP.png" },
+  { match: "Tigre vs Alianza Atlético", homeLogo: "https://static.flashscore.com/res/image/data/dG6N1MfM-ENHpchZ2.png", awayLogo: "https://static.flashscore.com/res/image/data/Miy4LAeM-z942qmGf.png" },
+  { match: "Atletico Cali FC vs Millonarios", homeLogo: "https://static.flashscore.com/res/image/data/n9uLPnDr-YkXz5hTm.png", awayLogo: "https://static.flashscore.com/res/image/data/COAjhCg5-6kduDy6P.png" }
+];
 
 // =====================================================
 // DATOS DE EVENTOS
 // =====================================================
-const eventsData = [];
+const eventsData = [
+  { time: "19:00", match: "Copa Libertadores: Palmeiras vs Junior", link: "https://la14hd.com/vivo/canales.php?stream=espn" },
+  { time: "19:00", match: "Copa Libertadores: Palmeiras vs Junior", link: "https://la14hd.com/vivo/canales.php?stream=disney3" },
+  { time: "19:00", match: "Copa Libertadores: Palmeiras vs Junior", link: "https://la14hd.com/vivo/canales.php?stream=foxsports2" },
+  { time: "19:00", match: "Copa Libertadores: Palmeiras vs Junior", link: "https://la14hd.com/vivo/canales.php?stream=beinsportes" },
+  { time: "19:00", match: "Torneo de Reserva: River Plate vs San Lorenzo", link: "https://la14hd.com/vivo/canales.php?stream=tntsports" },
+  { time: "19:00", match: "Torneo de Reserva: River Plate vs San Lorenzo", link: "https://rojadirectatve.com/sw3.html?get=https://rojadirectatve.com/repro/tntsports2.html" },
+  { time: "19:00", match: "Copa Libertadores: Cerro Porteño vs Sporting Cristal", link: "https://la14hd.com/vivo/canales.php?stream=espn2" },
+  { time: "19:00", match: "Copa Libertadores: Cerro Porteño vs Sporting Cristal", link: "https://la14hd.com/vivo/canales.php?stream=disney2" },
+  { time: "19:00", match: "Copa Libertadores: Cerro Porteño vs Sporting Cristal", link: "https://la14hd.com/vivo/canales.php?stream=foxsports3" },
+  { time: "21:00", match: "NHL Finales de Conferencia – Juego #5 – Vegas Golden Knights vs Colorado Avalanche", link: "https://la14hd.com/vivo/canales.php?stream=espn4" },
+  { time: "21:30", match: "Copa Libertadores: Boca Juniors vs Universidad Católica", link: "https://la14hd.com/vivo/canales.php?stream=espn2" },
+  { time: "21:30", match: "Copa Libertadores: Boca Juniors vs Universidad Católica", link: "https://la14hd.com/vivo/canales.php?stream=disney6" },
+  { time: "21:30", match: "Copa Libertadores: Boca Juniors vs Universidad Católica", link: "https://la14hd.com/vivo/canales.php?stream=foxsports" },
+  { time: "21:30", match: "Copa Libertadores: Boca Juniors vs Universidad Católica", link: "https://la14hd.com/vivo/canales.php?stream=beinsportes" },
+  { time: "21:30", match: "Copa Libertadores: Cruzeiro vs Barcelona", link: "https://la14hd.com/vivo/canales.php?stream=espn7" },
+  { time: "21:30", match: "Copa Libertadores: Cruzeiro vs Barcelona", link: "https://la14hd.com/vivo/canales.php?stream=disney7" },
+  { time: "21:30", match: "Copa Libertadores: Cruzeiro vs Barcelona", link: "https://la14hd.com/vivo/canales.php?stream=foxsports2" },
+  { time: "21:30", match: "Copa Sudamericana: América de Cali vs Macará", link: "https://la14hd.com/vivo/canales.php?stream=espn" },
+  { time: "21:30", match: "Copa Sudamericana: América de Cali vs Macará", link: "https://la14hd.com/vivo/canales.php?stream=disney4" },
+  { time: "21:30", match: "Copa Sudamericana: Tigre vs Alianza Atlético", link: "https://la14hd.com/vivo/canales.php?stream=espn5" },
+  { time: "21:30", match: "Copa Sudamericana: Tigre vs Alianza Atlético", link: "https://la14hd.com/vivo/canales.php?stream=disney5" },
+  { time: "21:30", match: "Copa Sudamericana: Tigre vs Alianza Atlético", link: "https://rojadirectatve.com/sw3.html?get=https://rojadirectatve.com/repro/espn5tv.html" },
+  { time: "22:00", match: "Copa Colombia: Atletico Cali FC vs Millonarios", link: "https://la14hd.com/vivo/canales.php?stream=winsportsplus" },
+  { time: "22:00", match: "Copa Colombia: Atletico Cali FC vs Millonarios", link: "https://la14hd.com/vivo/canales.php?stream=winsports2" },
+  { time: "22:00", match: "Copa Colombia: Atletico Cali FC vs Millonarios", link: "https://rojadirectatve.com/sw3.html?get=https://rojadirectatve.com/repro/winsports.html" }
+];
 
 // =====================================================
 // DICCIONARIO DE MAPEO DE LIGAS
