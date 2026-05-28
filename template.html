@@ -1115,6 +1115,7 @@ header {
 </style>
 <base target="_blank">
 <base target="_blank">
+<base target="_blank">
 </head>
 
 <body>
@@ -1232,12 +1233,17 @@ const channelNameMap = {
   'disney1': 'Disney+ 1', 'disney2': 'Disney+ 2', 'disney3': 'Disney+ 3', 'disney4': 'Disney+ 4',
   'disney5': 'Disney+ 5', 'disney6': 'Disney+ 6', 'disney7': 'Disney+ 7', 'disney8': 'Disney+ 8',
   'max1': 'Max 1', 'max2': 'Max 2', 'max3': 'Max 3', 'espn': 'ESPN', 'espn2': 'ESPN 2', 'espn3': 'ESPN 3',
-  'espn5': 'ESPN 5', 'espnmx': 'ESPN MX', 'espnpremium': 'ESPN Premium', 'tudnus': 'TUDN',
+  'espn4': 'ESPN 4', 'espn5': 'ESPN 5', 'espn7': 'ESPN 7', 'espn2mx': 'ESPN 2 MX', 'espnmx': 'ESPN MX',
+  'espnpremium': 'ESPN Premium', 'espn5tv': 'ESPN 5 TV', 'tudnus': 'TUDN',
   'fox1ar': 'Fox Sports 1 AR', 'fox2ar': 'Fox Sports 2 AR', 'foxdeportes': 'Fox Deportes',
-  'paramount1': 'Paramount+ 1', 'paramount2': 'Paramount+ 2', 'winplus': 'Win Sports+',
-  'winplus2': 'Win Sports+ 2', 'fanatiz1': 'Fanatiz 1', 'fanatiz2': 'Fanatiz 2', 'fanatiz3': 'Fanatiz 3',
+  'foxsports': 'Fox Sports', 'foxsports2': 'Fox Sports 2', 'foxsports3': 'Fox Sports 3',
+  'paramount1': 'Paramount+ 1', 'paramount2': 'Paramount+ 2',
+  'winplus': 'Win Sports+', 'winplus2': 'Win Sports+ 2', 'winsportsplus': 'Win Sports+',
+  'winsports': 'Win Sports', 'winsports2': 'Win Sports 2',
+  'fanatiz1': 'Fanatiz 1', 'fanatiz2': 'Fanatiz 2', 'fanatiz3': 'Fanatiz 3',
   'tyc': 'TyC Sports', 'tycint': 'TyC Sports Int', 'clarosports': 'Claro Sports',
-  'telefe': 'Telefe', 'daznf1': 'DAZN F1', 'sportv1': 'Sportv 1', 'sportv3': 'Sportv 3'
+  'telefe': 'Telefe', 'daznf1': 'DAZN F1', 'sportv1': 'Sportv 1', 'sportv3': 'Sportv 3',
+  'tntsports': 'TNT Sports', 'tntsports2': 'TNT Sports 2', 'beinsportes': 'beIN Sports'
 };
 
 // Estado global
@@ -1496,8 +1502,21 @@ function getLeague(match) {
 }
 
 function getChannelFromLink(link) {
-  const match = link.match(/channel=([a-zA-Z0-9]+)/);
-  return match ? match[1] : null;
+  if (!link) return null;
+
+  // Formato la14hd: ?stream=XXXX
+  const streamMatch = link.match(/[?&]stream=([a-zA-Z0-9]+)/);
+  if (streamMatch) return streamMatch[1];
+
+  // Formato legacy: ?channel=XXXX
+  const channelMatch = link.match(/[?&]channel=([a-zA-Z0-9]+)/);
+  if (channelMatch) return channelMatch[1];
+
+  // Formato rojadirectatve: extraer canal del path /repro/XXXX.html
+  const rojaMatch = link.match(/\/repro\/([a-zA-Z0-9]+)\.html/);
+  if (rojaMatch) return rojaMatch[1];
+
+  return null;
 }
 
 function formatChannelName(channel) {
@@ -1507,6 +1526,7 @@ function formatChannelName(channel) {
 function groupEventsByMatch(events) {
   const grouped = {};
   events.forEach(ev => {
+    if (!ev || !ev.match || !ev.link) return; // Ignorar eventos incompletos silenciosamente
     const key = `${ev.time}_${ev.match}`;
     if (!grouped[key]) {
       grouped[key] = { time: ev.time, match: ev.match, channels: [] };
@@ -1514,12 +1534,20 @@ function groupEventsByMatch(events) {
     const channel = getChannelFromLink(ev.link);
     if (channel) {
       grouped[key].channels.push({ name: channel, link: ev.link, displayName: formatChannelName(channel) });
+    } else {
+      // Fallback: usar hostname como nombre de canal genérico
+      const hostMatch = ev.link.match(/https?:\/\/([^\/]+)/);
+      if (hostMatch) {
+        const hostname = hostMatch[1].replace(/^www\./, '').split('.')[0];
+        const capitalized = hostname.charAt(0).toUpperCase() + hostname.slice(1);
+        grouped[key].channels.push({ name: hostname, link: ev.link, displayName: capitalized });
+      }
     }
   });
   Object.values(grouped).forEach(group => {
     group.channels.sort((a, b) => a.displayName.localeCompare(b.displayName));
   });
-  return Object.values(grouped);
+  return Object.values(grouped).filter(g => g.channels.length > 0); // Solo eventos con al menos un canal
 }
 
 function getEventDate(time) {
