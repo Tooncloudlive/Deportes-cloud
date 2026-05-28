@@ -1,5 +1,5 @@
 /**
- * Scraping de partidos desde streamx550.com
+ * Scraping de partidos desde la14hd.com/eventos
  * Extrae:
  * - hora
  * - nombre del partido
@@ -14,7 +14,7 @@ const { chromium } = require('playwright');
 const fs = require('fs');
 const path = require('path');
 
-const URL = 'https://streamx550.com/';
+const URL = 'https://la14hd.com/eventos/';
 const OUTPUT = path.join(__dirname, '..', 'data', 'partidos.json');
 
 // Ajustes horarios
@@ -117,12 +117,6 @@ const SCRAPE_SCRIPT = () => {
 
         if (!link) return;
 
-        // Reemplazo automático
-        link = link.replace(
-          'global1.php',
-          'global2.php'
-        );
-
         eventsData.push({
           time,
           match,
@@ -165,7 +159,7 @@ async function scrapePartidos() {
       timeout: 60000
     });
 
-    // Esperar renderizado
+    // Esperar renderizado (la14hd carga eventos dinamicamente via JS)
     await page.waitForTimeout(5000);
 
     // Verificar si hay eventos
