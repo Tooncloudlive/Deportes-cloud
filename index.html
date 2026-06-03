@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>ToonCloud Deportes</title>
-<!-- Build: 2026-06-03 10:49 | Events: 0 | Logos: 0 -->
+<!-- Build: 2026-06-03 20:38 | Events: 13 | Logos: 11 -->
 <meta name="theme-color" content="#000000">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -1205,12 +1205,38 @@ header {
 // El formato es: { match: "Equipo Local vs Equipo Visitante", homeLogo: "URL_ESCUDO_LOCAL", awayLogo: "URL_ESCUDO_VISITANTE" }
 // Si no quieres escudo para un equipo, deja el campo vacio: ""
 
-const matchesLogos = [];
+const matchesLogos = [
+  { match: "MLB – Minnesota Twins vs Chicago White Sox", homeLogo: "https://static.flashscore.com/res/image/data/48zwVQil-hf8mqtOe.png", awayLogo: "https://static.flashscore.com/res/image/data/rHrt6LAr-MFkjl69i.png" },
+  { match: "Albania vs Israel", homeLogo: "https://static.flashscore.com/res/image/data/2aEvjI9r-vZG58BBc.png", awayLogo: "https://static.flashscore.com/res/image/data/KI3dBtHG-2ybyvrpo.png" },
+  { match: "RD del Congo vs Dinamarca", homeLogo: "https://static.flashscore.com/res/image/data/8YIXSkBr-YFbDUeTh.png", awayLogo: "https://static.flashscore.com/res/image/data/d8MRvRBr-2kmuAQ93.png" },
+  { match: "Rosario Central vs Racing Club", homeLogo: "https://static.flashscore.com/res/image/data/hKqVGwgl-vuxu02Jt.png", awayLogo: "https://static.flashscore.com/res/image/data/6T5YTkZA-OCiVKiPK.png" },
+  { match: "Luxemburgo vs Italia", homeLogo: "https://static.flashscore.com/res/image/data/6Ja9JTjl-jovscNjN.png", awayLogo: "https://static.flashscore.com/res/image/data/zgZ3N3Yg-KfXjzrxU.png" },
+  { match: "Países Bajos vs Argelia", homeLogo: "https://static.flashscore.com/res/image/data/bieizLjl-fazrR153.png", awayLogo: "https://static.flashscore.com/res/image/data/OGRs7nwS-YFbDUeTh.png" },
+  { match: "Polonia vs Nigeria", homeLogo: "https://static.flashscore.com/res/image/data/zB15YqDr-vZG58BBc.png", awayLogo: "https://static.flashscore.com/res/image/data/OIzTC8fM-CEPH9Bbd.png" },
+  { match: "Corea del Sur vs El Salvador", homeLogo: "https://static.flashscore.com/res/image/data/zTP55fFG-63aNArwB.png", awayLogo: "https://static.flashscore.com/res/image/data/h81TtGWg-raJr9r28.png" },
+  { match: "San Lorenzo vs Deportivo Riestra", homeLogo: "https://static.flashscore.com/res/image/data/0xTdzwCr-YyppIBwT.png", awayLogo: "https://static.flashscore.com/res/image/data/Wr1x3UWg-rRNfwvij.png" },
+  { match: "Knicks vs Spurs - Finals Game #1", homeLogo: "https://static.flashscore.com/res/image/data/UBTxFpcM-I30Q0K9l.png", awayLogo: "https://static.flashscore.com/res/image/data/8f2WVCFG-SrHHDGUm.png" },
+  { match: "Panamá vs República Dominicana", homeLogo: "https://static.flashscore.com/res/image/data/GjtXYjcM-6yXdouA1.png", awayLogo: "https://static.flashscore.com/res/image/data/lxrfbgcM-raJr9r28.png" }
+];
 
 // =====================================================
 // DATOS DE EVENTOS
 // =====================================================
-const eventsData = [];
+const eventsData = [
+  { time: "14:30", match: "MLB – Minnesota Twins vs Chicago White Sox", link: "https://la14hd.com/vivo/canales.php?stream=espn5" },
+  { time: "14:30", match: "MLB – Minnesota Twins vs Chicago White Sox", link: "https://rojadirectatve.com/sw3.html?get=https://rojadirectatve.com/repro/espn5tv.html" },
+  { time: "15:00", match: "Amistoso: Albania vs Israel", link: "https://la14hd.com/vivo/canales.php?stream=disney2" },
+  { time: "15:00", match: "Amistoso: RD del Congo vs Dinamarca", link: "https://la14hd.com/vivo/canales.php?stream=disney1" },
+  { time: "15:00", match: "Torneo de Reserva: Rosario Central vs Racing Club", link: "https://la14hd.com/vivo/canales.php?stream=espn3" },
+  { time: "15:45", match: "Amistoso: Luxemburgo vs Italia", link: "https://la14hd.com/vivo/canales.php?stream=disney4" },
+  { time: "15:45", match: "Amistoso: Países Bajos vs Argelia", link: "https://la14hd.com/vivo/canales.php?stream=espn" },
+  { time: "15:45", match: "Amistoso: Países Bajos vs Argelia", link: "https://la14hd.com/vivo/canales.php?stream=disney3" },
+  { time: "15:45", match: "Amistoso: Polonia vs Nigeria", link: "https://la14hd.com/vivo/canales.php?stream=disney5" },
+  { time: "20:00", match: "Amistoso: Corea del Sur vs El Salvador", link: "https://la14hd.com/vivo/canales.php?stream=sportv" },
+  { time: "21:15", match: "Copa Argentina: San Lorenzo vs Deportivo Riestra", link: "https://la14hd.com/vivo/canales.php?stream=tycsports" },
+  { time: "21:30", match: "NBA: Knicks vs Spurs - Finals Game #1", link: "https://la14hd.com/vivo/canales.php?stream=espndeportes" },
+  { time: "21:45", match: "Amistoso: Panamá vs República Dominicana", link: "https://la14hd.com/vivo/canales.php?stream=eventos4" }
+];
 
 // =====================================================
 // DICCIONARIO DE MAPEO DE LIGAS
