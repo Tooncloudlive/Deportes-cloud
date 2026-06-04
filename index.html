@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>ToonCloud Deportes</title>
-<!-- Build: 2026-06-04 09:49 | Events: 0 | Logos: 0 -->
+<!-- Build: 2026-06-04 23:17 | Events: 4 | Logos: 2 -->
 <meta name="theme-color" content="#000000">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -1205,12 +1205,20 @@ header {
 // El formato es: { match: "Equipo Local vs Equipo Visitante", homeLogo: "URL_ESCUDO_LOCAL", awayLogo: "URL_ESCUDO_VISITANTE" }
 // Si no quieres escudo para un equipo, deja el campo vacio: ""
 
-const matchesLogos = [];
+const matchesLogos = [
+  { match: "República Checa vs Guatemala", homeLogo: "https://static.flashscore.com/res/image/data/UH0CqZdM-b1xaMyVe.png", awayLogo: "https://static.flashscore.com/res/image/data/hhdoZTYg-MPdGWDGc.png" },
+  { match: "México vs Serbia", homeLogo: "https://static.flashscore.com/res/image/data/Au0DMMCa-IPF97VQ3.png", awayLogo: "https://static.flashscore.com/res/image/data/rHIRgwGG-fazrR153.png" }
+];
 
 // =====================================================
 // DATOS DE EVENTOS
 // =====================================================
-const eventsData = [];
+const eventsData = [
+  { time: "21:00", match: "Amistoso: República Checa vs Guatemala", link: "https://la14hd.com/vivo/canales.php?stream=sportv" },
+  { time: "21:00", match: "Amistoso: República Checa vs Guatemala", link: "https://la14hd.com/vivo/canales.php?stream=foxsports2_usa" },
+  { time: "23:00", match: "Amistoso: México vs Serbia", link: "https://la14hd.com/vivo/canales.php?stream=azteca7" },
+  { time: "23:00", match: "Amistoso: México vs Serbia", link: "https://la14hd.com/vivo/canales.php?stream=tudn" }
+];
 
 // =====================================================
 // DICCIONARIO DE MAPEO DE LIGAS
