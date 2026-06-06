@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>ToonCloud Deportes</title>
-<!-- Build: 2026-06-06 08:28 | Events: 0 | Logos: 0 -->
+<!-- Build: 2026-06-06 23:20 | Events: 22 | Logos: 9 -->
 <meta name="theme-color" content="#000000">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -1205,12 +1205,45 @@ header {
 // El formato es: { match: "Equipo Local vs Equipo Visitante", homeLogo: "URL_ESCUDO_LOCAL", awayLogo: "URL_ESCUDO_VISITANTE" }
 // Si no quieres escudo para un equipo, deja el campo vacio: ""
 
-const matchesLogos = [];
+const matchesLogos = [
+  { match: "Inglaterra vs Nueva Zelanda", homeLogo: "https://static.flashscore.com/res/image/data/tCG9KQYA-Iyld3bDd.png", awayLogo: "https://static.flashscore.com/res/image/data/Q1WkZDyS-zmDbXBOa.png" },
+  { match: "Bolivia vs Escocia", homeLogo: "https://static.flashscore.com/res/image/data/voJCcZf5-Ik5Zg8Xj.png", awayLogo: "https://static.flashscore.com/res/image/data/lf3kdFwS-lfZlm1uk.png" },
+  { match: "Nacional vs Juventud", homeLogo: "https://static.flashscore.com/res/image/data/WUIDNjFa-xErFNzEn.png", awayLogo: "https://static.flashscore.com/res/image/data/6XyukXjl-WIGOXbOL.png" },
+  { match: "Venezuela vs Turquía", homeLogo: "https://static.flashscore.com/res/image/data/Knqi3yxS-jclZerLL.png", awayLogo: "https://static.flashscore.com/res/image/data/Q7zzy7HG-Cfuwb3yH.png" },
+  { match: "Brasil vs Egipto", homeLogo: "https://static.flashscore.com/res/image/data/hCaVxehl-88LAtdNt.png", awayLogo: "https://static.flashscore.com/res/image/data/SnO3j6HG-j9fRtEHh.png" },
+  { match: "Universidad Católica vs Cobresal", homeLogo: "https://static.flashscore.com/res/image/data/OvyAhfyB-nRWWeW7h.png", awayLogo: "https://static.flashscore.com/res/image/data/zLKcbhyS-p8NClxtb.png" },
+  { match: "Ñublense vs Univ. Concepción", homeLogo: "https://static.flashscore.com/res/image/data/MVoXktAr-KM9757Oh.png", awayLogo: "https://static.flashscore.com/res/image/data/nmpUa0FG-Eq74Jcjl.png" },
+  { match: "Vegas Golden Knights vs Carolina Hurricanes", homeLogo: "https://static.flashscore.com/res/image/data/rcaaQKFG-MucFHXDq.png", awayLogo: "https://static.flashscore.com/res/image/data/jo2tZcXg-Ea3nasx0.png" },
+  { match: "Argentina vs Honduras", homeLogo: "https://static.flashscore.com/res/image/data/xQCUe9zB-AmY8ktbk.png", awayLogo: "https://static.flashscore.com/res/image/data/0jM9DKYg-QH96Xa3A.png" }
+];
 
 // =====================================================
 // DATOS DE EVENTOS
 // =====================================================
-const eventsData = [];
+const eventsData = [
+  { time: "17:00", match: "Amistoso: Inglaterra vs Nueva Zelanda", link: "https://la18hd.com/vivo/canales.php?stream=espn" },
+  { time: "17:00", match: "Amistoso: Inglaterra vs Nueva Zelanda", link: "https://la18hd.com/vivo/canales.php?stream=disney16" },
+  { time: "17:00", match: "Amistoso: Bolivia vs Escocia", link: "https://la18hd.com/vivo/canales.php?stream=disney17" },
+  { time: "17:00", match: "Amistoso: Bolivia vs Escocia", link: "https://la18hd.com/vivo/canales.php?stream=espndeportes" },
+  { time: "17:00", match: "Amistoso: Bolivia vs Escocia", link: "https://la18hd.com/vivo/canales.php?stream=espn3mx" },
+  { time: "18:30", match: "Primera Divisón: Nacional vs Juventud", link: "https://la18hd.com/vivo/canales.php?stream=disney18" },
+  { time: "19:00", match: "Amistoso: Venezuela vs Turquía", link: "https://la18hd.com/vivo/canales.php?stream=disney20" },
+  { time: "19:00", match: "Amistoso: Brasil vs Egipto", link: "https://la18hd.com/vivo/canales.php?stream=espn" },
+  { time: "19:00", match: "Amistoso: Brasil vs Egipto", link: "https://la18hd.com/vivo/canales.php?stream=disney1" },
+  { time: "19:00", match: "Amistoso: Brasil vs Egipto", link: "https://la18hd.com/vivo/canales.php?stream=espndeportes" },
+  { time: "19:00", match: "Amistoso: Brasil vs Egipto", link: "https://la18hd.com/vivo/canales.php?stream=sportv" },
+  { time: "19:00", match: "Primera Divisón: Universidad Católica vs Cobresal", link: "https://la18hd.com/vivo/canales.php?stream=max3" },
+  { time: "19:00", match: "Primera Divisón: Ñublense vs Univ. Concepción", link: "https://la18hd.com/vivo/canales.php?stream=tntsportschile" },
+  { time: "19:00", match: "Primera Divisón: Ñublense vs Univ. Concepción", link: "https://la18hd.com/vivo/canales.php?stream=max2" },
+  { time: "21:00", match: "Segunda División: Segunda División", link: "https://la18hd.com/vivo/canales.php?stream=disney2" },
+  { time: "21:00", match: "NHL: Vegas Golden Knights vs. Carolina Hurricanes", link: "https://la18hd.com/vivo/canales.php?stream=espn4" },
+  { time: "21:00", match: "NHL: Vegas Golden Knights vs. Carolina Hurricanes", link: "https://la18hd.com/vivo/canales.php?stream=disney3" },
+  { time: "21:00", match: "Amistoso: Argentina vs Honduras", link: "https://la18hd.com/vivo/canales.php?stream=tycsports" },
+  { time: "21:00", match: "Amistoso: Argentina vs Honduras", link: "https://la18hd.com/vivo/canales.php?stream=telefe" },
+  { time: "21:00", match: "Amistoso: Argentina vs Honduras", link: "https://la18hd.com/vivo/canales.php?stream=espndeportes" },
+  { time: "23:00", match: "Boxeo: Brandon Mosqueda vs. Isaac Aranda", link: "https://la18hd.com/vivo/canales.php?stream=espn" },
+  { time: "23:00", match: "Boxeo: Brandon Mosqueda vs. Isaac Aranda", link: "https://la18hd.com/vivo/canales.php?stream=disney4" }
+];
 
 // =====================================================
 // DICCIONARIO DE MAPEO DE LIGAS
