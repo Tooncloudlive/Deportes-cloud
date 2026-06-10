@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>ToonCloud Deportes</title>
-<!-- Build: 2026-06-10 21:18 | Events: 17 | Logos: 7 -->
+<!-- Build: 2026-06-10 21:41 | Events: 13 | Logos: 5 -->
 <meta name="theme-color" content="#000000">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -1004,6 +1004,140 @@ header {
   letter-spacing: 0.02em;
 }
 
+
+/* =====================================================
+   ADGUARD PROMO - Discreet rounded buttons
+   ===================================================== */
+.adguard-promo {
+  margin: 0 auto var(--space-5);
+  padding: 14px 14px 12px;
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.04);
+  border: 0.5px solid var(--ios-border);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  box-shadow: var(--liquid-shadow);
+}
+
+.adguard-promo-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.adguard-promo-badge {
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, rgba(10, 132, 255, 0.18), rgba(175, 82, 222, 0.14));
+  border: 0.5px solid rgba(255, 255, 255, 0.1);
+}
+
+.adguard-promo-badge img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  filter: brightness(1.1);
+}
+
+.adguard-promo-copy {
+  min-width: 0;
+}
+
+.adguard-promo-title {
+  color: var(--ios-text-primary);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin-bottom: 3px;
+}
+
+.adguard-promo-text {
+  color: var(--ios-text-secondary);
+  font-size: 0.78rem;
+  line-height: 1.45;
+  letter-spacing: -0.01em;
+}
+
+.adguard-promo-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.adguard-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 11px 12px;
+  border-radius: 9999px;
+  text-decoration: none;
+  color: var(--ios-text-primary);
+  background: rgba(255, 255, 255, 0.05);
+  border: 0.5px solid var(--ios-border);
+  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+  overflow: hidden;
+}
+
+.adguard-btn:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.adguard-btn:active {
+  transform: scale(0.98);
+}
+
+.adguard-btn-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.adguard-btn-icon img {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+
+.adguard-btn-label {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.adguard-btn-label strong {
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.adguard-btn-label span {
+  font-size: 0.67rem;
+  color: var(--ios-text-tertiary);
+  line-height: 1.1;
+  margin-top: 2px;
+}
+
+@media (max-width: 480px) {
+  .adguard-promo-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* =====================================================
    SCROLLBAR - Minimal
    ===================================================== */
@@ -1145,6 +1279,62 @@ header {
     <p class="copyright">Larvas S.A &copy;</p>
   </div>
 
+
+  <!-- AdGuard Promo -->
+  <div class="adguard-promo">
+    <div class="adguard-promo-top">
+      <div class="adguard-promo-badge">
+        <img src="https://avatars3.githubusercontent.com/u/8361145?s=200&v=4" alt="AdGuard">
+      </div>
+      <div class="adguard-promo-copy">
+        <div class="adguard-promo-title">Para ver sin anuncios</div>
+        <div class="adguard-promo-text">Descargá este bloqueador de anuncios. La versión gratuita es suficiente: AdGuard.</div>
+      </div>
+    </div>
+
+    <div class="adguard-promo-grid">
+      <a class="adguard-btn" href="https://adguard.com/es/adguard-windows/overview.html" rel="noopener noreferrer">
+        <span class="adguard-btn-icon">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Windows_icon_logo.png" alt="Windows">
+        </span>
+        <span class="adguard-btn-label">
+          <strong>Windows</strong>
+          <span>AdGuard Free</span>
+        </span>
+      </a>
+
+      <a class="adguard-btn" href="https://adguard.com/es/adguard-mac/overview.html" rel="noopener noreferrer">
+        <span class="adguard-btn-icon">
+          <img src="https://img.icons8.com/ios_filled/512/FFFFFF/mac-logo.png" alt="Mac">
+        </span>
+        <span class="adguard-btn-label">
+          <strong>Mac</strong>
+          <span>AdGuard Free</span>
+        </span>
+      </a>
+
+      <a class="adguard-btn" href="https://adguard.com/es/adguard-android/overview.html" rel="noopener noreferrer">
+        <span class="adguard-btn-icon">
+          <img src="https://img.icons8.com/androidL/512/FFFFFF/android-os--v2.png" alt="Android">
+        </span>
+        <span class="adguard-btn-label">
+          <strong>Android</strong>
+          <span>AdGuard Free</span>
+        </span>
+      </a>
+
+      <a class="adguard-btn" href="https://adguard.com/es/adguard-ios/overview.html" rel="noopener noreferrer">
+        <span class="adguard-btn-icon">
+          <img src="https://static.vecteezy.com/system/resources/thumbnails/070/730/255/small/computer-logo-white-phone-icon-in-transparent-background-free-png.png" alt="iPhone">
+        </span>
+        <span class="adguard-btn-label">
+          <strong>iPhone</strong>
+          <span>AdGuard Free</span>
+        </span>
+      </a>
+    </div>
+  </div>
+
   <!-- Stats Bar -->
   <div class="stats-bar">
     <div class="stats-pill">
@@ -1206,8 +1396,6 @@ header {
 // Si no quieres escudo para un equipo, deja el campo vacio: ""
 
 const matchesLogos = [
-  { match: "Vélez Sársfield vs Tigre", homeLogo: "https://static.flashscore.com/res/image/data/MiclPtFa-YF2zL4v9.png", awayLogo: "https://static.flashscore.com/res/image/data/dG6N1MfM-ENHpchZ2.png" },
-  { match: "Sarmiento vs Talleres de Córdoba", homeLogo: "https://static.flashscore.com/res/image/data/21b462ZA-42HlKmWP.png", awayLogo: "https://static.flashscore.com/res/image/data/dERvVPeM-Q3holyiA.png" },
   { match: "Málaga vs Las Palmas", homeLogo: "https://static.flashscore.com/res/image/data/b7abRme5-MTxwaw7C.png", awayLogo: "https://static.flashscore.com/res/image/data/44xPoqHG-d6gaf9ua.png" },
   { match: "Portugal vs Nigeria", homeLogo: "https://static.flashscore.com/res/image/data/IBvrXaZg-vZG58BBc.png", awayLogo: "https://static.flashscore.com/res/image/data/OIzTC8fM-CEPH9Bbd.png" },
   { match: "Inglaterra vs Costa Rica", homeLogo: "https://static.flashscore.com/res/image/data/tCG9KQYA-Iyld3bDd.png", awayLogo: "https://static.flashscore.com/res/image/data/M72YWCeM-KfXjzrxU.png" },
@@ -1219,10 +1407,6 @@ const matchesLogos = [
 // DATOS DE EVENTOS
 // =====================================================
 const eventsData = [
-  { time: "15:00", match: "Torneo de Reserva: Vélez Sársfield vs Tigre", link: "https://la14hd.com/vivo/canales.php?stream=tntsports" },
-  { time: "15:00", match: "Torneo de Reserva: Vélez Sársfield vs Tigre", link: "https://rojadirectatve.com/sw3.html?get=https://rojadirectatve.com/repro/tntsports2.html" },
-  { time: "15:00", match: "Torneo de Reserva: Sarmiento vs Talleres de Córdoba", link: "https://la18hd.com/vivo/canales.php?stream=espn4" },
-  { time: "15:00", match: "Torneo de Reserva: Sarmiento vs Talleres de Córdoba", link: "https://la18hd.com/vivo/canales.php?stream=disney4" },
   { time: "16:00", match: "LaLiga 2: Málaga vs Las Palmas", link: "https://la18hd.com/vivo/canales.php?stream=espn2" },
   { time: "16:00", match: "LaLiga 2: Málaga vs Las Palmas", link: "https://la18hd.com/vivo/canales.php?stream=disney1" },
   { time: "16:00", match: "LaLiga 2: Málaga vs Las Palmas", link: "https://la18hd.com/vivo/canales.php?stream=espndeportes" },
