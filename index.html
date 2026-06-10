@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>ToonCloud Deportes</title>
-<!-- Build: 2026-06-10 09:49 | Events: 1 | Logos: 1 -->
+<!-- Build: 2026-06-10 21:18 | Events: 17 | Logos: 7 -->
 <meta name="theme-color" content="#000000">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -1206,14 +1206,36 @@ header {
 // Si no quieres escudo para un equipo, deja el campo vacio: ""
 
 const matchesLogos = [
-  { match: "San Diego Padres vs Cincinnati Reds", homeLogo: "https://static.flashscore.com/res/image/data/YsFz7vWg-plL3Lm41.png", awayLogo: "https://static.flashscore.com/res/image/data/tUgxR1zB-hxmcgnNf.png" }
+  { match: "Vélez Sársfield vs Tigre", homeLogo: "https://static.flashscore.com/res/image/data/MiclPtFa-YF2zL4v9.png", awayLogo: "https://static.flashscore.com/res/image/data/dG6N1MfM-ENHpchZ2.png" },
+  { match: "Sarmiento vs Talleres de Córdoba", homeLogo: "https://static.flashscore.com/res/image/data/21b462ZA-42HlKmWP.png", awayLogo: "https://static.flashscore.com/res/image/data/dERvVPeM-Q3holyiA.png" },
+  { match: "Málaga vs Las Palmas", homeLogo: "https://static.flashscore.com/res/image/data/b7abRme5-MTxwaw7C.png", awayLogo: "https://static.flashscore.com/res/image/data/44xPoqHG-d6gaf9ua.png" },
+  { match: "Portugal vs Nigeria", homeLogo: "https://static.flashscore.com/res/image/data/IBvrXaZg-vZG58BBc.png", awayLogo: "https://static.flashscore.com/res/image/data/OIzTC8fM-CEPH9Bbd.png" },
+  { match: "Inglaterra vs Costa Rica", homeLogo: "https://static.flashscore.com/res/image/data/tCG9KQYA-Iyld3bDd.png", awayLogo: "https://static.flashscore.com/res/image/data/M72YWCeM-KfXjzrxU.png" },
+  { match: "MLB – New York Mets vs St. Louis Cardinals", homeLogo: "https://static.flashscore.com/res/image/data/ID1PVAjl-QJ65VxPM.png", awayLogo: "https://static.flashscore.com/res/image/data/6cQJ9nAr-pOg0ZmTB.png" },
+  { match: "Spurs vs Knicks - Finals Game #4", homeLogo: "https://static.flashscore.com/res/image/data/8f2WVCFG-SrHHDGUm.png", awayLogo: "https://static.flashscore.com/res/image/data/UBTxFpcM-I30Q0K9l.png" }
 ];
 
 // =====================================================
 // DATOS DE EVENTOS
 // =====================================================
 const eventsData = [
-  { time: "22:30", match: "MLB: San Diego Padres vs Cincinnati Reds", link: "https://la18hd.com/vivo/canales.php?stream=espn3" }
+  { time: "15:00", match: "Torneo de Reserva: Vélez Sársfield vs Tigre", link: "https://la14hd.com/vivo/canales.php?stream=tntsports" },
+  { time: "15:00", match: "Torneo de Reserva: Vélez Sársfield vs Tigre", link: "https://rojadirectatve.com/sw3.html?get=https://rojadirectatve.com/repro/tntsports2.html" },
+  { time: "15:00", match: "Torneo de Reserva: Sarmiento vs Talleres de Córdoba", link: "https://la18hd.com/vivo/canales.php?stream=espn4" },
+  { time: "15:00", match: "Torneo de Reserva: Sarmiento vs Talleres de Córdoba", link: "https://la18hd.com/vivo/canales.php?stream=disney4" },
+  { time: "16:00", match: "LaLiga 2: Málaga vs Las Palmas", link: "https://la18hd.com/vivo/canales.php?stream=espn2" },
+  { time: "16:00", match: "LaLiga 2: Málaga vs Las Palmas", link: "https://la18hd.com/vivo/canales.php?stream=disney1" },
+  { time: "16:00", match: "LaLiga 2: Málaga vs Las Palmas", link: "https://la18hd.com/vivo/canales.php?stream=espndeportes" },
+  { time: "16:45", match: "Amistoso: Portugal vs Nigeria", link: "https://la18hd.com/vivo/canales.php?stream=espn" },
+  { time: "16:45", match: "Amistoso: Portugal vs Nigeria", link: "https://la18hd.com/vivo/canales.php?stream=disney2" },
+  { time: "16:45", match: "Amistoso: Portugal vs Nigeria", link: "https://la18hd.com/vivo/canales.php?stream=sportv" },
+  { time: "19:00", match: "Amistoso: Inglaterra vs Costa Rica", link: "https://la18hd.com/vivo/canales.php?stream=espn" },
+  { time: "19:00", match: "Amistoso: Inglaterra vs Costa Rica", link: "https://la18hd.com/vivo/canales.php?stream=disney3" },
+  { time: "19:00", match: "Amistoso: Inglaterra vs Costa Rica", link: "https://la18hd.com/vivo/canales.php?stream=foxsports2_usa" },
+  { time: "20:00", match: "MLB – New York Mets vs St. Louis Cardinals", link: "https://la18hd.com/vivo/canales.php?stream=espn5" },
+  { time: "20:00", match: "MLB – New York Mets vs St. Louis Cardinals", link: "https://la18hd.com/vivo/canales.php?stream=disney5" },
+  { time: "20:00", match: "MLB – New York Mets vs St. Louis Cardinals", link: "https://rojadirectatve.com/sw3.html?get=https://rojadirectatve.com/repro/espn5tv.html" },
+  { time: "21:30", match: "NBA: Spurs vs Knicks - Finals Game #4", link: "https://la18hd.com/vivo/canales.php?stream=espndeportes" }
 ];
 
 // =====================================================
