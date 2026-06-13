@@ -1,1 +1,57 @@
-[]
+[
+  {
+    "match": "Carlos A. Mannucci vs Alianza Atlético",
+    "homeLogo": "https://www.google.com/logos/doodles/2026/world-cup-2026-the-art-of-the-rabona-613-6753651837111096-shs.png",
+    "awayLogo": "https://www.google.com/logos/doodles/2026/world-cup-2026-the-art-of-the-rabona-613-6753651837111096.2-s.png"
+  },
+  {
+    "match": "Qatar vs Suiza",
+    "homeLogo": "https://static.flashscore.com/res/image/data/vky4LWkl-UPMdbcD9.png",
+    "awayLogo": "https://cdn.cookielaw.org/logos/static/ot_company_logo.png"
+  },
+  {
+    "match": "Everton vs Palestino",
+    "homeLogo": "https://static.flashscore.com/res/image/data/IaM72BCr-futBA1p8.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/GxmUk4dM-6o82IhbS.png"
+  },
+  {
+    "match": "Comerciantes Unidos vs Sporting Cristal",
+    "homeLogo": "https://static.flashscore.com/res/image/data/lOuqQhhl-8dieWfgh.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/bT8P90Ar-Em9Gxj8O.png"
+  },
+  {
+    "match": "Colo-Colo vs Cobresal",
+    "homeLogo": "https://static.flashscore.com/res/image/data/CMCTeMxS-tnwDCzLD.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/zLKcbhyS-p8NClxtb.png"
+  },
+  {
+    "match": "Brasil vs Marruecos",
+    "homeLogo": "https://static.flashscore.com/res/image/data/hCaVxehl-88LAtdNt.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/byRvSVil-hOurGDLS.png"
+  },
+  {
+    "match": "Binacional vs Cienciano",
+    "homeLogo": "https://static.flashscore.com/res/image/data/vTmLzXAr-ruuVkMjU.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/dI31wDil-Mu345fFj.png"
+  },
+  {
+    "match": "Ñublense vs Huachipato",
+    "homeLogo": "https://static.flashscore.com/res/image/data/MVoXktAr-KM9757Oh.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/v7pzlUCa-xIMey4eD.png"
+  },
+  {
+    "match": "San Antonio Spurs vs New York Knicks",
+    "homeLogo": "https://static.flashscore.com/res/image/data/8f2WVCFG-SrHHDGUm.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/UBTxFpcM-I30Q0K9l.png"
+  },
+  {
+    "match": "Haití vs Escocia",
+    "homeLogo": "https://static.flashscore.com/res/image/data/OzGon6Da-GY05WHbt.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/lf3kdFwS-lfZlm1uk.png"
+  },
+  {
+    "match": "Australia vs Turquía",
+    "homeLogo": "https://static.flashscore.com/res/image/data/Ygu7zgHG-YNb3oHYR.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/Q7zzy7HG-Cfuwb3yH.png"
+  }
+]
