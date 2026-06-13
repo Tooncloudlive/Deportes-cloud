@@ -1,276 +1,156 @@
-/**
- * Scraping de partidos desde la14hd.com/eventos
- * Extrae:
- * - hora
- * - nombre del partido
- * - enlaces de canales
- *
- * Si falla el scraping o no hay eventos:
- * - guarda [] en partidos.json
- * - NO rompe GitHub Actions
- */
-
-const { chromium } = require('playwright');
 const fs = require('fs');
 const path = require('path');
 
-const URL = 'https://la14hd.com/eventos/';
-const OUTPUT = path.join(__dirname, '..', 'data', 'partidos.json');
+// NOTA: Playwright ya no es necesario para este script.
+// Se usa fetch nativo (Node >= 18) para consumir JSON estático.
 
-// Ajustes horarios
-const SOURCE_OFFSET = 0;
-const TARGET_OFFSET = 0;
+const URL = 'https://streamhdx.com/eventos.json';
+const OUTPUT_PATH = path.resolve(__dirname, '..', 'data', 'partidos.json');
 
+// ---------------------------------------------------------------
+// Helpers de ruta / salida (mantener exactamente)
+// ---------------------------------------------------------------
 function ensureDir(filePath) {
   const dir = path.dirname(filePath);
-
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
   }
 }
 
 function saveEmptyJson() {
-  ensureDir(OUTPUT);
-
-  fs.writeFileSync(
-    OUTPUT,
-    JSON.stringify([], null, 2),
-    'utf-8'
-  );
-
+  ensureDir(OUTPUT_PATH);
+  fs.writeFileSync(OUTPUT_PATH, JSON.stringify([], null, 2));
   console.log('[Partidos] JSON vacío guardado');
 }
 
+// ---------------------------------------------------------------
+// Helpers de tiempo (mantener exactamente)
+// ---------------------------------------------------------------
 function pad2(n) {
   return String(n).padStart(2, '0');
 }
 
 function parseTimeToMinutes(timeStr) {
-  const match = /^(\d{1,2}):(\d{2})$/.exec(
-    String(timeStr).trim()
-  );
-
-  if (!match) return null;
-
-  const hours = Number(match[1]);
-  const minutes = Number(match[2]);
-
-  if (
-    Number.isNaN(hours) ||
-    Number.isNaN(minutes) ||
-    hours < 0 ||
-    hours > 23 ||
-    minutes < 0 ||
-    minutes > 59
-  ) {
-    return null;
-  }
-
-  return hours * 60 + minutes;
+  if (!timeStr) return 0;
+  const parts = timeStr.split(':');
+  if (parts.length !== 2) return 0;
+  const h = parseInt(parts[0], 10);
+  const m = parseInt(parts[1], 10);
+  if (isNaN(h) || isNaN(m)) return 0;
+  return h * 60 + m;
 }
+
+const SOURCE_OFFSET = 0;
+const TARGET_OFFSET = 0;
 
 function convertTimeToGMT3(timeStr) {
-  const minutes = parseTimeToMinutes(timeStr);
-
-  if (minutes === null) return timeStr;
-
+  if (!timeStr) return timeStr;
   const offsetDiff = TARGET_OFFSET - SOURCE_OFFSET;
+  if (offsetDiff === 0) return timeStr;
 
-  let converted = minutes + offsetDiff * 60;
+  let totalMinutes = parseTimeToMinutes(timeStr) + offsetDiff;
+  totalMinutes = ((totalMinutes % 1440) + 1440) % 1440;
 
-  converted = ((converted % 1440) + 1440) % 1440;
-
-  const hours = Math.floor(converted / 60);
-  const mins = converted % 60;
-
-  return `${pad2(hours)}:${pad2(mins)}`;
+  const h = Math.floor(totalMinutes / 60);
+  const m = totalMinutes % 60;
+  return `${pad2(h)}:${pad2(m)}`;
 }
 
-// Script que se ejecuta dentro del navegador
-const SCRAPE_SCRIPT = () => {
-
-  const eventsData = [];
-
-  document.querySelectorAll('.event').forEach(eventEl => {
-
-    const nameText =
-      eventEl
-        .querySelector('.event-name')
-        ?.innerText
-        ?.trim();
-
-    if (!nameText) return;
-
-    const timeMatch =
-      nameText.match(/^(\d{1,2}:\d{2})\s*-\s*(.*)$/);
-
-    if (!timeMatch) return;
-
-    const time = timeMatch[1];
-    const match = timeMatch[2].trim();
-
-    eventEl
-      .querySelectorAll('.iframe-link')
-      .forEach(input => {
-
-        let link = input.value;
-
-        if (!link) return;
-
-        eventsData.push({
-          time,
-          match,
-          link
-        });
-
-      });
-
-  });
-
-  return eventsData;
-};
-
+// ---------------------------------------------------------------
+// Scraping principal – ahora con fetch nativo (sin Playwright)
+// ---------------------------------------------------------------
 async function scrapePartidos() {
-
-  console.log('[Partidos] Iniciando scraping de', URL);
-
-  const browser = await chromium.launch({
-    headless: true,
-    args: [
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      '--disable-dev-shm-usage'
-    ]
-  });
-
-  const context = await browser.newContext({
-    timezoneId: 'America/Argentina/Buenos_Aires',
-    locale: 'es-AR',
-    userAgent:
-      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
-  });
-
-  const page = await context.newPage();
+  console.log('[Partidos] Iniciando descarga de', URL);
 
   try {
-
-    await page.goto(URL, {
-      waitUntil: 'domcontentloaded',
-      timeout: 60000
+    const response = await fetch(URL, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+      }
     });
 
-    // Esperar renderizado (la14hd carga eventos dinamicamente via JS)
-    await page.waitForTimeout(5000);
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
 
-    // Verificar si hay eventos
-    const hasEvents = await page.$('.event');
+    const data = await response.json();
 
-    if (!hasEvents) {
-
-      console.log('[Partidos] No hay eventos disponibles');
-
+    if (!data?.dias || !Array.isArray(data.dias)) {
+      console.log('[Partidos] Estructura JSON inesperada');
       saveEmptyJson();
-
       return;
     }
 
-    let eventsData =
-      await page.evaluate(SCRAPE_SCRIPT);
+    let eventsData = [];
 
-    // Si no encontró nada
-    if (!eventsData || eventsData.length === 0) {
+    // Iterar todos los días
+    for (const dia of data.dias) {
+      const eventos = dia?.eventos;
+      if (!Array.isArray(eventos)) continue;
 
-      console.log('[Partidos] No se encontraron partidos');
+      for (const evento of eventos) {
+        const time = String(evento?.hora || '').trim();
+        const match = String(evento?.titulo || '').trim();
+        const canales = evento?.canales;
 
-      saveEmptyJson();
+        if (!time || !match) continue;
+        if (!Array.isArray(canales) || canales.length === 0) continue;
 
-      return;
-    }
+        // Convertir hora si es necesario (mantener lógica actual)
+        const convertedTime = convertTimeToGMT3(time);
 
-    // Convertir horarios
-    eventsData = eventsData.map(event => ({
-      ...event,
-      time: convertTimeToGMT3(event.time)
-    }));
+        for (const canal of canales) {
+          const link = canal?.url || canal?.link || '';
+          if (!link) continue;
 
-    // Eliminar duplicados
-    const uniqueMap = new Map();
-
-    for (const event of eventsData) {
-
-      const key =
-        `${event.time}-${event.match}-${event.link}`;
-
-      if (!uniqueMap.has(key)) {
-        uniqueMap.set(key, event);
+          eventsData.push({
+            time: convertedTime,
+            match,
+            link: String(link).trim()
+          });
+        }
       }
     }
 
-    eventsData = [...uniqueMap.values()];
+    if (eventsData.length === 0) {
+      console.log('[Partidos] No se encontraron partidos');
+      saveEmptyJson();
+      return;
+    }
 
-    // Ordenar por hora
-    eventsData.sort((a, b) =>
-      a.time.localeCompare(b.time)
-    );
+    // 1. Deduplicación
+    const seen = new Map();
+    for (const event of eventsData) {
+      const key = `${event.time}-${event.match}-${event.link}`;
+      if (!seen.has(key)) {
+        seen.set(key, event);
+      }
+    }
+    eventsData = Array.from(seen.values());
 
-    console.log(
-      `[Partidos] Encontrados ${eventsData.length} canales`
-    );
+    // 2. Ordenamiento por hora
+    eventsData.sort((a, b) => a.time.localeCompare(b.time));
 
-    // Crear carpeta
-    ensureDir(OUTPUT);
+    // 3. Logs de resumen
+    const uniqueMatches = new Set(eventsData.map(e => e.match));
+    console.log('[Partidos] Encontrados', eventsData.length, 'canales');
 
-    // Guardar JSON
-    fs.writeFileSync(
-      OUTPUT,
-      JSON.stringify(eventsData, null, 2),
-      'utf-8'
-    );
-
-    console.log(
-      '[Partidos] Datos guardados en',
-      OUTPUT
-    );
-
-    // Resumen
-    const partidosUnicos =
-      new Set(
-        eventsData.map(e => e.match)
-      ).size;
-
-    console.log(
-      `[Partidos] ${partidosUnicos} partidos únicos`
-    );
+    // 4. Guardado
+    ensureDir(OUTPUT_PATH);
+    fs.writeFileSync(OUTPUT_PATH, JSON.stringify(eventsData, null, 2));
+    console.log('[Partidos] Datos guardados en', OUTPUT_PATH);
+    console.log('[Partidos]', uniqueMatches.size, 'partidos únicos');
 
   } catch (error) {
-
-    console.warn(
-      '[Partidos] Error durante scraping:',
-      error.message
-    );
-
-    // Fallback
+    console.log('[Partidos] Error durante descarga:', error.message || error);
     saveEmptyJson();
-
-    // NO romper GitHub Actions
     process.exitCode = 0;
-
-  } finally {
-
-    await browser.close();
-
   }
 }
 
-scrapePartidos().catch(error => {
-
-  console.warn(
-    '[Partidos] Error inesperado:',
-    error.message
-  );
-
+// Punto de entrada
+scrapePartidos().catch((error) => {
+  console.log('[Partidos] Error inesperado:', error.message || error);
   saveEmptyJson();
-
   process.exitCode = 0;
-
 });
