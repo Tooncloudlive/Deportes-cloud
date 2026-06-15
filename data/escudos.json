@@ -1,82 +1,37 @@
 [
   {
-    "match": "Ayacucho vs Los Chankas",
-    "homeLogo": "https://static.flashscore.com/res/image/data/bumffxAr-4GUthy9Q.png",
-    "awayLogo": "https://static.flashscore.com/res/image/data/Q91LTSg5-v9LWknvd.png"
+    "match": "España vs Islas de Cabo Verde",
+    "homeLogo": "https://static.flashscore.com/res/image/data/Od7JGXZA-0E8Iihe1.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/dSMzlcyS-GvK8wiCN.png"
   },
   {
-    "match": "Deportes Concepción vs Deportes Limache",
-    "homeLogo": "https://www.google.com/logos/doodles/2026/world-cup-2026-the-art-of-the-rabona-613-6753651837111096-shs.png",
-    "awayLogo": "https://www.google.com/logos/doodles/2026/world-cup-2026-the-art-of-the-rabona-613-6753651837111096.2-s.png"
+    "match": "Llacuabamba vs UTC Cajamarca",
+    "homeLogo": "https://static.flashscore.com/res/image/data/MsxmuUkl-GdPMFPFs.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/txvKJLh5-vJhlopip.png"
   },
   {
-    "match": "Alemania vs Curazao",
-    "homeLogo": "https://static.flashscore.com/res/image/data/zP226aXg-fB4vYUZp.png",
-    "awayLogo": "https://static.flashscore.com/res/image/data/bJ37l5f5-dERAD3h1.png"
+    "match": "Bélgica vs Egipto",
+    "homeLogo": "https://static.flashscore.com/res/image/data/Qur1J5jl-dtrVaP64.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/SnO3j6HG-tY1cOGyQ.png"
   },
   {
-    "match": "Alianza Universidad vs Sport Huancayo",
-    "homeLogo": "https://static.flashscore.com/res/image/data/CtqmWqZA-E5fjRD3k.png",
-    "awayLogo": "https://static.flashscore.com/res/image/data/hnIOJwGG-6ayjGGhJ.png"
+    "match": "Estudiantil CNI vs Unión Comercio",
+    "homeLogo": "https://static.flashscore.com/res/image/data/8rInX5Ea-raqBpxvg.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/vPqdAHf5-hj2AsRp7.png"
   },
   {
-    "match": "Unión La Calera vs Universidad de Chile",
-    "homeLogo": "https://static.flashscore.com/res/image/data/AJdiRXkl-0p3SjwUb.png",
-    "awayLogo": "https://cdn.cookielaw.org/logos/static/ot_company_logo.png"
+    "match": "Arabia Saudita vs Uruguay",
+    "homeLogo": "https://static.flashscore.com/res/image/data/G6x4A5zB-KtpTLRpL.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/ddzsJgf5-WdZ4jMrq.png"
   },
   {
-    "match": "Málaga vs UD Almería | Playoffs Final",
-    "homeLogo": "https://static.flashscore.com/res/image/data/b7abRme5-MTxwaw7C.png",
-    "awayLogo": "https://static.flashscore.com/res/image/data/8C5Bj3wS-nDyT2xMM.png"
+    "match": "Irán vs Nueva Zelanda",
+    "homeLogo": "https://static.flashscore.com/res/image/data/E71I3ig5-vHwNhhf2.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/Q1WkZDyS-zmDbXBOa.png"
   },
   {
-    "match": "Países Bajos vs Japón",
-    "homeLogo": "https://static.flashscore.com/res/image/data/bieizLjl-fazrR153.png",
-    "awayLogo": "https://static.flashscore.com/res/image/data/Crg4NaGG-ALs6yNah.png"
-  },
-  {
-    "match": "U. César Vallejo vs Alianza Lima",
-    "homeLogo": "https://static.flashscore.com/res/image/data/f9h3TpGG-4Wvh4L9q.png",
-    "awayLogo": "https://static.flashscore.com/res/image/data/OdDDfjWg-tE1csI3A.png"
-  },
-  {
-    "match": "Jonathan González vs Abraham Pérez",
-    "homeLogo": "https://static.flashscore.com/res/image/data/82UkUoCr-zoEeVq05.png",
-    "awayLogo": "https://static.flashscore.com/res/image/data/UFHIQMeM-dhhQOIjr.png"
-  },
-  {
-    "match": "Universidad Católica vs Univ. Concepción",
-    "homeLogo": "https://www.google.com/logos/doodles/2026/world-cup-2026-the-art-of-the-rabona-613-6753651837111096-shs.png",
-    "awayLogo": "https://www.google.com/logos/doodles/2026/world-cup-2026-the-art-of-the-rabona-613-6753651837111096.2-s.png"
-  },
-  {
-    "match": "Boston Red Sox vs Texas Rangers",
-    "homeLogo": "https://static.flashscore.com/res/image/data/E92vTtZA-EXC3kc6s.png",
-    "awayLogo": "https://static.flashscore.com/res/image/data/jq5P2KYg-dC4XBro4.png"
-  },
-  {
-    "match": "Costa de Marfil vs Ecuador",
-    "homeLogo": "https://static.flashscore.com/res/image/data/SQgULDCr-zTSy144G.png",
-    "awayLogo": "https://static.flashscore.com/res/image/data/Qkovv0wS-IPF97VQ3.png"
-  },
-  {
-    "match": "Deportivo Garcilaso vs Cusco FC",
-    "homeLogo": "https://static.flashscore.com/res/image/data/hQp9ywwS-rV5EZZh1.png",
-    "awayLogo": "https://static.flashscore.com/res/image/data/OjnbBwXg-06OeOzI0.png"
-  },
-  {
-    "match": "Vegas Golden Knights vs Carolina Hurricanes",
-    "homeLogo": "https://static.flashscore.com/res/image/data/rcaaQKFG-MucFHXDq.png",
-    "awayLogo": "https://static.flashscore.com/res/image/data/jo2tZcXg-Ea3nasx0.png"
-  },
-  {
-    "match": "Ilia Topuria vs Justin Gaethje",
-    "homeLogo": "https://cdn.cookielaw.org/logos/static/ot_company_logo.png",
-    "awayLogo": "https://static.flashscore.com/res/image/data/06ttZM9r-KrNiQ6FA.png"
-  },
-  {
-    "match": "Suecia vs Túnez",
-    "homeLogo": "https://static.flashscore.com/res/image/data/b7TlfQBr-Uywods6T.png",
-    "awayLogo": "https://static.flashscore.com/res/image/data/SjHXYWzS-SGdPrEJa.png"
+    "match": "Los Angeles Dodgers vs Tampa Bay Rays",
+    "homeLogo": "https://static.flashscore.com/res/image/data/YeWStKhl-xUjXmOIP.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/lGlxbdyB-6yNDMrbJ.png"
   }
 ]
