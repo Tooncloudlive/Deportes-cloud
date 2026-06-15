@@ -1,10 +1,5 @@
 [
   {
-    "match": "España vs Islas de Cabo Verde",
-    "homeLogo": "https://static.flashscore.com/res/image/data/Od7JGXZA-0E8Iihe1.png",
-    "awayLogo": "https://static.flashscore.com/res/image/data/dSMzlcyS-GvK8wiCN.png"
-  },
-  {
     "match": "Llacuabamba vs UTC Cajamarca",
     "homeLogo": "https://static.flashscore.com/res/image/data/MsxmuUkl-GdPMFPFs.png",
     "awayLogo": "https://static.flashscore.com/res/image/data/txvKJLh5-vJhlopip.png"
@@ -23,6 +18,11 @@
     "match": "Arabia Saudita vs Uruguay",
     "homeLogo": "https://static.flashscore.com/res/image/data/G6x4A5zB-KtpTLRpL.png",
     "awayLogo": "https://static.flashscore.com/res/image/data/ddzsJgf5-WdZ4jMrq.png"
+  },
+  {
+    "match": "Washington Nationals vs Kansas City Royals",
+    "homeLogo": "https://static.flashscore.com/res/image/data/niIgU2Ca-x4HIlj1S.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/dWjjpIxS-tfZkBZ4t.png"
   },
   {
     "match": "Irán vs Nueva Zelanda",
