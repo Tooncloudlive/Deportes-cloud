@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>ToonCloud Deportes</title>
-<!-- Build: 2026-06-19 10:19 | Events: 50 | Logos: 3 -->
+<!-- Build: 2026-06-19 21:09 | Events: 0 | Logos: 0 -->
 <meta name="theme-color" content="#000000">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -1395,67 +1395,12 @@ header {
 // El formato es: { match: "Equipo Local vs Equipo Visitante", homeLogo: "URL_ESCUDO_LOCAL", awayLogo: "URL_ESCUDO_VISITANTE" }
 // Si no quieres escudo para un equipo, deja el campo vacio: ""
 
-const matchesLogos = [
-  { match: "Escocia vs Marruecos", homeLogo: "https://static.flashscore.com/res/image/data/lf3kdFwS-lfZlm1uk.png", awayLogo: "https://static.flashscore.com/res/image/data/byRvSVil-hOurGDLS.png" },
-  { match: "Brasil vs Haití", homeLogo: "https://static.flashscore.com/res/image/data/hCaVxehl-88LAtdNt.png", awayLogo: "https://static.flashscore.com/res/image/data/OzGon6Da-GY05WHbt.png" },
-  { match: "Turquía vs Paraguay", homeLogo: "https://static.flashscore.com/res/image/data/Q7zzy7HG-Cfuwb3yH.png", awayLogo: "https://static.flashscore.com/res/image/data/xlHCGmwS-fXkePq9D.png" }
-];
+const matchesLogos = [];
 
 // =====================================================
 // DATOS DE EVENTOS
 // =====================================================
-const eventsData = [
-  { time: "14:00", match: "Copa Del Mundo 2026: Estados Unidos vs Australia", link: "https://stream-xhd.com/channel2/?id=dsports1" },
-  { time: "14:00", match: "Copa Del Mundo 2026: Estados Unidos vs Australia", link: "https://stream-xhd.com/channel3/?id=la1es" },
-  { time: "14:00", match: "Copa Del Mundo 2026: Estados Unidos vs Australia", link: "https://stream-xhd.com/channel3/?id=foxoneusa" },
-  { time: "14:00", match: "Copa Del Mundo 2026: Estados Unidos vs Australia", link: "https://stream-xhd.com/live1.php?stream=dsports" },
-  { time: "14:00", match: "Copa Del Mundo 2026: Estados Unidos vs Australia", link: "https://stream-xhd.com/live1.php?stream=tycsports" },
-  { time: "14:00", match: "Copa Del Mundo 2026: Estados Unidos vs Australia", link: "https://stream-xhd.com/live1.php?stream=vix1" },
-  { time: "14:00", match: "Copa Del Mundo 2026: Estados Unidos vs Australia", link: "https://stream-xhd.com/live1.php?stream=cazetv" },
-  { time: "14:00", match: "Copa Del Mundo 2026: Estados Unidos vs Australia", link: "https://stream-xhd.com/live1.php?stream=chilevision" },
-  { time: "14:00", match: "Copa Del Mundo 2026: Estados Unidos vs Australia", link: "https://stream-xhd.com/live1.php?stream=telemundo" },
-  { time: "14:00", match: "Copa Del Mundo 2026: Estados Unidos vs Australia", link: "https://stream-xhd.com/live1.php?stream=genpy" },
-  { time: "14:00", match: "Copa Del Mundo 2026: Estados Unidos vs Australia", link: "https://stream-xhd.com/live1.php?stream=trecepy" },
-  { time: "14:00", match: "Copa Del Mundo 2026: Estados Unidos vs Australia", link: "https://stream-xhd.com/live1.php?stream=foxoneusa" },
-  { time: "17:00", match: "Copa Del Mundo 2026: Escocia vs Marruecos", link: "https://stream-xhd.com/channel2/?id=dsports1" },
-  { time: "17:00", match: "Copa Del Mundo 2026: Escocia vs Marruecos", link: "https://stream-xhd.com/channel3/?id=rcn" },
-  { time: "17:00", match: "Copa Del Mundo 2026: Escocia vs Marruecos", link: "https://stream-xhd.com/channel3/?id=foxoneusa" },
-  { time: "17:00", match: "Copa Del Mundo 2026: Escocia vs Marruecos", link: "https://stream-xhd.com/live1.php?stream=dsports" },
-  { time: "17:00", match: "Copa Del Mundo 2026: Escocia vs Marruecos", link: "https://stream-xhd.com/live1.php?stream=telemundo" },
-  { time: "17:00", match: "Copa Del Mundo 2026: Escocia vs Marruecos", link: "https://stream-xhd.com/live1.php?stream=tycsports" },
-  { time: "17:00", match: "Copa Del Mundo 2026: Escocia vs Marruecos", link: "https://stream-xhd.com/live1.php?stream=telefe" },
-  { time: "17:00", match: "Copa Del Mundo 2026: Escocia vs Marruecos", link: "https://stream-xhd.com/live1.php?stream=vix1" },
-  { time: "17:00", match: "Copa Del Mundo 2026: Escocia vs Marruecos", link: "https://stream-xhd.com/live1.php?stream=cazetv" },
-  { time: "17:00", match: "Copa Del Mundo 2026: Escocia vs Marruecos", link: "https://stream-xhd.com/live1.php?stream=evento6" },
-  { time: "17:00", match: "Copa Del Mundo 2026: Escocia vs Marruecos", link: "https://stream-xhd.com/live1.php?stream=chilevision" },
-  { time: "17:00", match: "Copa Del Mundo 2026: Escocia vs Marruecos", link: "https://stream-xhd.com/live1.php?stream=foxoneusa" },
-  { time: "19:30", match: "Copa Del Mundo 2026: Brasil vs Haití", link: "https://stream-xhd.com/channel2/?id=dsports1" },
-  { time: "19:30", match: "Copa Del Mundo 2026: Brasil vs Haití", link: "https://stream-xhd.com/channel3/?id=sportv" },
-  { time: "19:30", match: "Copa Del Mundo 2026: Brasil vs Haití", link: "https://stream-xhd.com/channel3/?id=foxoneusa" },
-  { time: "19:30", match: "Copa Del Mundo 2026: Brasil vs Haití", link: "https://stream-xhd.com/live1.php?stream=dsports" },
-  { time: "19:30", match: "Copa Del Mundo 2026: Brasil vs Haití", link: "https://stream-xhd.com/live1.php?stream=telemundo" },
-  { time: "19:30", match: "Copa Del Mundo 2026: Brasil vs Haití", link: "https://stream-xhd.com/live1.php?stream=tycsports" },
-  { time: "19:30", match: "Copa Del Mundo 2026: Brasil vs Haití", link: "https://stream-xhd.com/live1.php?stream=sporttvbr1" },
-  { time: "19:30", match: "Copa Del Mundo 2026: Brasil vs Haití", link: "https://stream-xhd.com/live1.php?stream=vix1" },
-  { time: "19:30", match: "Copa Del Mundo 2026: Brasil vs Haití", link: "https://stream-xhd.com/live1.php?stream=azteca7" },
-  { time: "19:30", match: "Copa Del Mundo 2026: Brasil vs Haití", link: "https://stream-xhd.com/live1.php?stream=cazetv" },
-  { time: "19:30", match: "Copa Del Mundo 2026: Brasil vs Haití", link: "https://stream-xhd.com/live1.php?stream=unicanalpy" },
-  { time: "19:30", match: "Copa Del Mundo 2026: Brasil vs Haití", link: "https://stream-xhd.com/live1.php?stream=foxoneusa" },
-  { time: "22:00", match: "Copa Del Mundo 2026: Turquía vs Paraguay", link: "https://stream-xhd.com/channel2/?id=dsports1" },
-  { time: "22:00", match: "Copa Del Mundo 2026: Turquía vs Paraguay", link: "https://stream-xhd.com/channel3/?id=sportv" },
-  { time: "22:00", match: "Copa Del Mundo 2026: Turquía vs Paraguay", link: "https://stream-xhd.com/channel3/?id=fs1usa" },
-  { time: "22:00", match: "Copa Del Mundo 2026: Turquía vs Paraguay", link: "https://stream-xhd.com/live1.php?stream=dsports" },
-  { time: "22:00", match: "Copa Del Mundo 2026: Turquía vs Paraguay", link: "https://stream-xhd.com/live1.php?stream=disney1" },
-  { time: "22:00", match: "Copa Del Mundo 2026: Turquía vs Paraguay", link: "https://stream-xhd.com/live1.php?stream=telemundo" },
-  { time: "22:00", match: "Copa Del Mundo 2026: Turquía vs Paraguay", link: "https://stream-xhd.com/live1.php?stream=americatv" },
-  { time: "22:00", match: "Copa Del Mundo 2026: Turquía vs Paraguay", link: "https://stream-xhd.com/live1.php?stream=genpy" },
-  { time: "22:00", match: "Copa Del Mundo 2026: Turquía vs Paraguay", link: "https://stream-xhd.com/live1.php?stream=trecepy" },
-  { time: "22:00", match: "Copa Del Mundo 2026: Turquía vs Paraguay", link: "https://stream-xhd.com/live1.php?stream=unicanalpy" },
-  { time: "22:00", match: "Copa Del Mundo 2026: Turquía vs Paraguay", link: "https://stream-xhd.com/live1.php?stream=sporttvbr1" },
-  { time: "22:00", match: "Copa Del Mundo 2026: Turquía vs Paraguay", link: "https://stream-xhd.com/live1.php?stream=vix1" },
-  { time: "22:00", match: "Copa Del Mundo 2026: Turquía vs Paraguay", link: "https://stream-xhd.com/live1.php?stream=cazetv" },
-  { time: "22:00", match: "Copa Del Mundo 2026: Turquía vs Paraguay", link: "https://stream-xhd.com/live1.php?stream=fs1usa" }
-];
+const eventsData = [];
 
 // =====================================================
 // DICCIONARIO DE MAPEO DE LIGAS
