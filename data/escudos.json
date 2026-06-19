@@ -1,1 +1,27 @@
-[]
+[
+  {
+    "match": "EE. UU. vs Australia",
+    "homeLogo": "https://static.flashscore.com/res/image/data/GpV4Cle5-MPdHoKT3.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/Ygu7zgHG-YNb3oHYR.png"
+  },
+  {
+    "match": "Miramar Misiones vs Huracán",
+    "homeLogo": "https://static.flashscore.com/res/image/data/bwR7IxFa-OYb7JNmq.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/8SomouCa-jcpIfnhq.png"
+  },
+  {
+    "match": "Escocia vs Marruecos",
+    "homeLogo": "https://static.flashscore.com/res/image/data/lf3kdFwS-lfZlm1uk.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/byRvSVil-hOurGDLS.png"
+  },
+  {
+    "match": "Brasil vs Haití",
+    "homeLogo": "https://static.flashscore.com/res/image/data/hCaVxehl-88LAtdNt.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/OzGon6Da-GY05WHbt.png"
+  },
+  {
+    "match": "Turquía vs Paraguay",
+    "homeLogo": "https://static.flashscore.com/res/image/data/Q7zzy7HG-Cfuwb3yH.png",
+    "awayLogo": "https://static.flashscore.com/res/image/data/xlHCGmwS-fXkePq9D.png"
+  }
+]
