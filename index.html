@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>ToonCloud Deportes</title>
-<!-- Build: 2026-06-19 21:21 | Events: 23 | Logos: 5 -->
+<!-- Build: 2026-06-20 08:47 | Events: 0 | Logos: 0 -->
 <meta name="theme-color" content="#000000">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -1395,42 +1395,12 @@ header {
 // El formato es: { match: "Equipo Local vs Equipo Visitante", homeLogo: "URL_ESCUDO_LOCAL", awayLogo: "URL_ESCUDO_VISITANTE" }
 // Si no quieres escudo para un equipo, deja el campo vacio: ""
 
-const matchesLogos = [
-  { match: "EE. UU. vs Australia", homeLogo: "https://static.flashscore.com/res/image/data/GpV4Cle5-MPdHoKT3.png", awayLogo: "https://static.flashscore.com/res/image/data/Ygu7zgHG-YNb3oHYR.png" },
-  { match: "Miramar Misiones vs Huracán", homeLogo: "https://static.flashscore.com/res/image/data/bwR7IxFa-OYb7JNmq.png", awayLogo: "https://static.flashscore.com/res/image/data/8SomouCa-jcpIfnhq.png" },
-  { match: "Escocia vs Marruecos", homeLogo: "https://static.flashscore.com/res/image/data/lf3kdFwS-lfZlm1uk.png", awayLogo: "https://static.flashscore.com/res/image/data/byRvSVil-hOurGDLS.png" },
-  { match: "Brasil vs Haití", homeLogo: "https://static.flashscore.com/res/image/data/hCaVxehl-88LAtdNt.png", awayLogo: "https://static.flashscore.com/res/image/data/OzGon6Da-GY05WHbt.png" },
-  { match: "Turquía vs Paraguay", homeLogo: "https://static.flashscore.com/res/image/data/Q7zzy7HG-Cfuwb3yH.png", awayLogo: "https://static.flashscore.com/res/image/data/xlHCGmwS-fXkePq9D.png" }
-];
+const matchesLogos = [];
 
 // =====================================================
 // DATOS DE EVENTOS
 // =====================================================
-const eventsData = [
-  { time: "14:00", match: "Copa del Mundo: EE. UU. vs Australia", link: "https://la18hd.com/vivo/canales.php?stream=dsports" },
-  { time: "14:00", match: "Copa del Mundo: EE. UU. vs Australia", link: "https://la18hd.com/vivo/canales.php?stream=vtvplus" },
-  { time: "14:00", match: "Copa del Mundo: EE. UU. vs Australia", link: "https://la18hd.com/vivo/canales.php?stream=telemundo" },
-  { time: "14:00", match: "Copa del Mundo: EE. UU. vs Australia", link: "https://la18hd.com/vivo/canales.php?stream=tycsports" },
-  { time: "14:00", match: "Copa del Mundo: EE. UU. vs Australia", link: "https://la18hd.com/vivo/canales.php?stream=universo" },
-  { time: "16:00", match: "Segunda División: Miramar Misiones vs Huracán", link: "https://la18hd.com/vivo/canales.php?stream=disney1" },
-  { time: "17:00", match: "Copa del Mundo: Escocia vs Marruecos", link: "https://la18hd.com/vivo/canales.php?stream=dsports" },
-  { time: "17:00", match: "Copa del Mundo: Escocia vs Marruecos", link: "https://la18hd.com/vivo/canales.php?stream=vtvplus" },
-  { time: "17:00", match: "Copa del Mundo: Escocia vs Marruecos", link: "https://la18hd.com/vivo/canales.php?stream=tycsports" },
-  { time: "17:00", match: "Copa del Mundo: Escocia vs Marruecos", link: "https://la18hd.com/vivo/canales.php?stream=telefe" },
-  { time: "17:00", match: "Copa del Mundo: Escocia vs Marruecos", link: "https://la18hd.com/vivo/canales.php?stream=caracol" },
-  { time: "17:00", match: "Copa del Mundo: Escocia vs Marruecos", link: "https://la18hd.com/vivo/canales.php?stream=telemundo" },
-  { time: "19:30", match: "Copa del Mundo: Brasil vs Haití", link: "https://la18hd.com/vivo/canales.php?stream=dsports" },
-  { time: "19:30", match: "Copa del Mundo: Brasil vs Haití", link: "https://la18hd.com/vivo/canales.php?stream=vtvplus" },
-  { time: "19:30", match: "Copa del Mundo: Brasil vs Haití", link: "https://la18hd.com/vivo/canales.php?stream=tycsports" },
-  { time: "19:30", match: "Copa del Mundo: Brasil vs Haití", link: "https://la18hd.com/vivo/canales.php?stream=telemundo" },
-  { time: "19:30", match: "Copa del Mundo: Brasil vs Haití", link: "https://la18hd.com/vivo/canales.php?stream=sportv" },
-  { time: "22:00", match: "Copa del Mundo: Turquía vs Paraguay", link: "https://la18hd.com/vivo/canales.php?stream=disney3" },
-  { time: "22:00", match: "Copa del Mundo: Turquía vs Paraguay", link: "https://la18hd.com/vivo/canales.php?stream=dsports" },
-  { time: "22:00", match: "Copa del Mundo: Turquía vs Paraguay", link: "https://la18hd.com/vivo/canales.php?stream=vtvplus" },
-  { time: "22:00", match: "Copa del Mundo: Turquía vs Paraguay", link: "https://la18hd.com/vivo/canales.php?stream=telemundo" },
-  { time: "22:00", match: "Copa del Mundo: Turquía vs Paraguay", link: "https://la18hd.com/vivo/canales.php?stream=sportv" },
-  { time: "22:00", match: "Copa del Mundo: Turquía vs Paraguay", link: "https://la18hd.com/vivo/canales.php?stream=foxsports1_usa" }
-];
+const eventsData = [];
 
 // =====================================================
 // DICCIONARIO DE MAPEO DE LIGAS
