@@ -1246,6 +1246,34 @@ header {
     animation: none !important;
   }
 }
+
+/* =====================================================
+   MEJORAS ESTETICAS (override)
+   ===================================================== */
+nav { width: 100%; }                       /* 100vw causaba scroll horizontal */
+body { background: #000; }
+.container { max-width: 720px; }
+.glass-card {
+  background: linear-gradient(160deg, rgba(255,255,255,.07), rgba(255,255,255,.02)) !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+  border-radius: 22px !important;
+  box-shadow: 0 10px 30px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.10) !important;
+  backdrop-filter: blur(22px) saturate(160%);
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
+  transition: transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s ease, border-color .25s ease;
+}
+.glass-card:hover { transform: translateY(-2px); border-color: rgba(255,255,255,.2) !important; }
+.glass-card.live { border-color: rgba(48,209,88,.45) !important; box-shadow: 0 10px 34px rgba(48,209,88,.15), inset 0 1px 0 rgba(255,255,255,.12) !important; }
+.league-badge { letter-spacing: .08em; text-transform: uppercase; font-weight: 700; }
+.match-time { font-weight: 800; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.team-name { font-weight: 600; letter-spacing: -.01em; }
+.team-logo, .team-logo-placeholder { filter: drop-shadow(0 4px 10px rgba(0,0,0,.45)); }
+.btn-watch.enabled { background: linear-gradient(135deg,#30d158,#0a84ff) !important; color:#fff !important; border:none !important; box-shadow: 0 6px 18px rgba(10,132,255,.35); }
+.btn-watch.enabled:hover { filter: brightness(1.1); transform: translateY(-1px); }
+.stats-pill { backdrop-filter: blur(14px); border: 1px solid rgba(255,255,255,.1); }
+.empty-state { padding: 56px 20px; border: 1px dashed rgba(255,255,255,.15); border-radius: 22px; background: rgba(255,255,255,.03); }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+
 </style>
 <base target="_blank">
 <base target="_blank">
@@ -1840,11 +1868,12 @@ function renderEvents(list = eventsData) {
   updateStats(list);
 
   if (groupedEventsCache.length === 0) {
+    const noData = eventsData.length === 0;
     container.innerHTML = `
       <div class="empty-state">
-        <div class="empty-state-icon">&#128269;</div>
-        <p class="empty-state-text">No se encontraron partidos</p>
-        <p class="empty-state-subtext">Intenta con otra busqueda</p>
+        <div class="empty-state-icon">${noData ? '&#9917;' : '&#128269;'}</div>
+        <p class="empty-state-text">${noData ? 'Todavia no hay partidos cargados' : 'No se encontraron partidos'}</p>
+        <p class="empty-state-subtext">${noData ? 'La actualizacion automatica no genero eventos (eventsData esta vacio)' : 'Intenta con otra busqueda'}</p>
       </div>
     `;
     return;
